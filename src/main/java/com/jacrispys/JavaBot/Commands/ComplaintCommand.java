@@ -18,7 +18,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nonnull;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -88,13 +87,14 @@ public class ComplaintCommand extends ListenerAdapter {
                         InputStream is;
                         try {
                             is = getClass().getClassLoader().getResourceAsStream("guildData.yml");
-                            Map<String, Map<String, String>> values = yaml.load(is);
+                            Map<Long, Map<String, Long>> values = yaml.load(is);
                             if (values.containsKey(Long.parseLong(event.getGuild().getId()))) {
-                                Map<String, String> guildData = values.get(Long.parseLong(event.getGuild().getId()));
-                                String ticketChannel = guildData.get("tickets");
+                                Map<String, Long> guildData = values.get(Long.parseLong(event.getGuild().getId()));
+                                Long ticketChannel = guildData.get("tickets");
                                 TextChannel tickets = event.getGuild().getTextChannelById(ticketChannel);
-                                tickets.createThreadChannel(String.valueOf(buttonId), false).setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_HOUR).queue(threadChannel -> event.reply("Ticket opened here -> " + threadChannel.getAsMention()).setEphemeral(true).queue());
-
+                                if (tickets != null) {
+                                    tickets.createThreadChannel(String.valueOf(buttonId), false).setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_HOUR).queue(threadChannel -> event.reply("Ticket opened here -> " + threadChannel.getAsMention()).setEphemeral(true).queue());
+                                } else throw new NullPointerException("Could not locate tickets channel!");
                             }
 
 
