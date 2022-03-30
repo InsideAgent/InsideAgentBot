@@ -32,7 +32,7 @@ public class ComplaintCommand extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
         if (event.isFromType(ChannelType.PRIVATE)) return;
-        if (!event.getMessage().getContentRaw().contains("!complaint")) {
+        if (!event.getMessage().getContentRaw().startsWith("!complaint")) {
             if (event.getMessage().getContentRaw().contains("!clearcomplaint")) {
                 complaintId.remove(event.getAuthor());
                 complaintMention.remove(event.getAuthor());
@@ -56,9 +56,9 @@ public class ComplaintCommand extends ListenerAdapter {
         }
         complaintId.put(sender, uuid);
         complaintMention.put(sender, mentionedUser);
-        Button button = Button.primary("complaint:" + uuid, "Create Complaint?");
-        Button openTicket = Button.primary("ticket:" + uuid, "Open a Ticket?");
-        Button cancelRequest = Button.danger("cancel:" + uuid, "Cancel?");
+        Button button = Button.primary("complaint:" + uuid, "Create Complaint \uD83D\uDD2C");
+        Button openTicket = Button.primary("ticket:" + uuid, "Open a Ticket \uD83D\uDCDC");
+        Button cancelRequest = Button.danger("cancel:" + uuid, "Cancel ❌");
         event.getMessage().reply("Click below to create a complaint!").setActionRow(button, openTicket, cancelRequest).queue();
         event.getMessage().delete().queue();
 
@@ -88,12 +88,15 @@ public class ComplaintCommand extends ListenerAdapter {
                         try {
                             is = getClass().getClassLoader().getResourceAsStream("guildData.yml");
                             Map<Long, Map<String, Long>> values = yaml.load(is);
-                            if (values.containsKey(Long.parseLong(event.getGuild().getId()))) {
+                            if (values.containsKey(Long.parseLong(Objects.requireNonNull(event.getGuild()).getId()))) {
                                 Map<String, Long> guildData = values.get(Long.parseLong(event.getGuild().getId()));
                                 Long ticketChannel = guildData.get("tickets");
                                 TextChannel tickets = event.getGuild().getTextChannelById(ticketChannel);
                                 if (tickets != null) {
-                                    tickets.createThreadChannel(String.valueOf(buttonId), false).setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_HOUR).queue(threadChannel -> event.reply("Ticket opened here -> " + threadChannel.getAsMention()).setEphemeral(true).queue());
+                                    tickets.createThreadChannel(String.valueOf(buttonId), false).setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_HOUR).queue(threadChannel ->  {
+                                        event.reply("Ticket opened here -> " + threadChannel.getAsMention()).setEphemeral(true).queue();
+                                        threadChannel.sendMessage(event.getUser().getAsMention()).queue();
+                                    });
                                 } else throw new NullPointerException("Could not locate tickets channel!");
                             }
 
