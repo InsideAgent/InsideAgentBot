@@ -1,9 +1,6 @@
 package com.jacrispys.JavaBot.Commands;
 
-import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.ThreadChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -85,6 +82,7 @@ public class ComplaintCommand extends ListenerAdapter {
                         //
                         Yaml yaml = new Yaml();
                         InputStream is;
+                        User mentioned = complaintMention.get(event.getUser());
                         try {
                             is = getClass().getClassLoader().getResourceAsStream("guildData.yml");
                             Map<Long, Map<String, Long>> values = yaml.load(is);
@@ -93,10 +91,18 @@ public class ComplaintCommand extends ListenerAdapter {
                                 Long ticketChannel = guildData.get("tickets");
                                 TextChannel tickets = event.getGuild().getTextChannelById(ticketChannel);
                                 if (tickets != null) {
-                                    tickets.createThreadChannel(String.valueOf(buttonId), false).setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_HOUR).queue(threadChannel ->  {
-                                        event.reply("Ticket opened here -> " + threadChannel.getAsMention()).setEphemeral(true).queue();
-                                        threadChannel.sendMessage(event.getUser().getAsMention()).queue();
-                                    });
+                                    if(event.getGuild().getBoostTier().ordinal() <= 1) {
+                                        event.reply("Cannot create tickets in guilds without private threads feature!").setEphemeral(true).queue();
+                                        event.getMessage().delete().queue();
+                                        return;
+                                    }
+                                        tickets.createThreadChannel(String.valueOf(buttonId), true).setInvitable(false).setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_HOUR).queue(threadChannel -> {
+                                            event.reply("Ticket opened here -> " + threadChannel.getAsMention()).setEphemeral(true).queue();
+                                            threadChannel.addThreadMember(event.getUser()).queue();
+                                            threadChannel.addThreadMember(mentioned).queue();
+                                            threadChannel.sendMessage(event.getUser().getAsMention()).queue();
+                                            threadChannel.sendMessage(mentioned.getAsMention() + " we need to have a talk...").queue();
+                                        });
                                 } else throw new NullPointerException("Could not locate tickets channel!");
                             }
 
