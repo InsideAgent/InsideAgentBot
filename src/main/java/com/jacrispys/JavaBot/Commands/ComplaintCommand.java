@@ -67,18 +67,17 @@ public class ComplaintCommand extends ListenerAdapter {
         if (buttonId.equals(complaintId.get(event.getUser()))) {
             try {
                 switch (event.getComponentId().split(":")[0]) {
-                    case ("complaint"):
+                    case ("complaint") -> {
                         TextInput reason = TextInput.create("Reason", "Reasoning for complaint:", TextInputStyle.PARAGRAPH)
                                 .setMaxLength(500)
                                 .setRequired(true)
                                 .setPlaceholder("Reason:").build();
-
-
                         Modal complaintModal = Modal.create("complaint:" + complaintId.get(event.getUser()), "User complaint (" + complaintMention.get(event.getUser()).getAsTag() + "): ").addActionRows(ActionRow.of(reason)).build();
                         event.replyModal(complaintModal).queue();
                         event.getMessage().delete().queue();
                         return;
-                    case ("ticket"):
+                    }
+                    case ("ticket") -> {
                         //
                         Yaml yaml = new Yaml();
                         InputStream is;
@@ -91,18 +90,18 @@ public class ComplaintCommand extends ListenerAdapter {
                                 Long ticketChannel = guildData.get("tickets");
                                 TextChannel tickets = event.getGuild().getTextChannelById(ticketChannel);
                                 if (tickets != null) {
-                                    if(event.getGuild().getBoostTier().ordinal() <= 1) {
+                                    if (event.getGuild().getBoostTier().ordinal() <= 1) {
                                         event.reply("Cannot create tickets in guilds without private threads feature!").setEphemeral(true).queue();
                                         event.getMessage().delete().queue();
                                         return;
                                     }
-                                        tickets.createThreadChannel(String.valueOf(buttonId), true).setInvitable(false).setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_HOUR).queue(threadChannel -> {
-                                            event.reply("Ticket opened here -> " + threadChannel.getAsMention()).setEphemeral(true).queue();
-                                            threadChannel.addThreadMember(event.getUser()).queue();
-                                            threadChannel.addThreadMember(mentioned).queue();
-                                            threadChannel.sendMessage(event.getUser().getAsMention()).queue();
-                                            threadChannel.sendMessage(mentioned.getAsMention() + " we need to have a talk...").queue();
-                                        });
+                                    tickets.createThreadChannel(String.valueOf(buttonId), true).setInvitable(false).setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_HOUR).queue(threadChannel -> {
+                                        event.reply("Ticket opened here -> " + threadChannel.getAsMention()).setEphemeral(true).queue();
+                                        threadChannel.addThreadMember(event.getUser()).queue();
+                                        threadChannel.addThreadMember(mentioned).queue();
+                                        threadChannel.sendMessage(event.getUser().getAsMention()).queue();
+                                        threadChannel.sendMessage(mentioned.getAsMention() + " we need to have a talk...").queue();
+                                    });
                                 } else throw new NullPointerException("Could not locate tickets channel!");
                             }
 
@@ -110,18 +109,20 @@ public class ComplaintCommand extends ListenerAdapter {
                         } catch (NullPointerException ex) {
                             ex.printStackTrace();
                         }
-
                         event.getMessage().delete().queue();
                         return;
-                    case ("cancel"):
+                    }
+                    case ("cancel") -> {
                         //
                         event.reply("Request cancelled, to open a new complaint, just use !complaint and select a option!").setEphemeral(true).queue();
                         event.getMessage().delete().queue();
                         return;
-                    default:
+                    }
+                    default -> {
                         //
                         event.reply("Could not locate the action requested... Please try again later!").setEphemeral(true).queue();
                         event.getMessage().delete().queue();
+                    }
                 }
             } finally {
                 if (!(event.getComponentId().split(":")[0]).equalsIgnoreCase("complaint")) {

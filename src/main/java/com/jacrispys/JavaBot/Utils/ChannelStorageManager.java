@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ChannelStorageManager {
     private final Yaml yaml;
@@ -73,6 +74,59 @@ public class ChannelStorageManager {
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public void addGuildData(Guild guild, String dataTag, Object data) {
+        try {
+            Map<Long, Map<String, Object>> guildList = this.yaml.load(loadConfig());
+            if ((guildList.containsKey(Long.parseLong(guild.getId())))) {
+                Map<String, Object> guildData = guildList.get(Long.parseLong(guild.getId()));
+                URL resourceUrl = getClass().getClassLoader().getResource("guildData.yml");
+                File file = new File(resourceUrl.toURI());
+                FileWriter writer = new FileWriter(file);
+                guildData.putIfAbsent(dataTag, data);
+                yaml.dump(guildList, writer);
+                System.out.println(writer);
+                return;
+            }
+            System.out.println(guildList);
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setGuildData(Guild guild, String dataTag, Object data) {
+        try {
+            Map<Long, Map<String, Object>> guildList = this.yaml.load(loadConfig());
+            if ((guildList.containsKey(Long.parseLong(guild.getId())))) {
+                Map<String, Object> guildData = guildList.get(Long.parseLong(guild.getId()));
+                URL resourceUrl = getClass().getClassLoader().getResource("guildData.yml");
+                File file = new File(resourceUrl.toURI());
+                FileWriter writer = new FileWriter(file);
+                guildData.put(dataTag, data);
+                yaml.dump(guildList, writer);
+                System.out.println(writer);
+                return;
+            }
+            System.out.println(guildList);
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Object getGuildData(Guild guild, String dataTag) throws NullPointerException{
+        try {
+            InputStream is;
+            is = getClass().getClassLoader().getResourceAsStream("guildData.yml");
+            Map<Long, Map<String, Object>> values = yaml.load(is);
+            if (values.containsKey(Long.parseLong(Objects.requireNonNull(guild.getId())))) {
+                Map<String, Object> guildData = values.get(Long.parseLong(guild.getId()));
+                return guildData.get(dataTag);
+            }
+            throw new NullPointerException("Could not locate the queried data!");
+        } catch(Exception ex) {
+            throw new NullPointerException("Could not locate the queried data!");
         }
     }
 
