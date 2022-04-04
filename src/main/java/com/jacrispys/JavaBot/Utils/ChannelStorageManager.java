@@ -32,6 +32,7 @@ public record ChannelStorageManager(Yaml yaml) {
      * @return true if the guild was successfully added,
      * will {@return} false if the guild was already located in the data file
      */
+    @SuppressWarnings("all")
     public boolean addNewGuild(Guild guild) {
         try {
             Map<Long, Map<String, Long>> guildList = this.yaml.load(loadConfig());
@@ -54,6 +55,13 @@ public record ChannelStorageManager(Yaml yaml) {
         }
     }
 
+    /**
+     *
+     * @param guild to have ticket channel set
+     * @param channel {@link TextChannel} where tickets will be collected
+     * @return {@link Boolean} is true if the guild has no ticket channel & throws no errors, false otherwise
+     */
+    @SuppressWarnings("all")
     public boolean setTicketChannel(Guild guild, TextChannel channel) {
         try {
             Map<Long, Map<String, Long>> guildList = this.yaml.load(loadConfig());
@@ -75,6 +83,13 @@ public record ChannelStorageManager(Yaml yaml) {
         }
     }
 
+    /**
+     *
+     * @param guild to be found in data file
+     * @param dataTag is the name of the data to be added
+     * @param data the actual data being changed
+     */
+    @SuppressWarnings("all")
     public void addGuildData(Guild guild, String dataTag, Object data) {
         try {
             Map<Long, Map<String, Object>> guildList = this.yaml.load(loadConfig());
@@ -94,6 +109,13 @@ public record ChannelStorageManager(Yaml yaml) {
         }
     }
 
+    /**
+     *
+     * @param guild to be found in data file
+     * @param dataTag is the name of the data to be added
+     * @param data the actual data being changed
+     */
+    @SuppressWarnings("all")
     public void setGuildData(Guild guild, String dataTag, Object data) {
         try {
             Map<Long, Map<String, Object>> guildList = this.yaml.load(loadConfig());
@@ -113,6 +135,13 @@ public record ChannelStorageManager(Yaml yaml) {
         }
     }
 
+    /**
+     *
+     * @param guild is the guild to obtain data from
+     * @param dataTag name of the data location
+     * @return object of what is inside the {@param dataTag}
+     * @throws NullPointerException if the queried data could not be found
+     */
     public Object getGuildData(Guild guild, String dataTag) throws NullPointerException {
         try {
             InputStream is;
