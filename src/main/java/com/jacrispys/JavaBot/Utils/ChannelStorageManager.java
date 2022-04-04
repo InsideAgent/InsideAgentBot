@@ -11,9 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class ChannelStorageManager {
-    private final Yaml yaml;
-
+public record ChannelStorageManager(Yaml yaml) {
     public static ChannelStorageManager INSTANCE;
 
     public ChannelStorageManager(Yaml yaml) {
@@ -21,18 +19,18 @@ public class ChannelStorageManager {
         INSTANCE = this;
     }
 
-    public static ChannelStorageManager getInstance() { return INSTANCE; }
+    public static ChannelStorageManager getInstance() {
+        return INSTANCE;
+    }
 
-    protected InputStream loadConfig() {
+    private  InputStream loadConfig() {
         return getClass().getClassLoader().getResourceAsStream("guildData.yml");
     }
 
     /**
-     *
      * @param guild is the guild to be added to the config
      * @return true if the guild was successfully added,
      * will {@return} false if the guild was already located in the data file
-     *
      */
     public boolean addNewGuild(Guild guild) {
         try {
@@ -115,7 +113,7 @@ public class ChannelStorageManager {
         }
     }
 
-    public Object getGuildData(Guild guild, String dataTag) throws NullPointerException{
+    public Object getGuildData(Guild guild, String dataTag) throws NullPointerException {
         try {
             InputStream is;
             is = getClass().getClassLoader().getResourceAsStream("guildData.yml");
@@ -125,11 +123,10 @@ public class ChannelStorageManager {
                 return guildData.get(dataTag);
             }
             throw new NullPointerException("Could not locate the queried data!");
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new NullPointerException("Could not locate the queried data!");
         }
     }
-
 
 
 }
