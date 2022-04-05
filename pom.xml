@@ -7,20 +7,73 @@
     <groupId>com.Jacrispys</groupId>
     <artifactId>DiscordBot</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <proc>none</proc>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>process-test-annotations</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <proc>only</proc>
+                            <annotationProcessors>
+                                <annotationProcessor>com.jacrispys.JavaBot.Utils.ExperimentalUtils.ExperimentalProcessor</annotationProcessor>
+                            </annotationProcessors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.jacrispys.JavaBot.JavaBotMain</mainClass>
+                        </manifest>
+                    </archive>
+                    <outputDirectory>C:\Users\jvanz\Desktop\Bot</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <author>Jacrispys</author>
+        <mainClass>com.jacrispys.JavaBot.JavaBotMain</mainClass>
     </properties>
 
     <repositories>
-        <repository>
-            <id>dv8tion</id>
-            <name>m2-dv8tion</name>
-            <url>https://m2.dv8tion.net/releases</url>
-        </repository>
         <repository>
             <id>dv8tion</id>
             <name>m2-dv8tion</name>
