@@ -11,18 +11,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@Deprecated(forRemoval = true)
 public record ChannelStorageManager(Yaml yaml) {
+    @Deprecated(forRemoval = true)
     public static ChannelStorageManager INSTANCE;
 
+    @Deprecated(forRemoval = true)
     public ChannelStorageManager(Yaml yaml) {
         this.yaml = yaml;
         INSTANCE = this;
     }
 
+    @Deprecated(forRemoval = true)
     public static ChannelStorageManager getInstance() {
         return INSTANCE;
     }
-
+    @Deprecated(forRemoval = true)
     private  InputStream loadConfig() {
         return getClass().getClassLoader().getResourceAsStream("guildData.yml");
     }
@@ -33,6 +37,7 @@ public record ChannelStorageManager(Yaml yaml) {
      * will {@return} false if the guild was already located in the data file
      */
     @SuppressWarnings("all")
+    @Deprecated(forRemoval = true)
     public boolean addNewGuild(Guild guild) {
         try {
             Map<Long, Map<String, Long>> guildList = this.yaml.load(loadConfig());
@@ -62,6 +67,7 @@ public record ChannelStorageManager(Yaml yaml) {
      * @return {@link Boolean} is true if the guild has no ticket channel & throws no errors, false otherwise
      */
     @SuppressWarnings("all")
+    @Deprecated(forRemoval = true)
     public boolean setTicketChannel(Guild guild, TextChannel channel) {
         try {
             Map<Long, Map<String, Long>> guildList = this.yaml.load(loadConfig());
@@ -90,6 +96,7 @@ public record ChannelStorageManager(Yaml yaml) {
      * @param data the actual data being changed
      */
     @SuppressWarnings("all")
+    @Deprecated(forRemoval = true)
     public void addGuildData(Guild guild, String dataTag, Object data) {
         try {
             Map<Long, Map<String, Object>> guildList = this.yaml.load(loadConfig());
@@ -116,6 +123,7 @@ public record ChannelStorageManager(Yaml yaml) {
      * @param data the actual data being changed
      */
     @SuppressWarnings("all")
+    @Deprecated(forRemoval = true)
     public void setGuildData(Guild guild, String dataTag, Object data) {
         try {
             Map<Long, Map<String, Object>> guildList = this.yaml.load(loadConfig());
@@ -142,6 +150,7 @@ public record ChannelStorageManager(Yaml yaml) {
      * @return object of what is inside the {@param dataTag}
      * @throws NullPointerException if the queried data could not be found
      */
+    @Deprecated(forRemoval = true)
     public Object getGuildData(Guild guild, String dataTag) throws NullPointerException {
         try {
             InputStream is;
