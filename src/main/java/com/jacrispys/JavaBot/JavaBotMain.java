@@ -5,8 +5,8 @@ import com.jacrispys.JavaBot.Commands.GameSpyCommand;
 import com.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
 import com.jacrispys.JavaBot.Commands.RegisterGuildCommand;
 import com.jacrispys.JavaBot.Events.BotStartup;
-import com.jacrispys.JavaBot.Utils.ChannelStorageManager;
 import com.jacrispys.JavaBot.Utils.GameSpyThread;
+import com.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -14,7 +14,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.yaml.snakeyaml.Yaml;
 
 
 public class JavaBotMain {
@@ -29,6 +28,9 @@ public class JavaBotMain {
                 .enableCache(CacheFlag.ACTIVITY)
                 .build();
 
+        MySQLConnection mySQLConnection = new MySQLConnection();
+        mySQLConnection.getConnection("inside_agent_bot");
+
         jda.getPresence().setActivity(Activity.streaming("Well this is a thing now...", "https://www.twitch.tv/jacrispyslive"));
         jda.addEventListener(new DefaultPrivateMessageResponse());
         jda.addEventListener(new ComplaintCommand());
@@ -37,7 +39,6 @@ public class JavaBotMain {
         jda.addEventListener(new BotStartup());
         gameSpyThread = new GameSpyThread(jda);
         gameSpyThread.start();
-        new ChannelStorageManager(new Yaml());
 
 
     }
