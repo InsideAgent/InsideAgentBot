@@ -1,7 +1,6 @@
 package com.jacrispys.JavaBot.Utils;
 
 
-import com.iwebpp.crypto.TweetNaclFast;
 import com.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -9,12 +8,14 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.requests.RestAction;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +24,7 @@ public class GameSpyThread extends Thread {
 
     @SuppressWarnings("all")
     private final JDA jda;
-    public List<Guild> runningSpies = new ArrayList<>();
+    public Map<Guild, ScheduledExecutorService> runningSpies = new HashMap<>();
     private final MySQLConnection connection = MySQLConnection.getInstance();
 
 
@@ -38,30 +39,36 @@ public class GameSpyThread extends Thread {
     }
 
     public void addNewSpy(Guild guild) {
-        runningSpies.add(guild);
-        runSpy(guild);
+        runningSpies.put(guild, runSpy(guild));
     }
 
 
-    public void setSpyList(List<Guild> guildList) {
+    @Deprecated
+    public void setSpyData(Map<Guild, ScheduledExecutorService> guildList) {
         runningSpies = guildList;
     }
 
-    public List<Guild> getRunningSpies() {
+    public Map<Guild, ScheduledExecutorService> getRunningSpies() {
         return runningSpies;
     }
 
-    protected void runSpy(Guild guild) {
+    protected ScheduledExecutorService runSpy(Guild guild) {
        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
        Runnable service = () -> {
            HashMap<Member, Activity> guildData = fetchData(guild);
+           System.out.println(guildData);
        };
        executorService.scheduleAtFixedRate(service, 1, 5, TimeUnit.SECONDS);
+       return executorService;
 
     }
 
+    public ScheduledExecutorService getSpy(Guild guild) {
+        return runningSpies.get(guild);
+    }
+
     protected HashMap<Member, Activity> fetchData(Guild guild) {
-        Map<Member, Activity> dataMap = new HashMap<>();
+        HashMap<Member, Activity> dataMap = new HashMap<>();
         for (Member member : guild.getMembers()) {
             for (Activity activity : member.getActivities()) {
                 if (activity.getTimestamps() != null && activity.isRich()) {
@@ -69,13 +76,13 @@ public class GameSpyThread extends Thread {
                 }
             }
         }
-        return (HashMap<Member, Activity>) dataMap;
+        return dataMap;
     }
 
 
     public void sendUpdate(Guild guild) {
 
-        TextChannel gameSpyChannel = null;
+        TextChannel gameSpyChannel;
         try {
             gameSpyChannel = guild.getTextChannelById(connection.getGameSpyChannel(guild));
         } catch (Exception e) {

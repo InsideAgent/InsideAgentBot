@@ -22,7 +22,7 @@ public class GameSpy {
         this.guild = guild;
     }
 
-    public void toggleGameSpy(MessageReceivedEvent event) {
+    public boolean toggleGameSpy(MessageReceivedEvent event) {
         try {
             MySQLConnection connection = MySQLConnection.getInstance();
 
@@ -36,19 +36,20 @@ public class GameSpy {
                     m.delete().queueAfter(3, TimeUnit.SECONDS);
                     event.getMessage().delete().queueAfter(3, TimeUnit.SECONDS);
                 });
-                return;
+                return true;
             }
             connection.executeCommand("UPDATE guilds SET GameSpy=" + false + " WHERE ID=" + event.getGuild().getId());
             event.getMessage().reply("GameSpy successfully disabled!").queue(m ->  {
                 m.delete().queueAfter(3, TimeUnit.SECONDS);
                 event.getMessage().delete().queueAfter(3, TimeUnit.SECONDS);
             });
+            return false;
         } catch(Exception ex) {
             event.getMessage().reply("Could not enable GameSpy! Please check a developer for the issue.").queue(m ->  {
                 m.delete().queueAfter(3, TimeUnit.SECONDS);
                 event.getMessage().delete().queueAfter(3, TimeUnit.SECONDS);
             });
-            System.out.println("added new data!");
+            return false;
         }
 
     }
