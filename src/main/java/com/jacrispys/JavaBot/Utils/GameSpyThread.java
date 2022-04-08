@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 
 import java.awt.*;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -56,7 +57,23 @@ public class GameSpyThread extends Thread {
        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
        Runnable service = () -> {
            HashMap<Member, Activity> guildData = fetchData(guild);
-           System.out.println(guildData);
+           for(Member member : guildData.keySet()) {
+               try {
+                   long currentTime;
+                   ResultSet rs = connection.queryCommand("SELECT totalTime FROM inside_agent_bot.gamespyusers WHERE memberId=" + member.getIdLong()
+                           + " AND Guild=" + guild.getId());
+                   rs.beforeFirst();
+                   rs.next();
+                   currentTime = rs.getInt("totalTime");
+
+                   currentTime = currentTime + 5;
+               connection.executeCommand("UPDATE inside_agent_bot.gamespyusers SET totalTime=" + currentTime +
+                       " WHERE Guild=" + guild.getId() + " AND MemberId=" + member.getIdLong());
+               } catch (Exception e) {
+                   e.printStackTrace();
+               }
+           }
+
        };
        executorService.scheduleAtFixedRate(service, 1, 5, TimeUnit.SECONDS);
        return executorService;
