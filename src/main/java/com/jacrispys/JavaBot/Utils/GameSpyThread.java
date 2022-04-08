@@ -1,6 +1,7 @@
 package com.jacrispys.JavaBot.Utils;
 
 
+import com.iwebpp.crypto.TweetNaclFast;
 import com.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -10,23 +11,23 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GameSpyThread extends Thread {
 
+    @SuppressWarnings("all")
     private final JDA jda;
     public List<Guild> runningSpies = new ArrayList<>();
     private final MySQLConnection connection = MySQLConnection.getInstance();
 
-    public GameSpyThread(JDA jda) throws Exception {
+
+    public GameSpyThread(JDA jda) {
         this.jda = jda;
     }
 
@@ -38,6 +39,7 @@ public class GameSpyThread extends Thread {
 
     public void addNewSpy(Guild guild) {
         runningSpies.add(guild);
+        runSpy(guild);
     }
 
 
@@ -49,8 +51,29 @@ public class GameSpyThread extends Thread {
         return runningSpies;
     }
 
+    protected void runSpy(Guild guild) {
+       ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+       Runnable service = () -> {
+           HashMap<Member, Activity> guildData = fetchData(guild);
+       };
+       executorService.scheduleAtFixedRate(service, 1, 5, TimeUnit.SECONDS);
 
-    public void runSpy(Guild guild) {
+    }
+
+    protected HashMap<Member, Activity> fetchData(Guild guild) {
+        Map<Member, Activity> dataMap = new HashMap<>();
+        for (Member member : guild.getMembers()) {
+            for (Activity activity : member.getActivities()) {
+                if (activity.getTimestamps() != null && activity.isRich()) {
+                    dataMap.put(member, activity);
+                }
+            }
+        }
+        return (HashMap<Member, Activity>) dataMap;
+    }
+
+
+    public void sendUpdate(Guild guild) {
 
         TextChannel gameSpyChannel = null;
         try {

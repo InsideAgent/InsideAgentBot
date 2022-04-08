@@ -58,8 +58,8 @@ public class GameSpy {
         System.out.println("starting spies");
     }
 
-    public void runSpy(Guild guild) {
-        spyThread.runSpy(guild);
+    public void sendUpdate(Guild guild) {
+        spyThread.sendUpdate(guild);
     }
 
 

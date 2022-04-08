@@ -57,7 +57,7 @@ public class ComplaintCommand extends ListenerAdapter {
         Button openTicket = Button.primary("ticket:" + uuid, "Open a Ticket \uD83D\uDCDC");
         Button cancelRequest = Button.danger("cancel:" + uuid, "Cancel ❌");
         event.getMessage().reply("Click below to create a complaint!").setActionRow(button, openTicket, cancelRequest).queue();
-        event.getMessage().delete().queue();
+        event.getMessage().delete().queueAfter(1, TimeUnit.SECONDS);
 
     }
 
@@ -75,7 +75,7 @@ public class ComplaintCommand extends ListenerAdapter {
                         Modal complaintModal = Modal.create("complaint:" + complaintId.get(event.getUser()), "User complaint (" + complaintMention.get(event.getUser()).getAsTag() + "): ").addActionRows(ActionRow.of(reason)).build();
                         event.replyModal(complaintModal).queue();
                         event.getMessage().delete().queue();
-                        return;
+                        
                     }
                     case ("ticket") -> {
                         //
@@ -105,13 +105,11 @@ public class ComplaintCommand extends ListenerAdapter {
                             ex.printStackTrace();
                     }
                     event.getMessage().delete().queue();
-                    return;
                 }
                 case ("cancel") -> {
                     //
                     event.reply("Request cancelled, to open a new complaint, just use !complaint and select a option!").setEphemeral(true).queue();
                     event.getMessage().delete().queue();
-                    return;
                 }
                 default -> {
                     //
@@ -152,7 +150,7 @@ public class ComplaintCommand extends ListenerAdapter {
     protected void collectComplaint(String reason, User complainer, User complaint) {
         complaint.openPrivateChannel().queue((privateChannel -> {
             privateChannel.sendMessage("User: " + complainer.getAsTag() + ", has complained about you with the following message: ").queue();
-            privateChannel.sendMessage("> `" + reason + "`").queue();
+            privateChannel.sendMessage("> " + reason).queue();
         }));
     }
 }

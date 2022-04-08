@@ -25,7 +25,7 @@ public class GameSpyCommand extends ListenerAdapter {
                         MySQLConnection connection = MySQLConnection.getInstance();
                         connection.executeCommand("UPDATE guilds SET GameSpyChannel=" + event.getTextChannel().getId() + " WHERE ID=" + event.getGuild().getId());
                     } else {
-                        spy.runSpy(event.getGuild());
+                        spy.sendUpdate(event.getGuild());
                     }
                 }
             }
