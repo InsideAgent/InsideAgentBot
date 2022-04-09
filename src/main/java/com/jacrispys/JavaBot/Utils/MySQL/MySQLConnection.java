@@ -76,6 +76,18 @@ public class MySQLConnection {
         }
     }
 
+    public int executeUpdate(String command) {
+        try {
+            Statement statement = getConnection("inside_agent_bot").createStatement();
+            int success = statement.executeUpdate(command);
+            statement.close();
+            return success;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
     public ResultSet queryCommand(String query) throws Exception {
         Statement statement = null;
         try {

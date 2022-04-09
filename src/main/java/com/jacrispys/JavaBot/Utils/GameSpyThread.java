@@ -64,7 +64,7 @@ public class GameSpyThread extends Thread {
                    currentTime = rs.getInt("totalTime");
 
                    currentTime = currentTime + 5;
-               connection.executeCommand("UPDATE inside_agent_bot.gamespyusers SET totalTime=" + currentTime +
+               connection.executeUpdate("UPDATE inside_agent_bot.gamespyusers SET totalTime=" + currentTime +
                        " WHERE Guild=" + guild.getId() + " AND MemberId=" + member.getIdLong());
                } catch (Exception e) {
                    e.printStackTrace();
