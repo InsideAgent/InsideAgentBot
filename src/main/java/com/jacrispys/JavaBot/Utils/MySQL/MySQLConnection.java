@@ -38,9 +38,8 @@ public class MySQLConnection {
     }
 
     public long getGameSpyChannel(Guild guild) throws Exception {
-        try {
+        try (Statement statement = getConnection("inside_agent_bot").createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             long channelId;
-            Statement statement = getConnection("inside_agent_bot").createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             String command = "SELECT GameSpyChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId();
             ResultSet rs = statement.executeQuery(command);
             rs.beforeFirst();
@@ -53,9 +52,8 @@ public class MySQLConnection {
         }
     }
 
-    public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
-        try {
-            Statement statement = getConnection("inside_agent_bot").createStatement();
+    public boolean registerGuild(Guild guild, TextChannel defaultChannel)  {
+        try (Statement statement = getConnection("inside_agent_bot").createStatement()) {
             String command = "INSERT INTO guilds (ID,GameSpy,TicketChannel,GameSpyChannel) VALUES (" + guild.getId() + ", 0, null, " + defaultChannel.getId() + ");";
             statement.execute(command);
             return true;
@@ -68,7 +66,9 @@ public class MySQLConnection {
     public boolean executeCommand(String command) {
         try {
             Statement statement = getConnection("inside_agent_bot").createStatement();
-            return statement.execute(command);
+            boolean success = statement.execute(command);
+            statement.close();
+            return success;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,7 +77,7 @@ public class MySQLConnection {
     }
 
     public ResultSet queryCommand(String query) throws Exception {
-        Statement statement;
+        Statement statement = null;
         try {
             statement = getConnection("inside_agent_bot").createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             return statement.executeQuery(query);

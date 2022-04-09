@@ -8,15 +8,12 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.requests.RestAction;
 
 import java.awt.*;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -96,6 +93,23 @@ public class GameSpyThread extends Thread {
         return dataMap;
     }
 
+    protected Map<Member, Long> getTotalTime(Guild guild) throws Exception {
+        try {
+            Map<Member, Long> timeMap = new HashMap<>();
+            ResultSet rs = connection.queryCommand("SELECT * FROM inside_agent_bot.gamespyusers WHERE Guild=" + guild.getId() + " AND totalTime!=0 " +
+                    "ORDER BY totalTime DESC;");
+            rs.beforeFirst();
+            while(rs.next()) {
+                long memberId = rs.getLong("MemberId");
+                int timeSeconds = rs.getInt("totalTime");
+                timeMap.put(guild.getMemberById(memberId), (long) timeSeconds);
+            }
+            return timeMap;
+        } catch(Exception ex) {
+            throw new Exception("Could not locate TimeData!");
+        }
+    }
+
 
     public void sendUpdate(Guild guild) {
 
@@ -134,7 +148,20 @@ public class GameSpyThread extends Thread {
             embedBuilder.addField("*Games*", richValue.substring(0,1024), false);
             embedBuilder.addField("*Games (Cont)*", richValue.substring(1024,richValue.toString().length()), false);
         } else {
-            embedBuilder.addField("*Games*", richValue.toString(), false);
+            embedBuilder.addField("*Games*", richValue + "\n", false);
+        }
+
+        try {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (Member member : getTotalTime(guild).keySet()) {
+                Map<Member, Long> dataMap = getTotalTime(guild);
+                long seconds = dataMap.get(member);
+                String time = String.format("%02d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
+                stringBuilder.append(member.getAsMention() + " played for: " + time + "!\n");
+            }
+            embedBuilder.addField("Playtime this Week!", stringBuilder.toString(), false);
+        }catch (Exception ex) {
+
         }
 
         gameSpyChannel.sendMessageEmbeds(embedBuilder.build()).queue();
