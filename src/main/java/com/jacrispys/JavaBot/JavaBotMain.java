@@ -31,7 +31,7 @@ public class JavaBotMain {
         MySQLConnection mySQLConnection = new MySQLConnection();
         mySQLConnection.getConnection("inside_agent_bot");
 
-        jda.getPresence().setActivity(Activity.streaming("Well this is a thing now...", "https://www.twitch.tv/jacrispyslive"));
+        jda.getPresence().setActivity(Activity.streaming("Version-0.1.1 Woo!", "https://www.twitch.tv/jacrispyslive"));
         jda.addEventListener(new DefaultPrivateMessageResponse());
         jda.addEventListener(new ComplaintCommand());
         jda.addEventListener(new RegisterGuildCommand());

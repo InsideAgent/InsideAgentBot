@@ -89,7 +89,7 @@ public class MySQLConnection {
         }
     }
     public ResultSet queryCommand(String query) throws Exception {
-        Statement statement = null;
+        Statement statement;
         try {
             statement = getConnection("inside_agent_bot").createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             return statement.executeQuery(query);

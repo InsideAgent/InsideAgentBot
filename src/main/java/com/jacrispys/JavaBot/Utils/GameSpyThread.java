@@ -85,7 +85,7 @@ public class GameSpyThread extends Thread {
         HashMap<Member, Activity> dataMap = new HashMap<>();
         for (Member member : guild.getMembers()) {
             for (Activity activity : member.getActivities()) {
-                if (activity.getTimestamps() != null && activity.isRich()) {
+                if (activity.getTimestamps() != null) {
                     dataMap.put(member, activity);
                 }
             }
@@ -161,7 +161,7 @@ public class GameSpyThread extends Thread {
             }
             embedBuilder.addField("Playtime this Week!", stringBuilder.toString(), false);
         }catch (Exception ex) {
-
+            return;
         }
 
         gameSpyChannel.sendMessageEmbeds(embedBuilder.build()).queue();
