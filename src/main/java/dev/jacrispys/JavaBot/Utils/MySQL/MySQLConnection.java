@@ -1,4 +1,4 @@
-package com.jacrispys.JavaBot.Utils.MySQL;
+package dev.jacrispys.JavaBot.Utils.MySQL;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;

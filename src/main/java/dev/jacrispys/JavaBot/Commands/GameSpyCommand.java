@@ -1,9 +1,9 @@
-package com.jacrispys.JavaBot.Commands;
+package dev.jacrispys.JavaBot.Commands;
 
-import com.jacrispys.JavaBot.Events.GameSpy;
-import com.jacrispys.JavaBot.JavaBotMain;
-import com.jacrispys.JavaBot.Utils.GameSpyThread;
-import com.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
+import dev.jacrispys.JavaBot.Events.GameSpy;
+import dev.jacrispys.JavaBot.JavaBotMain;
+import dev.jacrispys.JavaBot.Utils.GameSpyThread;
+import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;

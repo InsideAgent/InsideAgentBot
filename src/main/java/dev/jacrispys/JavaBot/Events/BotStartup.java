@@ -1,6 +1,6 @@
-package com.jacrispys.JavaBot.Events;
+package dev.jacrispys.JavaBot.Events;
 
-import com.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
+import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 public class BotStartup extends ListenerAdapter {
 
     public void onReady(@NotNull ReadyEvent event) {
+
         // Start GameSpy on enabled servers.
         for (Guild guild : event.getJDA().getGuilds()) {
             try {

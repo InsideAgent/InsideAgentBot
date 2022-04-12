@@ -1,12 +1,12 @@
-package com.jacrispys.JavaBot;
+package dev.jacrispys.JavaBot;
 
-import com.jacrispys.JavaBot.Commands.ComplaintCommand;
-import com.jacrispys.JavaBot.Commands.GameSpyCommand;
-import com.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
-import com.jacrispys.JavaBot.Commands.RegisterGuildCommand;
-import com.jacrispys.JavaBot.Events.BotStartup;
-import com.jacrispys.JavaBot.Utils.GameSpyThread;
-import com.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
+import dev.jacrispys.JavaBot.Commands.ComplaintCommand;
+import dev.jacrispys.JavaBot.Commands.GameSpyCommand;
+import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
+import dev.jacrispys.JavaBot.Commands.RegisterGuildCommand;
+import dev.jacrispys.JavaBot.Events.BotStartup;
+import dev.jacrispys.JavaBot.Utils.GameSpyThread;
+import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;

@@ -1,8 +1,8 @@
-package com.jacrispys.JavaBot.Events;
+package dev.jacrispys.JavaBot.Events;
 
-import com.jacrispys.JavaBot.JavaBotMain;
-import com.jacrispys.JavaBot.Utils.GameSpyThread;
-import com.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
+import dev.jacrispys.JavaBot.JavaBotMain;
+import dev.jacrispys.JavaBot.Utils.GameSpyThread;
+import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 

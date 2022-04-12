@@ -1,7 +1,7 @@
-package com.jacrispys.JavaBot.Utils;
+package dev.jacrispys.JavaBot.Utils;
 
 
-import com.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
+import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
