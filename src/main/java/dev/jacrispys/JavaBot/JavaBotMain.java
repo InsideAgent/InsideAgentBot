@@ -2,11 +2,14 @@ package dev.jacrispys.JavaBot;
 
 import dev.jacrispys.JavaBot.Commands.ComplaintCommand;
 import dev.jacrispys.JavaBot.Commands.GameSpyCommand;
+import dev.jacrispys.JavaBot.Commands.MusicCommands;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
 import dev.jacrispys.JavaBot.Commands.RegisterGuildCommand;
 import dev.jacrispys.JavaBot.Events.BotStartup;
+import dev.jacrispys.JavaBot.Events.WordBlocker;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
+import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -30,6 +33,7 @@ public class JavaBotMain {
 
         MySQLConnection mySQLConnection = new MySQLConnection();
         mySQLConnection.getConnection("inside_agent_bot");
+        GuildAudioManager.initManager();
 
         jda.getPresence().setActivity(Activity.streaming("Version-0.1.1 Woo!", "https://www.twitch.tv/jacrispyslive"));
         jda.addEventListener(new DefaultPrivateMessageResponse());
@@ -37,6 +41,8 @@ public class JavaBotMain {
         jda.addEventListener(new RegisterGuildCommand());
         jda.addEventListener(new GameSpyCommand());
         jda.addEventListener(new BotStartup());
+        jda.addEventListener(new WordBlocker());
+        jda.addEventListener(new MusicCommands());
         gameSpyThread = new GameSpyThread(jda);
         gameSpyThread.start();
 
