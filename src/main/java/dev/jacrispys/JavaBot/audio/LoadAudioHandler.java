@@ -32,4 +32,8 @@ public class LoadAudioHandler {
         });
 
     }
+
+    public void skipTrack(GuildAudioManager audioManager, TextChannel textChannel) {
+        audioManager.skipTrack(textChannel);
+    }
 }

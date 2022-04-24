@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import net.dv8tion.jda.api.entities.Guild;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -11,15 +12,21 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer audioPlayer;
     private final BlockingQueue<AudioTrack> queue;
+    private final Guild guild;
 
 
     /**
      *
      * @param audioPlayer the player that schedules the audio
      */
-    public TrackScheduler(AudioPlayer audioPlayer) {
+    public TrackScheduler(AudioPlayer audioPlayer, Guild guild) {
         this.audioPlayer = audioPlayer;
         this.queue = new LinkedBlockingQueue<>();
+        this.guild = guild;
+    }
+
+    public BlockingQueue<AudioTrack> getTrackQueue() {
+        return this.queue;
     }
 
     /**
@@ -45,6 +52,8 @@ public class TrackScheduler extends AudioEventAdapter {
     public void onTrackEnd(AudioPlayer audioPlayer, AudioTrack track, AudioTrackEndReason endReason) {
         if(endReason.mayStartNext) {
             nextTrack();
+            GuildAudioManager.getGuildAudioManager(guild).announceNextTrack();
+
         }
     }
 

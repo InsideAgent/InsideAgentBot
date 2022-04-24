@@ -7,13 +7,19 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.managers.AudioManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 
 public class GuildAudioManager {
 
@@ -32,10 +38,13 @@ public class GuildAudioManager {
 
     private static final Map<Guild, GuildAudioManager> audioManagers = new HashMap<>();
 
+    private static Guild currentGuild = null;
+
     public static synchronized GuildAudioManager getGuildAudioManager(Guild guild) {
         if(audioManagers.get(guild) == null) {
             GuildAudioManager audioManager = new GuildAudioManager();
             audioManagers.put(guild, audioManager);
+            currentGuild = guild;
             return audioManager;
         }
         return audioManagers.get(guild);
@@ -47,7 +56,7 @@ public class GuildAudioManager {
         AudioSourceManagers.registerRemoteSources(audioManager);
         AudioSourceManagers.registerLocalSource(audioManager);
         this.audioPlayer = audioManager.createPlayer();
-        this.scheduler = new TrackScheduler(this.audioPlayer);
+        this.scheduler = new TrackScheduler(this.audioPlayer, currentGuild);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
     }
@@ -71,6 +80,13 @@ public class GuildAudioManager {
         channel.sendMessage(("Adding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")")).queue();
 
         play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), firstTrack, voiceChannel);
+
+        if(!playlist.isSearchResult()) {
+            channel.sendMessage(("Adding to queue playlist titled: " + playlist.getName())).queue();
+            for(int i = 1; i < playlist.getTracks().size(); i++) {
+                play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), playlist.getTracks().get(i), voiceChannel);
+            }
+        }
     }
     public void trackNotFound(TextChannel channel, String trackUrl) {
         channel.sendMessage("Could not find: " + trackUrl).queue();
@@ -85,23 +101,53 @@ public class GuildAudioManager {
         guildAudioManager.scheduler.queue(track);
     }
 
-    private void skipTrack(TextChannel channel) {
+    public void skipTrack(TextChannel channel) {
         GuildAudioManager manager = getGuildAudioManager(channel.getGuild());
         manager.scheduler.nextTrack();
+        channel.sendMessage("Track Skipped! Now Playing: " + manager.audioPlayer.getPlayingTrack().getInfo().title).queue();
     }
 
     private void attachToVoiceChannel(Guild guild, VoiceChannel channel) {
-        boolean inVoiceChannel;
-        try {
-            guild.getSelfMember().getVoiceState().getChannel();
-            inVoiceChannel = true;
-        } catch(NullPointerException ex) {
-            inVoiceChannel = false;
-        }
+        boolean inVoiceChannel = guild.getSelfMember().getVoiceState().inAudioChannel();
 
         if(!inVoiceChannel) {
             AudioManager manager = guild.getAudioManager();
             manager.openAudioConnection(channel);
+            manager.setSendingHandler(sendHandler);
         }
+    }
+
+    public void setVolume(int i, TextChannel channel) {
+        if(i < 0 || i > 100) {
+           channel.sendMessage("Volume must be between 1-100!").queue();
+        }
+        channel.sendMessage("Volume is currently set at: " + i).queue();
+        audioPlayer.setVolume(i);
+    }
+
+    public void displayQueue(TextChannel channel) {
+        EmbedBuilder msg = new EmbedBuilder();
+        msg.setTitle("Pagination");
+        msg.setDescription("Hello World! This is the first page");
+
+        msg.setFooter("Page 1/4");
+        msg.setColor(0x33cc33);
+        List<Button> buttons = new ArrayList<>();
+        buttons.add(Button.primary("page_1", Emoji.fromUnicode("⏪")));
+        buttons.add(Button.primary("page_1", Emoji.fromUnicode("◀")));
+        buttons.add(Button.danger("page_cancel", Emoji.fromUnicode("❌")));
+        buttons.add(Button.primary("page_2", Emoji.fromUnicode("▶")));
+        buttons.add(Button.primary("page_4", Emoji.fromUnicode("⏩")));
+
+        channel.sendMessageEmbeds((msg.build())).setActionRow(buttons).queue();
+
+        BlockingQueue<AudioTrack> tracks = scheduler.getTrackQueue();
+        for(AudioTrack track : tracks) {
+
+        }
+    }
+
+    public void announceNextTrack() {
+
     }
 }

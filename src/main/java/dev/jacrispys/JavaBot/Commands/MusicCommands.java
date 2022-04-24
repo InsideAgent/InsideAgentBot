@@ -8,6 +8,10 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Locale;
+
 public class MusicCommands extends ListenerAdapter {
 
     private final LoadAudioHandler audioHandler = new LoadAudioHandler();
@@ -15,8 +19,9 @@ public class MusicCommands extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
         if (event.isFromType(ChannelType.PRIVATE)) return;
+        GuildAudioManager audioManager = GuildAudioManager.getGuildAudioManager(event.getGuild());
         if (event.getMessage().getContentRaw().toLowerCase().contains("-play")) {
-            String trackUrl = event.getMessage().getContentRaw().split("-play")[1];
+            String trackUrl = event.getMessage().getContentRaw().split("-play ")[1];
             VoiceChannel channel;
             try {
                 channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
@@ -24,9 +29,26 @@ public class MusicCommands extends ListenerAdapter {
                     event.getMessage().reply("Could not load song, as you are not in a voice channel!").queue();
                     return;
                 }
-                audioHandler.loadAndPlay(event.getTextChannel(), trackUrl, GuildAudioManager.getGuildAudioManager(event.getGuild()), channel);
-            } catch(NullPointerException ex) {
-                event.getMessage().reply("Could not load song, as you are not in a voice channel!").queue();
+                new URL(trackUrl);
+                audioHandler.loadAndPlay(event.getTextChannel(), trackUrl, audioManager, channel);
+            } catch(MalformedURLException ex) {
+                channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
+                if(channel == null) {
+                    event.getMessage().reply("Could not load song, as you are not in a voice channel!").queue();
+                    return;
+                }
+                String ytSearch = ("ytsearch:" + trackUrl);
+                audioHandler.loadAndPlay(event.getTextChannel(), ytSearch, audioManager, channel);
+            }
+        }else if(event.getMessage().getContentRaw().equalsIgnoreCase("-skip")) {
+            audioHandler.skipTrack(audioManager, event.getTextChannel());
+        }else if (event.getMessage().getContentRaw().contains("-volume")) {
+            try {
+            int i = Integer.parseInt(event.getMessage().getContentRaw().split("-volume ")[1]);
+
+                audioManager.setVolume(i, event.getTextChannel());
+            } catch(NumberFormatException ex) {
+                event.getMessage().reply(event.getMessage().getContentRaw().split("-volume ")[1] + " is not a number 1 - 100!").queue();
             }
         }
     }

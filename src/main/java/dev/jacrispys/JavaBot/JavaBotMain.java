@@ -24,11 +24,11 @@ public class JavaBotMain {
     private static GameSpyThread gameSpyThread;
 
     public static void main(String[] args) throws Exception {
-        JDA jda = JDABuilder.createDefault("Nzg2NzIxNzU1NTYwODA0Mzcz.X9Khuw.Y0pgvYATjsNpAKzRMwEeXPnGsi8")
+        JDA jda = JDABuilder.createDefault(System.getenv("TOKEN"))
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
-                .enableCache(CacheFlag.ACTIVITY)
+                .enableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE)
                 .build();
 
         MySQLConnection mySQLConnection = new MySQLConnection();
