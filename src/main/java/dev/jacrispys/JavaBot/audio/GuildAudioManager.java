@@ -17,10 +17,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.managers.AudioManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -30,11 +27,12 @@ public class GuildAudioManager {
     private final AudioPlayer audioPlayer;
     private final TrackScheduler scheduler;
     private final AudioPlayerSendHandler sendHandler;
+    private final Map<Guild, TextChannel> announceChannel = new HashMap<>();
 
     private static GuildAudioManager instance = null;
 
     public static void initManager() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new GuildAudioManager();
         }
     }
@@ -44,7 +42,7 @@ public class GuildAudioManager {
     private static Guild currentGuild = null;
 
     public static synchronized GuildAudioManager getGuildAudioManager(Guild guild) {
-        if(audioManagers.get(guild) == null) {
+        if (audioManagers.get(guild) == null) {
             GuildAudioManager audioManager = new GuildAudioManager();
             audioManagers.put(guild, audioManager);
             currentGuild = guild;
@@ -56,6 +54,8 @@ public class GuildAudioManager {
 
     protected GuildAudioManager() {
         this.audioManager = new DefaultAudioPlayerManager();
+        this.audioPlayer = audioManager.createPlayer();
+        AudioSourceManagers.registerLocalSource(audioManager);
 
         SpotifyConfig spotifyConfig = new SpotifyConfig();
         spotifyConfig.setClientId(System.getenv("SpotifyClientId"));
@@ -65,8 +65,6 @@ public class GuildAudioManager {
 
 
         AudioSourceManagers.registerRemoteSources(audioManager);
-        AudioSourceManagers.registerLocalSource(audioManager);
-        this.audioPlayer = audioManager.createPlayer();
         this.scheduler = new TrackScheduler(this.audioPlayer, currentGuild);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
@@ -79,11 +77,14 @@ public class GuildAudioManager {
 
     public void trackLoaded(TextChannel channel, String trackUrl, AudioTrack track, VoiceChannel voiceChannel) {
         channel.sendMessage("Adding to queue " + track.getInfo().title).queue();
+        announceChannel.put(channel.getGuild(), channel);
 
         play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), track, voiceChannel);
     }
+
     public void playListLoaded(TextChannel channel, String trackUrl, AudioPlaylist playlist, VoiceChannel voiceChannel) {
         AudioTrack firstTrack = playlist.getSelectedTrack();
+        announceChannel.put(channel.getGuild(), channel);
 
         if (firstTrack == null) {
             firstTrack = playlist.getTracks().get(0);
@@ -93,13 +94,14 @@ public class GuildAudioManager {
 
         play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), firstTrack, voiceChannel);
 
-        if(!playlist.isSearchResult()) {
+        if (!playlist.isSearchResult()) {
             channel.sendMessage(("Adding to queue playlist titled: " + playlist.getName())).queue();
-            for(int i = 1; i < playlist.getTracks().size(); i++) {
+            for (int i = 1; i < playlist.getTracks().size(); i++) {
                 play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), playlist.getTracks().get(i), voiceChannel);
             }
         }
     }
+
     public void trackNotFound(TextChannel channel, String trackUrl) {
         channel.sendMessage("Could not find: " + trackUrl).queue();
     }
@@ -116,7 +118,7 @@ public class GuildAudioManager {
     public void skipTrack(TextChannel channel) {
         GuildAudioManager manager = getGuildAudioManager(channel.getGuild());
         manager.scheduler.nextTrack();
-        if(audioPlayer.getPlayingTrack() != null) {
+        if (audioPlayer.getPlayingTrack() != null) {
             channel.sendMessage("Track Skipped! Now Playing: " + manager.audioPlayer.getPlayingTrack().getInfo().title).queue();
         }
     }
@@ -124,7 +126,7 @@ public class GuildAudioManager {
     private void attachToVoiceChannel(Guild guild, VoiceChannel channel) {
         boolean inVoiceChannel = guild.getSelfMember().getVoiceState().inAudioChannel();
 
-        if(!inVoiceChannel) {
+        if (!inVoiceChannel) {
             AudioManager manager = guild.getAudioManager();
             manager.openAudioConnection(channel);
             manager.setSendingHandler(sendHandler);
@@ -132,8 +134,8 @@ public class GuildAudioManager {
     }
 
     public void setVolume(int i, TextChannel channel) {
-        if(i < 0 || i > 100) {
-           channel.sendMessage("Volume must be between 1-100!").queue();
+        if (i < 0 || i > 100) {
+            channel.sendMessage("Volume must be between 1-100!").queue();
         }
         channel.sendMessage("Volume is currently set at: " + i).queue();
         audioPlayer.setVolume(i);
@@ -156,17 +158,40 @@ public class GuildAudioManager {
         channel.sendMessageEmbeds((msg.build())).setActionRow(buttons).queue();
 
         BlockingQueue<AudioTrack> tracks = scheduler.getTrackQueue();
-        for(AudioTrack track : tracks) {
+        for (AudioTrack track : tracks) {
 
         }
     }
 
-    public void announceNextTrack() {
+
+    public void announceNextTrack(Guild guild) {
 
     }
 
     public void clearQueue(TextChannel channel) {
         channel.sendMessage("Clearing queue!").queue();
         scheduler.setQueue(new LinkedBlockingQueue<>());
+    }
+
+    public void pausePlayer(TextChannel channel) {
+        if (!audioPlayer.isPaused()) {
+            channel.sendMessage("Paused ⏸️").queue();
+            audioPlayer.setPaused(true);
+        }
+    }
+
+    public void resumePlayer(TextChannel channel) {
+        if (audioPlayer.isPaused()) {
+            channel.sendMessage("Resumed ▶️").queue();
+            audioPlayer.setPaused(false);
+        }
+    }
+
+    public void shufflePlayer(TextChannel channel) {
+        ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
+        Collections.shuffle(trackList);
+        BlockingQueue<AudioTrack> tracks = new LinkedBlockingQueue<>(trackList);
+        scheduler.setQueue(tracks);
+        channel.sendMessage("Shuffling! \uD83C\uDFB2").queue();
     }
 }

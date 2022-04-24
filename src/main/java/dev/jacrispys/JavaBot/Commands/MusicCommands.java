@@ -20,7 +20,8 @@ public class MusicCommands extends ListenerAdapter {
         if (event.getAuthor().isBot()) return;
         if (event.isFromType(ChannelType.PRIVATE)) return;
         GuildAudioManager audioManager = GuildAudioManager.getGuildAudioManager(event.getGuild());
-        if (event.getMessage().getContentRaw().toLowerCase().contains("-play")) {
+        String message = event.getMessage().getContentRaw();
+        if (message.toLowerCase().contains("-play")) {
             String trackUrl = event.getMessage().getContentRaw().split("-play ")[1];
             VoiceChannel channel;
             try {
@@ -40,7 +41,7 @@ public class MusicCommands extends ListenerAdapter {
                 String ytSearch = ("ytsearch:" + trackUrl);
                 audioHandler.loadAndPlay(event.getTextChannel(), ytSearch, audioManager, channel);
             }
-        }else if(event.getMessage().getContentRaw().equalsIgnoreCase("-skip")) {
+        }else if(message.equalsIgnoreCase("-skip")) {
             audioHandler.skipTrack(audioManager, event.getTextChannel());
         }else if (event.getMessage().getContentRaw().contains("-volume")) {
             try {
@@ -50,8 +51,23 @@ public class MusicCommands extends ListenerAdapter {
             } catch(NumberFormatException ex) {
                 event.getMessage().reply(event.getMessage().getContentRaw().split("-volume ")[1] + " is not a number 1 - 100!").queue();
             }
-        }else if (event.getMessage().getContentRaw().equalsIgnoreCase("-clear")) {
+        }else if (message.equalsIgnoreCase("-clear") ) {
             audioManager.clearQueue(event.getTextChannel());
+        }else if (message.equalsIgnoreCase("-pause") || message.equalsIgnoreCase("-stop")) {
+            audioManager.pausePlayer(event.getTextChannel());
+        }else if (message.equalsIgnoreCase("-resume") || message.equalsIgnoreCase("-play")) {
+            audioManager.resumePlayer(event.getTextChannel());
+        }else if (message.equalsIgnoreCase("-shuffle") ) {
+            audioManager.shufflePlayer(event.getTextChannel());
+        }else if (message.equalsIgnoreCase("-dc") || message.equalsIgnoreCase("-disconnect") || message.equalsIgnoreCase("-leave")) {
+            event.getGuild().getAudioManager().closeAudioConnection();
+        } else if(message.equalsIgnoreCase("-move") || message.equalsIgnoreCase("-follow")) {
+            if(event.getGuild().getMember(event.getAuthor()).getVoiceState().inAudioChannel()) {
+                event.getGuild().getAudioManager().openAudioConnection(event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel());
+                event.getTextChannel().sendMessage("Following! ✈️").queue();
+            } else {
+                event.getTextChannel().sendMessage("You are not in a VoiceChannel that I can access!").queue();
+            }
         }
     }
 }
