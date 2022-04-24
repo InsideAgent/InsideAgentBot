@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer audioPlayer;
-    private final BlockingQueue<AudioTrack> queue;
+    private BlockingQueue<AudioTrack> queue;
     private final Guild guild;
 
 
@@ -27,6 +27,9 @@ public class TrackScheduler extends AudioEventAdapter {
 
     public BlockingQueue<AudioTrack> getTrackQueue() {
         return this.queue;
+    }
+    public void setQueue(BlockingQueue<AudioTrack> queue) {
+        this.queue = queue;
     }
 
     /**

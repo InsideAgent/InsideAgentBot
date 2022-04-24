@@ -1,5 +1,7 @@
 package dev.jacrispys.JavaBot.audio;
 
+import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifyConfig;
+import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -20,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class GuildAudioManager {
 
@@ -53,12 +56,21 @@ public class GuildAudioManager {
 
     protected GuildAudioManager() {
         this.audioManager = new DefaultAudioPlayerManager();
+
+        SpotifyConfig spotifyConfig = new SpotifyConfig();
+        spotifyConfig.setClientId(System.getenv("SpotifyClientId"));
+        spotifyConfig.setClientSecret(System.getenv("SpotifySecret"));
+        spotifyConfig.setCountryCode("US");
+        audioManager.registerSourceManager(new SpotifySourceManager(null, spotifyConfig, audioManager));
+
+
         AudioSourceManagers.registerRemoteSources(audioManager);
         AudioSourceManagers.registerLocalSource(audioManager);
         this.audioPlayer = audioManager.createPlayer();
         this.scheduler = new TrackScheduler(this.audioPlayer, currentGuild);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
+
     }
 
     public AudioPlayerManager getAudioManager() {
@@ -104,7 +116,9 @@ public class GuildAudioManager {
     public void skipTrack(TextChannel channel) {
         GuildAudioManager manager = getGuildAudioManager(channel.getGuild());
         manager.scheduler.nextTrack();
-        channel.sendMessage("Track Skipped! Now Playing: " + manager.audioPlayer.getPlayingTrack().getInfo().title).queue();
+        if(audioPlayer.getPlayingTrack() != null) {
+            channel.sendMessage("Track Skipped! Now Playing: " + manager.audioPlayer.getPlayingTrack().getInfo().title).queue();
+        }
     }
 
     private void attachToVoiceChannel(Guild guild, VoiceChannel channel) {
@@ -149,5 +163,10 @@ public class GuildAudioManager {
 
     public void announceNextTrack() {
 
+    }
+
+    public void clearQueue(TextChannel channel) {
+        channel.sendMessage("Clearing queue!").queue();
+        scheduler.setQueue(new LinkedBlockingQueue<>());
     }
 }

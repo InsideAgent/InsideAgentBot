@@ -50,6 +50,8 @@ public class MusicCommands extends ListenerAdapter {
             } catch(NumberFormatException ex) {
                 event.getMessage().reply(event.getMessage().getContentRaw().split("-volume ")[1] + " is not a number 1 - 100!").queue();
             }
+        }else if (event.getMessage().getContentRaw().equalsIgnoreCase("-clear")) {
+            audioManager.clearQueue(event.getTextChannel());
         }
     }
 }
