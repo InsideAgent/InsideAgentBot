@@ -10,12 +10,11 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Emoji;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -28,6 +27,7 @@ public class GuildAudioManager {
     private final TrackScheduler scheduler;
     private final AudioPlayerSendHandler sendHandler;
     private final Map<Guild, TextChannel> announceChannel = new HashMap<>();
+    private User requester = null;
 
     private static GuildAudioManager instance = null;
 
@@ -108,6 +108,15 @@ public class GuildAudioManager {
 
     public void trackLoadFailed(TextChannel channel, String trackUrl, FriendlyException exception) {
         channel.sendMessage("Could not play: " + exception.getMessage()).queue();
+    }
+
+    public void setRequester(User requester) {
+        this.requester = requester;
+    }
+
+    @Nullable
+    public User getRequester() {
+        return requester;
     }
 
     private void play(Guild guild, GuildAudioManager guildAudioManager, AudioTrack track, VoiceChannel voiceChannel) {
@@ -193,5 +202,24 @@ public class GuildAudioManager {
         BlockingQueue<AudioTrack> tracks = new LinkedBlockingQueue<>(trackList);
         scheduler.setQueue(tracks);
         channel.sendMessage("Shuffling! \uD83C\uDFB2").queue();
+    }
+
+    public void sendTrackInfo(TextChannel channel) {
+        if(audioPlayer.getPlayingTrack() == null) {
+            channel.sendMessage("Cannot get track info as no song is playing!").queue();
+            return;
+        }
+        AudioTrack track = audioPlayer.getPlayingTrack();
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle(track.getInfo().author + " - " + track.getInfo().title);
+        String durationSlider = ("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+        float div = ((float) track.getPosition() / (float) track.getDuration()*20);
+        int duration = Math.round(div);
+        String emoji = ("\uD83D\uDD18");
+        durationSlider = durationSlider.substring(0,duration) + emoji + durationSlider.substring(duration+1);
+        String time = "[" + DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + "/" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]";
+        eb.addField("", "-Requested By: " + getRequester().getAsMention() + "\n" + durationSlider + "\n" + time, false);
+
+        channel.sendMessageEmbeds(eb.build()).queue();
     }
 }

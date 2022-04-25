@@ -31,7 +31,7 @@ public class MusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                audioHandler.loadAndPlay(event.getTextChannel(), trackUrl, audioManager, channel);
+                audioHandler.loadAndPlay(event.getTextChannel(), trackUrl, audioManager, channel, event.getAuthor());
             } catch(MalformedURLException ex) {
                 channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
                 if(channel == null) {
@@ -39,7 +39,7 @@ public class MusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                audioHandler.loadAndPlay(event.getTextChannel(), ytSearch, audioManager, channel);
+                audioHandler.loadAndPlay(event.getTextChannel(), ytSearch, audioManager, channel, event.getAuthor());
             }
         }else if(message.equalsIgnoreCase("-skip")) {
             audioHandler.skipTrack(audioManager, event.getTextChannel());
@@ -61,6 +61,7 @@ public class MusicCommands extends ListenerAdapter {
             audioManager.shufflePlayer(event.getTextChannel());
         }else if (message.equalsIgnoreCase("-dc") || message.equalsIgnoreCase("-disconnect") || message.equalsIgnoreCase("-leave")) {
             event.getGuild().getAudioManager().closeAudioConnection();
+            audioManager.clearQueue(event.getTextChannel());
         } else if(message.equalsIgnoreCase("-move") || message.equalsIgnoreCase("-follow")) {
             if(event.getGuild().getMember(event.getAuthor()).getVoiceState().inAudioChannel()) {
                 event.getGuild().getAudioManager().openAudioConnection(event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel());
@@ -68,6 +69,8 @@ public class MusicCommands extends ListenerAdapter {
             } else {
                 event.getTextChannel().sendMessage("You are not in a VoiceChannel that I can access!").queue();
             }
+        } else if(message.equalsIgnoreCase("-song") || message.equalsIgnoreCase("-info")) {
+            audioManager.sendTrackInfo(event.getTextChannel());
         }
     }
 }
