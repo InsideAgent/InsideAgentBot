@@ -17,13 +17,13 @@ public class LoadAudioHandler {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 guildAudioManager.trackLoaded(channel, trackUrl, audioTrack, voiceChannel);
-                guildAudioManager.setRequester(requester);
+                guildAudioManager.setRequester(audioTrack, requester);
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
                 guildAudioManager.playListLoaded(channel, trackUrl, audioPlaylist, voiceChannel);
-                guildAudioManager.setRequester(requester);
+                guildAudioManager.setRequester(audioPlaylist.getTracks().get(0), requester);
             }
 
             @Override

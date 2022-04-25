@@ -56,6 +56,7 @@ public class TrackScheduler extends AudioEventAdapter {
         if(endReason.mayStartNext) {
             nextTrack();
             GuildAudioManager.getGuildAudioManager(guild).announceNextTrack(guild);
+            GuildAudioManager.getGuildAudioManager(guild).getRequester().remove(track);
 
         }
     }

@@ -30,7 +30,7 @@ public class GuildAudioManager {
     private final TrackScheduler scheduler;
     private final AudioPlayerSendHandler sendHandler;
     private final Map<Guild, TextChannel> announceChannel = new HashMap<>();
-    private User requester = null;
+    private final Map<AudioTrack, User> requester = new HashMap<>();
 
     private static GuildAudioManager instance = null;
 
@@ -113,13 +113,13 @@ public class GuildAudioManager {
         channel.sendMessage("Could not play: " + exception.getMessage()).queue();
     }
 
-    public void setRequester(User requester) {
-        this.requester = requester;
+    public void setRequester(AudioTrack track, User requester) {
+        this.requester.put(track, requester);
     }
 
     @Nullable
-    public User getRequester() {
-        return requester;
+    public Map<AudioTrack, User> getRequester() {
+        return this.requester;
     }
 
     private void play(Guild guild, GuildAudioManager guildAudioManager, AudioTrack track, VoiceChannel voiceChannel) {
@@ -212,7 +212,7 @@ public class GuildAudioManager {
         String emoji = ("\uD83D\uDD18");
         durationSlider = durationSlider.substring(0,duration) + emoji + durationSlider.substring(duration+1);
         String time = "[" + DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + "/" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]";
-        eb.addField("", "-Requested By: " + getRequester().getAsMention() + "\n" + durationSlider + "\n" + time, false);
+        eb.addField("", "-Requested By: " + getRequester().get(track).getAsMention() + "\n" + durationSlider + "\n" + time, false);
 
         channel.sendMessageEmbeds(eb.build()).queue();
     }
