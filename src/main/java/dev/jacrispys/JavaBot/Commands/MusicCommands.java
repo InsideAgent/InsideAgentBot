@@ -21,8 +21,14 @@ public class MusicCommands extends ListenerAdapter {
         if (event.isFromType(ChannelType.PRIVATE)) return;
         GuildAudioManager audioManager = GuildAudioManager.getGuildAudioManager(event.getGuild());
         String message = event.getMessage().getContentRaw();
-        if (message.toLowerCase().contains("-play")) {
-            String trackUrl = event.getMessage().getContentRaw().split("-play ")[1];
+        if (message.toLowerCase().contains("-play") || message.toLowerCase().contains("-p")) {
+            String trackUrl;
+            if (message.toLowerCase().contains("-play")) {
+                trackUrl = event.getMessage().getContentRaw().split("-play ")[1];
+            } else {
+                trackUrl = event.getMessage().getContentRaw().split("-p ")[1];
+            }
+
             VoiceChannel channel;
             try {
                 channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
@@ -71,6 +77,19 @@ public class MusicCommands extends ListenerAdapter {
             }
         } else if(message.equalsIgnoreCase("-song") || message.equalsIgnoreCase("-info")) {
             audioManager.sendTrackInfo(event.getTextChannel());
+        }else if(message.equalsIgnoreCase("-q") || message.equalsIgnoreCase("-queue")) {
+            audioManager.displayQueue(event.getTextChannel());
+        } else if(message.toLowerCase().contains("-remove")) {
+            try {
+                int position = Integer.parseInt(event.getMessage().getContentRaw().split("-remove ")[1]);
+                audioManager.removeTrack(position, event.getTextChannel());
+            } catch(NumberFormatException ex) {
+                event.getMessage().reply("Could not parse: " + event.getMessage().getContentRaw().split("-remove ")[1] + " as a number!").queue();
+
+            }
+        } else if(message.toLowerCase().contains("-seek")) {
+            String time = event.getMessage().getContentRaw().split("-seek ")[1];
+            audioManager.seekTrack(time, event.getTextChannel());
         }
     }
 }

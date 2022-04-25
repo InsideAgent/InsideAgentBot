@@ -55,6 +55,9 @@ public class ComplaintCommand extends ListenerAdapter {
         complaintMention.put(sender, mentionedUser);
         Button button = Button.primary("complaint:" + uuid, "Create Complaint \uD83D\uDD2C");
         Button openTicket = Button.primary("ticket:" + uuid, "Open a Ticket \uD83D\uDCDC");
+        if (event.getGuild().getBoostTier().ordinal() <= 1) {
+            openTicket = openTicket.asDisabled();
+        }
         Button cancelRequest = Button.danger("cancel:" + uuid, "Cancel ❌");
         event.getMessage().reply("Click below to create a complaint!").setActionRow(button, openTicket, cancelRequest).queue();
         event.getMessage().delete().queueAfter(1, TimeUnit.SECONDS);

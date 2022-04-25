@@ -16,9 +16,12 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Function;
 
 public class GuildAudioManager {
 
@@ -151,25 +154,16 @@ public class GuildAudioManager {
     }
 
     public void displayQueue(TextChannel channel) {
-        EmbedBuilder msg = new EmbedBuilder();
-        msg.setTitle("Pagination");
-        msg.setDescription("Hello World! This is the first page");
 
-        msg.setFooter("Page 1/4");
-        msg.setColor(0x33cc33);
-        List<Button> buttons = new ArrayList<>();
-        buttons.add(Button.primary("page_1", Emoji.fromUnicode("⏪")));
-        buttons.add(Button.primary("page_1", Emoji.fromUnicode("◀")));
-        buttons.add(Button.danger("page_cancel", Emoji.fromUnicode("❌")));
-        buttons.add(Button.primary("page_2", Emoji.fromUnicode("▶")));
-        buttons.add(Button.primary("page_4", Emoji.fromUnicode("⏩")));
-
-        channel.sendMessageEmbeds((msg.build())).setActionRow(buttons).queue();
-
+        StringBuilder queue = new StringBuilder();
         BlockingQueue<AudioTrack> tracks = scheduler.getTrackQueue();
+        int i = 1;
         for (AudioTrack track : tracks) {
-
+            queue.append("`" + i + ". " + track.getInfo().author + " - " + track.getInfo().title + "` \n");
+            i++;
         }
+        channel.sendMessage("Showing Queue of " + tracks.size() + " tracks!").queue();
+        channel.sendMessage(queue.toString()).queue();
     }
 
 
@@ -221,5 +215,33 @@ public class GuildAudioManager {
         eb.addField("", "-Requested By: " + getRequester().getAsMention() + "\n" + durationSlider + "\n" + time, false);
 
         channel.sendMessageEmbeds(eb.build()).queue();
+    }
+
+    public void removeTrack(int position, TextChannel channel) {
+        BlockingQueue<AudioTrack> tracks = scheduler.getTrackQueue();
+        AudioTrack removed = tracks.stream().toList().get(position - 1);
+        if(removed != null) {
+            channel.sendMessage("Successfully Removed: `" + removed.getInfo().author + " - "  + removed.getInfo().title + "` from the queue!").queue();
+            ArrayList<AudioTrack> trackList = new ArrayList<>(tracks.stream().toList());
+            trackList.remove(position - 1);
+            tracks = new LinkedBlockingQueue<>(trackList);
+            scheduler.setQueue(tracks);
+        } else {
+            channel.sendMessage("Could not locate track at position: " + position + "!").queue();
+        }
+
+    }
+
+    public void seekTrack(String time, TextChannel channel) {
+        try {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+            Function<String, String> adjust = input -> input.indexOf(":", 3) >= 0
+                    ? input : "00:" + input;
+            long millis = dtf.parse(adjust.apply(time)).get(ChronoField.MILLI_OF_DAY);
+            audioPlayer.getPlayingTrack().setPosition(millis);
+            channel.sendMessage("Seeking to: " + time + "!").queue();
+        } catch (Exception ex) {
+            channel.sendMessage("Invalid use of seek! Please use the format 'HH:mm:ss'").queue();
+        }
     }
 }
