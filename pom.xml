@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.Jacrispys</groupId>
-    <artifactId>DiscordBot</artifactId>
+    <artifactId>DevBot</artifactId>
     <version>0.1.2</version>
     <build>
         <plugins>

@@ -66,71 +66,71 @@ public class ComplaintCommand extends ListenerAdapter {
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        UUID buttonId = UUID.fromString(event.getComponentId().split(":")[1]);
-        if (buttonId.equals(complaintId.get(event.getUser()))) {
-            try {
-                switch (event.getComponentId().split(":")[0]) {
-                    case ("complaint") -> {
-                        TextInput reason = TextInput.create("Reason", "Reasoning for complaint:", TextInputStyle.PARAGRAPH)
-                                .setMaxLength(500)
-                                .setRequired(true)
-                                .setPlaceholder("Reason:").build();
-                        Modal complaintModal = Modal.create("complaint:" + complaintId.get(event.getUser()), "User complaint (" + complaintMention.get(event.getUser()).getAsTag() + "): ").addActionRows(ActionRow.of(reason)).build();
-                        event.replyModal(complaintModal).queue();
-                        event.getMessage().delete().queue();
-                        
-                    }
-                    case ("ticket") -> {
-                        //
-                        User mentioned = complaintMention.get(event.getUser());
-                        try {
-                            MySQLConnection connection = MySQLConnection.getInstance();
-                            ResultSet rs = connection.queryCommand("SELECT TicketChannel FROM inside_agent_bot.guilds WHERE ID=" + event.getGuild().getId());
-                            rs.beforeFirst();
-                            rs.next();
-                            long channelId = rs.getLong("TicketChannel");
-                            TextChannel tickets = event.getGuild().getTextChannelById(channelId);
-                            if (tickets != null) {
-                                if (event.getGuild().getBoostTier().ordinal() <= 1) {
-                                    event.reply("Cannot create tickets in guilds without private threads feature!").setEphemeral(true).queue();
-                                    event.getMessage().delete().queue();
-                                    return;
-                                }
-                                tickets.createThreadChannel(String.valueOf(buttonId), true).setInvitable(false).setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_HOUR).queue(threadChannel -> {
-                                    event.reply("Ticket opened here -> " + threadChannel.getAsMention()).setEphemeral(true).queue();
-                                    threadChannel.addThreadMember(event.getUser()).queue();
-                                    threadChannel.addThreadMember(mentioned).queue();
-                                    threadChannel.sendMessage(event.getUser().getAsMention()).queue();
-                                    threadChannel.sendMessage(mentioned.getAsMention() + " we need to have a talk...").queue();
-                                });
-                            } else throw new NullPointerException("Could not locate tickets channel!");
-                        } catch(Exception ex) {
-                            ex.printStackTrace();
-                    }
-                    event.getMessage().delete().queue();
-                }
-                case ("cancel") -> {
-                    //
-                    event.reply("Request cancelled, to open a new complaint, just use !complaint and select a option!").setEphemeral(true).queue();
-                    event.getMessage().delete().queue();
-                }
-                default -> {
-                    //
-                    event.reply("Could not locate the action requested... Please try again later!").setEphemeral(true).queue();
-                    event.getMessage().delete().queue();
-                }
-            }
-        } finally{
-            if (!(event.getComponentId().split(":")[0]).equalsIgnoreCase("complaint")) {
-                complaintId.remove(event.getUser());
-                complaintMention.remove(event.getUser());
-            }
-        }
-    } else
+        try {
+            UUID buttonId = UUID.fromString(event.getComponentId().split(":")[1]);
+            if (buttonId.equals(complaintId.get(event.getUser()))) {
+                try {
+                    switch (event.getComponentId().split(":")[0]) {
+                        case ("complaint") -> {
+                            TextInput reason = TextInput.create("Reason", "Reasoning for complaint:", TextInputStyle.PARAGRAPH)
+                                    .setMaxLength(500)
+                                    .setRequired(true)
+                                    .setPlaceholder("Reason:").build();
+                            Modal complaintModal = Modal.create("complaint:" + complaintId.get(event.getUser()), "User complaint (" + complaintMention.get(event.getUser()).getAsTag() + "): ").addActionRows(ActionRow.of(reason)).build();
+                            event.replyModal(complaintModal).queue();
+                            event.getMessage().delete().queue();
 
-    {
-        event.reply("Only the user who issued the complaint can use this feature!").setEphemeral(true).queue();
-    }
+                        }
+                        case ("ticket") -> {
+                            //
+                            User mentioned = complaintMention.get(event.getUser());
+                            try {
+                                MySQLConnection connection = MySQLConnection.getInstance();
+                                ResultSet rs = connection.queryCommand("SELECT TicketChannel FROM inside_agent_bot.guilds WHERE ID=" + event.getGuild().getId());
+                                rs.beforeFirst();
+                                rs.next();
+                                long channelId = rs.getLong("TicketChannel");
+                                TextChannel tickets = event.getGuild().getTextChannelById(channelId);
+                                if (tickets != null) {
+                                    if (event.getGuild().getBoostTier().ordinal() <= 1) {
+                                        event.reply("Cannot create tickets in guilds without private threads feature!").setEphemeral(true).queue();
+                                        event.getMessage().delete().queue();
+                                        return;
+                                    }
+                                    tickets.createThreadChannel(String.valueOf(buttonId), true).setInvitable(false).setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_HOUR).queue(threadChannel -> {
+                                        event.reply("Ticket opened here -> " + threadChannel.getAsMention()).setEphemeral(true).queue();
+                                        threadChannel.addThreadMember(event.getUser()).queue();
+                                        threadChannel.addThreadMember(mentioned).queue();
+                                        threadChannel.sendMessage(event.getUser().getAsMention()).queue();
+                                        threadChannel.sendMessage(mentioned.getAsMention() + " we need to have a talk...").queue();
+                                    });
+                                } else throw new NullPointerException("Could not locate tickets channel!");
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                            event.getMessage().delete().queue();
+                        }
+                        case ("cancel") -> {
+                            //
+                            event.reply("Request cancelled, to open a new complaint, just use !complaint and select a option!").setEphemeral(true).queue();
+                            event.getMessage().delete().queue();
+                        }
+                        default -> {
+                            //
+                            event.reply("Could not locate the action requested... Please try again later!").setEphemeral(true).queue();
+                            event.getMessage().delete().queue();
+                        }
+                    }
+                } finally {
+                    if (!(event.getComponentId().split(":")[0]).equalsIgnoreCase("complaint")) {
+                        complaintId.remove(event.getUser());
+                        complaintMention.remove(event.getUser());
+                    }
+                }
+            } else {
+                event.reply("Only the user who issued the complaint can use this feature!").setEphemeral(true).queue();
+            }
+        }catch (Exception ex) { return; }
 
 }
 

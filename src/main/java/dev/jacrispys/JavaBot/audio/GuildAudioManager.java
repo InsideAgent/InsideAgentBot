@@ -13,8 +13,12 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -22,17 +26,17 @@ import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 
-public class GuildAudioManager {
+public class GuildAudioManager extends ListenerAdapter {
 
     private final AudioPlayerManager audioManager;
     private final AudioPlayer audioPlayer;
     private final TrackScheduler scheduler;
     private final AudioPlayerSendHandler sendHandler;
-    private final Map<Guild, TextChannel> announceChannel = new HashMap<>();
     private final Map<AudioTrack, User> requester = new HashMap<>();
 
     private boolean djEnabled = false;
@@ -45,14 +49,12 @@ public class GuildAudioManager {
         if (audioManagers.get(guild) == null) {
             GuildAudioManager audioManager = new GuildAudioManager(guild);
             audioManagers.put(guild, audioManager);
-            if(currentGuild == null) currentGuild = guild;
+            if (currentGuild == null) currentGuild = guild;
             return audioManager;
         }
-        if(currentGuild == null) currentGuild = guild;
+        if (currentGuild == null) currentGuild = guild;
         return audioManagers.get(guild);
     }
-
-
 
 
     protected GuildAudioManager(Guild instance) {
@@ -72,6 +74,7 @@ public class GuildAudioManager {
         this.scheduler = new TrackScheduler(this.audioPlayer, currentGuild);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
+        instance.getJDA().addEventListener(this);
     }
 
     public AudioPlayerManager getAudioManager() {
@@ -79,23 +82,21 @@ public class GuildAudioManager {
     }
 
     public void trackLoaded(TextChannel channel, String trackUrl, AudioTrack track, VoiceChannel voiceChannel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
         channel.sendMessage("Adding to queue " + track.getInfo().title).queue();
-        announceChannel.put(channel.getGuild(), channel);
 
         play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), track, voiceChannel);
     }
 
     public void playListLoaded(TextChannel channel, String trackUrl, AudioPlaylist playlist, VoiceChannel voiceChannel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
         AudioTrack firstTrack = playlist.getSelectedTrack();
-        announceChannel.put(channel.getGuild(), channel);
 
         if (firstTrack == null) {
             firstTrack = playlist.getTracks().get(0);
@@ -114,7 +115,7 @@ public class GuildAudioManager {
     }
 
     public void trackNotFound(TextChannel channel, String trackUrl) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
@@ -122,7 +123,7 @@ public class GuildAudioManager {
     }
 
     public void trackLoadFailed(TextChannel channel, String trackUrl, FriendlyException exception) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
@@ -145,7 +146,7 @@ public class GuildAudioManager {
     }
 
     public void skipTrack(TextChannel channel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
@@ -168,7 +169,7 @@ public class GuildAudioManager {
     }
 
     public void setVolume(int i, TextChannel channel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
@@ -180,28 +181,96 @@ public class GuildAudioManager {
         audioPlayer.setVolume(i);
     }
 
+    private int queuePage;
+
     public void displayQueue(TextChannel channel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
 
+        queuePage = 1;
+
         StringBuilder queue = new StringBuilder();
         BlockingQueue<AudioTrack> tracks = scheduler.getTrackQueue();
-        int i = 1;
-        for (AudioTrack track : tracks) {
-            queue.append("`" + i + ". " + track.getInfo().author + " - " + track.getInfo().title + "` \n");
-            i++;
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Current Song Queue");
+        eb.setColor(Color.decode("#42f5c8"));
+        eb.setFooter("Page " + queuePage + "/" + (int) Math.ceil((float) tracks.size() / 10));
+
+        ArrayList<AudioTrack> trackList = new ArrayList<>(tracks.stream().toList());
+        for (int i = 0; i <= 10; i++) {
+            try {
+                AudioTrack track = trackList.get(i);
+                queue.append("`").append(i + 1).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append("` \n");
+            } catch (IndexOutOfBoundsException ex) {
+                break;
+            }
         }
-        channel.sendMessage("Showing Queue of " + tracks.size() + " tracks!").queue();
-        if(!queue.toString().isEmpty()) {
-            channel.sendMessage(queue.toString()).queue();
+        eb.addField("Made by: Jacrispys", queue.toString(), false);
+
+        List<Button> buttons = new ArrayList<>();
+        buttons.add(Button.primary("firstPage:" + channel.getGuild().getId(), "⏪"));
+        buttons.add(Button.primary("backPage:" + channel.getGuild().getId(), "◀️"));
+        buttons.add(Button.danger("remove:" + channel.getGuild().getId(), "✖️"));
+        buttons.add(Button.primary("nextPage:" + channel.getGuild().getId(), "▶️"));
+        buttons.add(Button.primary("lastPage:" + channel.getGuild().getId(), "⏩"));
+
+        channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue();
+
+    }
+
+    private EmbedBuilder updateEmbed(MessageEmbed embed, int page) {
+        queuePage = page;
+        EmbedBuilder eb = new EmbedBuilder(embed);
+        eb.clearFields();
+        StringBuilder queue = new StringBuilder();
+        ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
+        for (int i = 0; i <= 10; i++) {
+            try {
+                AudioTrack track = trackList.get((page - 1)*10 + i);
+                queue.append("`").append((page - 1)*10 + i + 1).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append("` \n");
+            } catch (IndexOutOfBoundsException ex) {
+                break;
+            }
+        }
+        eb.setFooter("Page " + page + "/" + (int) Math.ceil((float) scheduler.getTrackQueue().size() / 10));
+        eb.addField("Made by: Jacrispys", queue.toString(), false);
+        return eb;
+
+
+    }
+
+    @Override
+    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+        try {
+            Guild fromButtonGuild = event.getJDA().getGuildById(event.getComponentId().split(":")[1]);
+            String buttonName = event.getComponentId().split(":")[0];
+            int pages = (int) Math.ceil((float) scheduler.getTrackQueue().size() / 10);
+            if (fromButtonGuild != event.getGuild()) return;
+
+            switch (buttonName) {
+                case ("firstPage") -> event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), 1).build()).queue();
+                case ("backPage") -> {
+                    if (queuePage <= 1) return;
+                    event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage - 1).build()).queue();
+                }
+                case ("remove") -> event.getMessage().delete().queue();
+                case ("nextPage") -> {
+                    if (queuePage >= pages) return;
+                    event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage + 1).build()).queue();
+                }
+                case ("lastPage") -> event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), pages).build()).queue();
+                default -> System.out.println("wtf");
+            }
+        } catch (Exception ex) {
         }
     }
 
 
     public void announceNextTrack(Guild guild, AudioTrack newSong) {
-        if(djEnabled) {
+        if (djEnabled) {
             try {
                 TextChannel channel = guild.getTextChannelById(MySQLConnection.getInstance().getMusicChannel(guild));
                 channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
@@ -218,13 +287,13 @@ public class GuildAudioManager {
             eb.addField(newSong.getInfo().title, "By - " + newSong.getInfo().author, false);
             eb.setColor(Color.decode("#155b5e"));
             channel.sendMessageEmbeds(eb.build()).queue();
-        } catch(SQLException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
 
     public void clearQueue(TextChannel channel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
@@ -233,7 +302,7 @@ public class GuildAudioManager {
     }
 
     public void pausePlayer(TextChannel channel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
@@ -244,7 +313,7 @@ public class GuildAudioManager {
     }
 
     public void resumePlayer(TextChannel channel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
@@ -255,7 +324,7 @@ public class GuildAudioManager {
     }
 
     public void shufflePlayer(TextChannel channel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
@@ -267,11 +336,11 @@ public class GuildAudioManager {
     }
 
     public void sendTrackInfo(TextChannel channel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
-        if(audioPlayer.getPlayingTrack() == null) {
+        if (audioPlayer.getPlayingTrack() == null) {
             channel.sendMessage("Cannot get track info as no song is playing!").queue();
             return;
         }
@@ -279,11 +348,11 @@ public class GuildAudioManager {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle(track.getInfo().author + " - " + track.getInfo().title);
         String durationSlider = ("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
-        float div = ((float) track.getPosition() / (float) track.getDuration()*20);
+        float div = ((float) track.getPosition() / (float) track.getDuration() * 20);
         int duration = Math.round(div);
         String emoji = ("\uD83D\uDD18");
-        if(duration > 20) duration = 20;
-        durationSlider = durationSlider.substring(0,duration) + emoji + durationSlider.substring(duration+1);
+        if (duration > 20) duration = 20;
+        durationSlider = durationSlider.substring(0, duration) + emoji + durationSlider.substring(duration + 1);
         String time = "[" + DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + "/" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]";
         eb.addField("", "-Requested By: " + getRequester().get(track).getAsMention() + "\n" + durationSlider + "\n" + time, false);
 
@@ -291,14 +360,14 @@ public class GuildAudioManager {
     }
 
     public void removeTrack(int position, TextChannel channel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
         BlockingQueue<AudioTrack> tracks = scheduler.getTrackQueue();
         AudioTrack removed = tracks.stream().toList().get(position - 1);
-        if(removed != null) {
-            channel.sendMessage("Successfully Removed: `" + removed.getInfo().author + " - "  + removed.getInfo().title + "` from the queue!").queue();
+        if (removed != null) {
+            channel.sendMessage("Successfully Removed: `" + removed.getInfo().author + " - " + removed.getInfo().title + "` from the queue!").queue();
             ArrayList<AudioTrack> trackList = new ArrayList<>(tracks.stream().toList());
             trackList.remove(position - 1);
             tracks = new LinkedBlockingQueue<>(trackList);
@@ -310,7 +379,7 @@ public class GuildAudioManager {
     }
 
     public void seekTrack(String time, TextChannel channel) {
-        if(djEnabled) {
+        if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
@@ -332,7 +401,7 @@ public class GuildAudioManager {
 
 
     public void enableDJ(TextChannel channel, User sender, Guild guild) {
-        if(!djEnabled) {
+        if (!djEnabled) {
             clearQueue(channel);
             skipTrack(channel);
             djEnabled = true;

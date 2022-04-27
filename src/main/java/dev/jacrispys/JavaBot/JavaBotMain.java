@@ -23,7 +23,7 @@ public class JavaBotMain {
     private static GameSpyThread gameSpyThread;
 
     public static void main(String[] args) throws Exception {
-        JDA jda = JDABuilder.createDefault(System.getenv("TOKEN"))
+        JDA jda = JDABuilder.createDefault("ODkyNTU1ODIwMjkyNzk2NDg4.YVOnYg.m6xo-z7C7vFX6TgcyE5xF0ZMOe4")
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
