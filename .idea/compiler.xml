@@ -11,7 +11,7 @@
       <profile name="Experimental" enabled="true" />
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="DiscordBot" target="17" />
+      <module name="DevBot" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
