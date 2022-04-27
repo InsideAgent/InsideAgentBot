@@ -264,7 +264,8 @@ public class GuildAudioManager extends ListenerAdapter {
                 case ("lastPage") -> event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), pages).build()).queue();
                 default -> System.out.println("wtf");
             }
-        } catch (Exception ex) {
+        } catch (IllegalStateException ex) {
+            return;
         }
     }
 
