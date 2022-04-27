@@ -14,7 +14,9 @@ public class MySQLConnection {
         INSTANCE = this;
     }
 
-    public static MySQLConnection getInstance() {return INSTANCE;}
+    public static MySQLConnection getInstance() {
+        return INSTANCE;
+    }
 
     public Connection getConnection(String dataBase) throws Exception {
         try {
@@ -23,7 +25,7 @@ public class MySQLConnection {
 
             String url = "jdbc:mysql://localhost:3306/" + dataBase;
             Class.forName("com.mysql.cj.jdbc.Driver");
-            if(this.connection == null) {
+            if (this.connection == null) {
                 Connection connection = DriverManager.getConnection(url, userName, db_password);
                 this.connection = connection;
                 return connection;
@@ -52,7 +54,7 @@ public class MySQLConnection {
         }
     }
 
-    public boolean registerGuild(Guild guild, TextChannel defaultChannel)  {
+    public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
         try (Statement statement = getConnection("inside_agent_bot").createStatement()) {
             String command = "INSERT INTO guilds (ID,GameSpy,TicketChannel,GameSpyChannel) VALUES (" + guild.getId() + ", 0, null, " + defaultChannel.getId() + ");";
             statement.execute(command);
@@ -88,6 +90,7 @@ public class MySQLConnection {
             return -1;
         }
     }
+
     public ResultSet queryCommand(String query) throws Exception {
         Statement statement;
         try {
@@ -99,4 +102,14 @@ public class MySQLConnection {
 
     }
 
+    public void setMusicChannel(Guild guild, long channelId) throws SQLException {
+        connection.createStatement().executeUpdate("UPDATE guilds SET musicChannel=" + channelId + " WHERE ID=" + guild.getId());
+    }
+
+    public Long getMusicChannel(Guild guild) throws SQLException{
+        ResultSet rs = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT musicChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
+        rs.beforeFirst();
+        rs.next();
+        return rs.getLong("musicChannel");
+    }
 }

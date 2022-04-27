@@ -1,5 +1,6 @@
 package dev.jacrispys.JavaBot.Commands;
 
+import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.audio.LoadAudioHandler;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -10,18 +11,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Locale;
+import java.sql.SQLException;
 
 public class MusicCommands extends ListenerAdapter {
 
-    private final LoadAudioHandler audioHandler = new LoadAudioHandler();
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
         if (event.isFromType(ChannelType.PRIVATE)) return;
         GuildAudioManager audioManager = GuildAudioManager.getGuildAudioManager(event.getGuild());
+        LoadAudioHandler audioHandler = new LoadAudioHandler(audioManager);
         String message = event.getMessage().getContentRaw();
-        if (message.toLowerCase().contains("-play") || message.toLowerCase().contains("-p")) {
+        if (((message.toLowerCase().contains("-play") && message.split("-play ").length > 1) || (message.toLowerCase().contains("-p") && message.split("-p ").length > 1))) {
             String trackUrl;
             if (message.toLowerCase().contains("-play")) {
                 trackUrl = event.getMessage().getContentRaw().split("-play ")[1];
@@ -37,7 +38,12 @@ public class MusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                audioHandler.loadAndPlay(event.getTextChannel(), trackUrl, audioManager, channel, event.getAuthor());
+                audioHandler.loadAndPlay(event.getTextChannel(), trackUrl, channel, event.getAuthor());
+                try {
+                    MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
+                } catch(SQLException ex1) {
+
+                }
             } catch(MalformedURLException ex) {
                 channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
                 if(channel == null) {
@@ -45,9 +51,14 @@ public class MusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                audioHandler.loadAndPlay(event.getTextChannel(), ytSearch, audioManager, channel, event.getAuthor());
+                audioHandler.loadAndPlay(event.getTextChannel(), ytSearch, channel, event.getAuthor());
+                try {
+                    MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
+                } catch(SQLException ex1) {
+
+                }
             }
-        }else if(message.equalsIgnoreCase("-skip")) {
+        }else if(message.equalsIgnoreCase("-skip") || message.equalsIgnoreCase("-s")) {
             audioHandler.skipTrack(audioManager, event.getTextChannel());
         }else if (event.getMessage().getContentRaw().contains("-volume")) {
             try {
@@ -90,6 +101,12 @@ public class MusicCommands extends ListenerAdapter {
         } else if(message.toLowerCase().contains("-seek")) {
             String time = event.getMessage().getContentRaw().split("-seek ")[1];
             audioManager.seekTrack(time, event.getTextChannel());
+        } else if(message.equalsIgnoreCase("-hijack")) {
+            if(event.getAuthor().getIdLong() != 731364923120025705L) {
+                event.getMessage().reply("You sir! Are not a certified DJ! Begone! ヽ(⌐■_■)ノ♬").queue();
+                return;
+            }
+            audioManager.enableDJ(event.getTextChannel(), event.getAuthor(), event.getGuild());
         }
     }
 }

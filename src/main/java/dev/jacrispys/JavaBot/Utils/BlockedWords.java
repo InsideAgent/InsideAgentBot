@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public enum BlockedWords {
-    CURSES("FUCK","SHIT"),
+    CURSES("FUCK","SHIT", "NIGGER"),
     OTHER("POOP");
 
     final ArrayList<String> list = new ArrayList<>();

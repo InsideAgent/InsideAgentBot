@@ -99,7 +99,7 @@
         <dependency>
             <groupId>com.github.DV8FromTheWorld</groupId>
             <artifactId>JDA</artifactId>
-            <version>5492a76bce</version>
+            <version>e8dc87f5d9</version>
         </dependency>
 
         <dependency>
@@ -119,6 +119,14 @@
             <groupId>com.github.Topis-Lavalink-Plugins</groupId>
             <artifactId>Topis-Source-Managers</artifactId>
             <version>2.0.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.OlegKunitsyn</groupId>
+            <artifactId>libshout-java</artifactId>
+            <version>2.2.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/resources/libshout-java-2.2.2.jar</systemPath>
         </dependency>
 
     </dependencies>

@@ -9,7 +9,6 @@ import dev.jacrispys.JavaBot.Events.BotStartup;
 import dev.jacrispys.JavaBot.Events.WordBlocker;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
-import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -33,7 +32,6 @@ public class JavaBotMain {
 
         MySQLConnection mySQLConnection = new MySQLConnection();
         mySQLConnection.getConnection("inside_agent_bot");
-        GuildAudioManager.initManager();
 
         jda.getPresence().setActivity(Activity.streaming("Version-0.1.1 Woo!", "https://www.twitch.tv/jacrispyslive"));
         jda.addEventListener(new DefaultPrivateMessageResponse());
