@@ -160,6 +160,7 @@ public class GuildAudioManager extends ListenerAdapter {
     private void attachToVoiceChannel(Guild guild, VoiceChannel channel) {
 
         boolean inVoiceChannel = guild.getSelfMember().getVoiceState().inAudioChannel();
+        
 
         if (!inVoiceChannel) {
             AudioManager manager = guild.getAudioManager();

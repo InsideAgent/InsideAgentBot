@@ -107,6 +107,9 @@ public class MusicCommands extends ListenerAdapter {
                 return;
             }
             audioManager.enableDJ(event.getTextChannel(), event.getAuthor(), event.getGuild());
+        } else if(message.equalsIgnoreCase("-fix")) {
+            VoiceChannel vc = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+            vc.getManager().setRegion(event.getMember().getVoiceState().getChannel().getRegion()).queue();
         }
     }
 }
