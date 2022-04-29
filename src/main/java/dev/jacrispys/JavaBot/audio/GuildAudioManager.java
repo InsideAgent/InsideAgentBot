@@ -172,7 +172,7 @@ public class GuildAudioManager extends ListenerAdapter {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
-        channel.sendMessage("Could not play: " + exception.getMessage()).queue();
+        channel.sendMessage("Could not play: " + trackUrl + " \nReason:" + exception.getMessage()).queue();
     }
 
     public void setRequester(AudioTrack track, User requester) {
