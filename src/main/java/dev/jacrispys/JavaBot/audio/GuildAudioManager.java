@@ -124,7 +124,11 @@ public class GuildAudioManager extends ListenerAdapter {
         embedBuilder.addField("Position in queue: ", "`" + scheduler.getTrackQueue().size() + "`", false);
         long rawTimeUntilPlay = 0;
         for (AudioTrack queue : scheduler.getTrackQueue().stream().toList()) {
-            rawTimeUntilPlay = rawTimeUntilPlay + queue.getDuration();
+            rawTimeUntilPlay += queue.getDuration();
+        }
+        rawTimeUntilPlay -= track.getDuration();
+        if (audioPlayer.getPlayingTrack() != null) {
+            rawTimeUntilPlay += (audioPlayer.getPlayingTrack().getDuration() - audioPlayer.getPlayingTrack().getPosition());
         }
         String timeUntilPlay = DurationFormatUtils.formatDuration(rawTimeUntilPlay, "HH:mm:ss");
         embedBuilder.addField("Estimated time until track plays: ", "`" + timeUntilPlay + "`", false);
@@ -139,6 +143,10 @@ public class GuildAudioManager extends ListenerAdapter {
         long rawTimeUntilPlay = 0;
         for (AudioTrack queue : scheduler.getTrackQueue().stream().toList()) {
             rawTimeUntilPlay = rawTimeUntilPlay + queue.getDuration();
+        }
+        rawTimeUntilPlay -= playlist.getTracks().get(0).getDuration();
+        if (audioPlayer.getPlayingTrack() != null) {
+            rawTimeUntilPlay += (audioPlayer.getPlayingTrack().getDuration() - audioPlayer.getPlayingTrack().getPosition());
         }
         String timeUntilPlay = DurationFormatUtils.formatDuration(rawTimeUntilPlay, "HH:mm:ss");
         if (singleSong) {
@@ -197,7 +205,7 @@ public class GuildAudioManager extends ListenerAdapter {
         }
         GuildAudioManager manager = getGuildAudioManager(channel.getGuild());
         manager.scheduler.nextTrack();
-        if(queueLoop || songLoop) {
+        if (queueLoop || songLoop) {
             channel.sendMessage("Track skipped! Loop was disabled!").queue();
         }
         queueLoop = false;
@@ -413,7 +421,7 @@ public class GuildAudioManager extends ListenerAdapter {
         if (duration > 20) duration = 20;
         durationSlider = durationSlider.substring(0, duration) + emoji + durationSlider.substring(duration + 1);
         String time = "[" + DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + "/" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]";
-        eb.addField("-Requested By: ",getRequester().get(track).getAsMention() + "\n" + durationSlider + "\n" + time, false);
+        eb.addField("-Requested By: ", getRequester().get(track).getAsMention() + "\n" + durationSlider + "\n" + time, false);
 
         channel.sendMessageEmbeds(eb.build()).queue();
     }
@@ -505,7 +513,7 @@ public class GuildAudioManager extends ListenerAdapter {
     public void loopQueue(TextChannel channel) {
         songLoop = false;
 
-        if(queueLoop) {
+        if (queueLoop) {
             queueLoop = false;
             channel.sendMessage("Disabled queue loop! \uD83D\uDD01").queue();
             return;
@@ -513,10 +521,11 @@ public class GuildAudioManager extends ListenerAdapter {
         queueLoop = true;
         channel.sendMessage("Enabled queue loop! \uD83D\uDD01").queue();
     }
+
     public void loopSong(TextChannel channel) {
         queueLoop = false;
 
-        if(songLoop) {
+        if (songLoop) {
             songLoop = false;
             channel.sendMessage("Disabled song loop! \uD83D\uDD02").queue();
             return;
