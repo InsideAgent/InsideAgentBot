@@ -86,7 +86,7 @@ public class GuildAudioManager extends ListenerAdapter {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
-        channel.sendMessage("Adding to queue " + track.getInfo().title).queue();
+        channel.sendMessageEmbeds(songLoadedMessage(trackUrl, track)).queue();
 
         play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), track, voiceChannel);
     }
@@ -102,16 +102,61 @@ public class GuildAudioManager extends ListenerAdapter {
             firstTrack = playlist.getTracks().get(0);
         }
 
-        channel.sendMessage(("Adding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")")).queue();
 
         play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), firstTrack, voiceChannel);
 
         if (!playlist.isSearchResult()) {
-            channel.sendMessage(("Adding to queue playlist titled: " + playlist.getName())).queue();
+            channel.sendMessageEmbeds(playlistLoadedMessage(trackUrl, playlist, false)).queue();
             for (int i = 1; i < playlist.getTracks().size(); i++) {
                 play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), playlist.getTracks().get(i), voiceChannel);
             }
+        } else {
+            channel.sendMessageEmbeds(playlistLoadedMessage(trackUrl, playlist, true)).queue();
         }
+    }
+
+    private MessageEmbed songLoadedMessage(String trackUrl, AudioTrack track) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle("Adding song to queue...");
+        embedBuilder.addField("Title: ", "`" + track.getInfo().title + "`", false);
+        embedBuilder.addField("Author: ", "`" + track.getInfo().author + "`", false);
+        embedBuilder.addField("Link: ", trackUrl, false);
+        embedBuilder.addField("Position in queue: ", "`" + scheduler.getTrackQueue().size() + "`", false);
+        long rawTimeUntilPlay = 0;
+        for (AudioTrack queue : scheduler.getTrackQueue().stream().toList()) {
+            rawTimeUntilPlay = rawTimeUntilPlay + queue.getDuration();
+        }
+        String timeUntilPlay = DurationFormatUtils.formatDuration(rawTimeUntilPlay, "HH:mm:ss");
+        embedBuilder.addField("Estimated time until track plays: ", "`" + timeUntilPlay + "`", false);
+        embedBuilder.setFooter("From Playlist: ❌");
+        embedBuilder.setColor(Color.decode("#34d2eb"));
+        return embedBuilder.build();
+
+    }
+
+    private MessageEmbed playlistLoadedMessage(String trackUrl, AudioPlaylist playlist, boolean singleSong) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        long rawTimeUntilPlay = 0;
+        for (AudioTrack queue : scheduler.getTrackQueue().stream().toList()) {
+            rawTimeUntilPlay = rawTimeUntilPlay + queue.getDuration();
+        }
+        String timeUntilPlay = DurationFormatUtils.formatDuration(rawTimeUntilPlay, "HH:mm:ss");
+        if (singleSong) {
+            embedBuilder.addField("Title: ", "`" + playlist.getTracks().get(0).getInfo().title + "`", false);
+            embedBuilder.addField("Author: ", "`" + playlist.getTracks().get(0).getInfo().author + "`", false);
+            embedBuilder.addField("Link: ", playlist.getTracks().get(0).getInfo().uri, false);
+            embedBuilder.setTitle("Adding song to queue...");
+            embedBuilder.setFooter("From Playlist: ✅");
+        } else {
+            embedBuilder.setTitle("Adding playlist to queue...");
+            embedBuilder.addField("Playlist Title: ", "`" + playlist.getName() + "`", false);
+            embedBuilder.addField("Playlist Size: ", "`" + playlist.getTracks().size() + "`", false);
+            embedBuilder.addField("Playlist Link: ", trackUrl, false);
+        }
+        embedBuilder.addField("Position in queue: ", "`" + scheduler.getTrackQueue().size() + "`", false);
+        embedBuilder.addField("Estimated time until track plays: ", "`" + timeUntilPlay + "`", false);
+        embedBuilder.setColor(Color.decode("#34d2eb"));
+        return embedBuilder.build();
     }
 
     public void trackNotFound(TextChannel channel, String trackUrl) {
@@ -152,15 +197,17 @@ public class GuildAudioManager extends ListenerAdapter {
         }
         GuildAudioManager manager = getGuildAudioManager(channel.getGuild());
         manager.scheduler.nextTrack();
-        if (audioPlayer.getPlayingTrack() != null) {
-            channel.sendMessage("Track Skipped! Now Playing: " + manager.audioPlayer.getPlayingTrack().getInfo().title).queue();
+        if(queueLoop || songLoop) {
+            channel.sendMessage("Track skipped! Loop was disabled!").queue();
         }
+        queueLoop = false;
+        songLoop = false;
     }
 
     private void attachToVoiceChannel(Guild guild, VoiceChannel channel) {
 
         boolean inVoiceChannel = guild.getSelfMember().getVoiceState().inAudioChannel();
-        
+
 
         if (!inVoiceChannel) {
             AudioManager manager = guild.getAudioManager();
@@ -209,7 +256,7 @@ public class GuildAudioManager extends ListenerAdapter {
                 break;
             }
         }
-        eb.addField("Made by: Jacrispys", queue.toString(), false);
+        eb.addField("Current Song: " + audioPlayer.getPlayingTrack().getInfo().author + " - " + audioPlayer.getPlayingTrack().getInfo().title, queue.toString(), false);
 
         List<Button> buttons = new ArrayList<>();
         buttons.add(Button.primary("firstPage:" + channel.getGuild().getId(), "⏪"));
@@ -230,14 +277,14 @@ public class GuildAudioManager extends ListenerAdapter {
         ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
         for (int i = 0; i <= 10; i++) {
             try {
-                AudioTrack track = trackList.get((page - 1)*10 + i);
-                queue.append("`").append((page - 1)*10 + i + 1).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append("` \n");
+                AudioTrack track = trackList.get((page - 1) * 10 + i);
+                queue.append("`").append((page - 1) * 10 + i + 1).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append("` \n");
             } catch (IndexOutOfBoundsException ex) {
                 break;
             }
         }
         eb.setFooter("Page " + page + "/" + (int) Math.ceil((float) scheduler.getTrackQueue().size() / 10));
-        eb.addField("Made by: Jacrispys", queue.toString(), false);
+        eb.addField("Current Song: " + audioPlayer.getPlayingTrack().getInfo().author + " - " + audioPlayer.getPlayingTrack().getInfo().title, queue.toString(), false);
         return eb;
 
 
@@ -254,12 +301,23 @@ public class GuildAudioManager extends ListenerAdapter {
             switch (buttonName) {
                 case ("firstPage") -> event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), 1).build()).queue();
                 case ("backPage") -> {
-                    if (queuePage <= 1) { event.reply("What? Did you expect page 0 or something?").setEphemeral(true).queue(); return; }
+                    if (queuePage <= 1) {
+                        if (queuePage == 0) {
+                            event.reply("What? Did you expect page 0 or... HEY WAIT A MINUTE \uD83D\uDE21").setEphemeral(true).queue();
+                            return;
+                        } else {
+                            event.reply("What? Did you expect page 0 or something?").setEphemeral(true).queue();
+                            return;
+                        }
+                    }
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage - 1).build()).queue();
                 }
                 case ("remove") -> event.getMessage().delete().queue();
                 case ("nextPage") -> {
-                    if (queuePage >= pages){ event.reply("Cannot go further than the final page!").setEphemeral(true).queue(); return; }
+                    if (queuePage >= pages) {
+                        event.reply("Cannot go further than the final page!").setEphemeral(true).queue();
+                        return;
+                    }
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage + 1).build()).queue();
                 }
                 case ("lastPage") -> event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), pages).build()).queue();
@@ -356,7 +414,7 @@ public class GuildAudioManager extends ListenerAdapter {
         if (duration > 20) duration = 20;
         durationSlider = durationSlider.substring(0, duration) + emoji + durationSlider.substring(duration + 1);
         String time = "[" + DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + "/" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]";
-        eb.addField("", "-Requested By: " + getRequester().get(track).getAsMention() + "\n" + durationSlider + "\n" + time, false);
+        eb.addField("-Requested By: ",getRequester().get(track).getAsMention() + "\n" + durationSlider + "\n" + time, false);
 
         channel.sendMessageEmbeds(eb.build()).queue();
     }
@@ -440,5 +498,31 @@ public class GuildAudioManager extends ListenerAdapter {
         channel.sendMessage("This bot has now been taken over by DJ " + sender.getAsMention() + "! ヽ(⌐■_■)ノ♬").queue();
 
 
+    }
+
+    public boolean queueLoop = false;
+    public boolean songLoop = false;
+
+    public void loopQueue(TextChannel channel) {
+        songLoop = false;
+
+        if(queueLoop) {
+            queueLoop = false;
+            channel.sendMessage("Disabled queue loop! \uD83D\uDD01").queue();
+            return;
+        }
+        queueLoop = true;
+        channel.sendMessage("Enabled queue loop! \uD83D\uDD01").queue();
+    }
+    public void loopSong(TextChannel channel) {
+        queueLoop = false;
+
+        if(songLoop) {
+            songLoop = false;
+            channel.sendMessage("Disabled song loop! \uD83D\uDD02").queue();
+            return;
+        }
+        songLoop = true;
+        channel.sendMessage("Enabled song loop! \uD83D\uDD02").queue();
     }
 }

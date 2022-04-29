@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Locale;
 
 public class MusicCommands extends ListenerAdapter {
 
@@ -108,8 +109,18 @@ public class MusicCommands extends ListenerAdapter {
             }
             audioManager.enableDJ(event.getTextChannel(), event.getAuthor(), event.getGuild());
         } else if(message.equalsIgnoreCase("-fix")) {
-            VoiceChannel vc = (VoiceChannel) event.getMember().getVoiceState().getChannel();
-            vc.getManager().setRegion(event.getMember().getVoiceState().getChannel().getRegion()).queue();
+            try {
+                VoiceChannel vc = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+                vc.getManager().setRegion(event.getMember().getVoiceState().getChannel().getRegion()).queue();
+            } catch (NullPointerException ex) {
+                event.getMessage().reply("Could not locate your voice channel!").queue();
+            }
+        } else if(message.toLowerCase().contains("-loop")) {
+            if(message.split("-loop ").length == 1 || message.split("-loop ")[1].equalsIgnoreCase("queue")) {
+                audioManager.loopQueue(event.getTextChannel());
+            } else if(message.split("-loop ")[1].equalsIgnoreCase("song")) {
+                audioManager.loopSong(event.getTextChannel());
+            }
         }
     }
 }
