@@ -3,7 +3,9 @@ package dev.jacrispys.JavaBot.Commands;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.audio.LoadAudioHandler;
+import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -110,7 +112,8 @@ public class MusicCommands extends ListenerAdapter {
         } else if(message.equalsIgnoreCase("-fix")) {
             try {
                 VoiceChannel vc = (VoiceChannel) event.getMember().getVoiceState().getChannel();
-                vc.getManager().setRegion(event.getMember().getVoiceState().getChannel().getRegion()).queue();
+                vc.getManager().setRegion(Region.AUTOMATIC).queue();
+                event.getMessage().addReaction("\uD83D\uDC4D").queue();
             } catch (NullPointerException ex) {
                 event.getMessage().reply("Could not locate your voice channel!").queue();
             }
