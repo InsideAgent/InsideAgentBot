@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Locale;
 
 public class MusicCommands extends ListenerAdapter {
 
@@ -43,7 +42,7 @@ public class MusicCommands extends ListenerAdapter {
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
                 } catch(SQLException ex1) {
-
+                    ex1.printStackTrace();
                 }
             } catch(MalformedURLException ex) {
                 channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
@@ -56,7 +55,7 @@ public class MusicCommands extends ListenerAdapter {
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
                 } catch(SQLException ex1) {
-
+                    ex1.printStackTrace();
                 }
             }
         }else if(message.equalsIgnoreCase("-skip") || message.equalsIgnoreCase("-s")) {

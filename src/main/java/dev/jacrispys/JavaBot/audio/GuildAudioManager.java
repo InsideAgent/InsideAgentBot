@@ -304,11 +304,10 @@ public class GuildAudioManager extends ListenerAdapter {
                     if (queuePage <= 1) {
                         if (queuePage == 0) {
                             event.reply("What? Did you expect page 0 or... HEY WAIT A MINUTE \uD83D\uDE21").setEphemeral(true).queue();
-                            return;
                         } else {
                             event.reply("What? Did you expect page 0 or something?").setEphemeral(true).queue();
-                            return;
                         }
+                        return;
                     }
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage - 1).build()).queue();
                 }
@@ -324,7 +323,7 @@ public class GuildAudioManager extends ListenerAdapter {
                 default -> System.out.println("wtf");
             }
         } catch (IllegalStateException ex) {
-            return;
+            ex.printStackTrace();
         }
     }
 
@@ -455,7 +454,7 @@ public class GuildAudioManager extends ListenerAdapter {
         }
     }
 
-    protected void djLoaded(TextChannel channel, String trackUrl, AudioTrack track, VoiceChannel voiceChannel) {
+    protected void djLoaded(TextChannel channel, AudioTrack track, VoiceChannel voiceChannel) {
         play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), track, voiceChannel);
     }
 
@@ -477,7 +476,7 @@ public class GuildAudioManager extends ListenerAdapter {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                djLoaded(channel, "http://10.0.0.109:8000/mixxx", audioTrack, vc);
+                djLoaded(channel, audioTrack, vc);
             }
 
             @Override

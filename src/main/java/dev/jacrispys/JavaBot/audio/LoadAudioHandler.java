@@ -9,12 +9,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 
 
-public class LoadAudioHandler {
-    private final GuildAudioManager guildAudioManager;
-
-    public LoadAudioHandler(GuildAudioManager guildAudioManager) {
-        this.guildAudioManager = guildAudioManager;
-    }
+public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
 
     public void loadAndPlay(TextChannel channel, final String trackUrl, VoiceChannel voiceChannel, User requester) {
         guildAudioManager.getAudioManager().loadItemOrdered(guildAudioManager, trackUrl, new AudioLoadResultHandler() {
@@ -28,7 +23,7 @@ public class LoadAudioHandler {
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
                 guildAudioManager.playListLoaded(channel, trackUrl, audioPlaylist, voiceChannel);
-                for(AudioTrack track : audioPlaylist.getTracks()) {
+                for (AudioTrack track : audioPlaylist.getTracks()) {
                     guildAudioManager.setRequester(track, requester);
                 }
             }
@@ -37,7 +32,6 @@ public class LoadAudioHandler {
             public void noMatches() {
                 guildAudioManager.trackNotFound(channel, trackUrl);
             }
-
 
 
             @Override
