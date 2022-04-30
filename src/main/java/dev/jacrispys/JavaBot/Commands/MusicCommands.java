@@ -123,6 +123,15 @@ public class MusicCommands extends ListenerAdapter {
             } else if(message.split("-loop ")[1].equalsIgnoreCase("song")) {
                 audioManager.loopSong(event.getTextChannel());
             }
+        } else if(message.toLowerCase().contains("-move ")) {
+            try {
+                int pos1 = Integer.parseInt(message.split("-move ")[1].split(" ")[0]);
+                int pos2 = Integer.parseInt(message.split("-move " + pos1 + " ")[1]);
+                audioManager.moveSong(event.getTextChannel(), pos1, pos2);
+            }catch(NumberFormatException ex) {
+                event.getTextChannel().sendMessage("Cannot parse integer positions! Please use the format: `-move [pos1] [pos2]` where pos1,pos2 are numbers!").queue();
+                return;
+            }
         }
     }
 }

@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.w3c.dom.Text;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -511,7 +512,11 @@ public class GuildAudioManager extends ListenerAdapter {
     public boolean songLoop = false;
 
     public void loopQueue(TextChannel channel) {
-        songLoop = false;
+        if(songLoop) {
+            songLoop = false;
+            queueLoop = false;
+            channel.sendMessage("Disabled queue loop! \uD83D\uDD01").queue();
+        }
 
         if (queueLoop) {
             queueLoop = false;
@@ -532,5 +537,13 @@ public class GuildAudioManager extends ListenerAdapter {
         }
         songLoop = true;
         channel.sendMessage("Enabled song loop! \uD83D\uDD02").queue();
+    }
+
+    public void moveSong(TextChannel channel, int pos1, int pos2) {
+        ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
+        AudioTrack song1 = trackList.get(pos1 -1);
+        Collections.swap(trackList, pos1 -1, pos2 -1);
+        scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
+        channel.sendMessage("Moved song `" + song1.getInfo().author + " - " + song1.getInfo().title + "` to position: `" + pos2 + "`").queue();
     }
 }
