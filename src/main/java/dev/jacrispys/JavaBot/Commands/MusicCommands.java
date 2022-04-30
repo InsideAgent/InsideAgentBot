@@ -5,7 +5,6 @@ import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.audio.LoadAudioHandler;
 import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -18,6 +17,7 @@ import java.sql.SQLException;
 public class MusicCommands extends ListenerAdapter {
 
 
+    @SuppressWarnings("all")
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
         if (event.isFromType(ChannelType.PRIVATE)) return;

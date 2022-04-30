@@ -20,7 +20,6 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.Text;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -219,6 +218,7 @@ public class GuildAudioManager extends ListenerAdapter {
         songLoop = false;
     }
 
+    @SuppressWarnings("all")
     private void attachToVoiceChannel(Guild guild, VoiceChannel channel) {
 
         boolean inVoiceChannel = guild.getSelfMember().getVoiceState().inAudioChannel();
@@ -347,6 +347,7 @@ public class GuildAudioManager extends ListenerAdapter {
         if (djEnabled) {
             try {
                 TextChannel channel = guild.getTextChannelById(MySQLConnection.getInstance().getMusicChannel(guild));
+                assert channel != null;
                 channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
                 return;
             } catch (SQLException ex) {
@@ -360,6 +361,7 @@ public class GuildAudioManager extends ListenerAdapter {
             eb.setTitle("Currently Playing... \uD83C\uDFB5\uD83C\uDFB5\uD83C\uDFB5");
             eb.addField(newSong.getInfo().title, "By - " + newSong.getInfo().author, false);
             eb.setColor(Color.decode("#155b5e"));
+            assert channel != null;
             channel.sendMessageEmbeds(eb.build()).queue();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -428,6 +430,7 @@ public class GuildAudioManager extends ListenerAdapter {
         if (duration > 20) duration = 20;
         durationSlider = durationSlider.substring(0, duration) + emoji + durationSlider.substring(duration + 1);
         String time = "[" + DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + "/" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]";
+        assert getRequester() != null;
         eb.addField("-Requested By: ", getRequester().get(track).getAsMention() + "\n" + durationSlider + "\n" + time, false);
 
         channel.sendMessageEmbeds(eb.build()).queue();
@@ -474,6 +477,7 @@ public class GuildAudioManager extends ListenerAdapter {
     }
 
 
+    @SuppressWarnings("all")
     public void enableDJ(TextChannel channel, User sender, Guild guild) {
         if (!djEnabled) {
             clearQueue(channel);
