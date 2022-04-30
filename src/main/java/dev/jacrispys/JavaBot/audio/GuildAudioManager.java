@@ -512,6 +512,10 @@ public class GuildAudioManager extends ListenerAdapter {
     public boolean songLoop = false;
 
     public void loopQueue(TextChannel channel) {
+        if (djEnabled) {
+            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
+            return;
+        }
         if(songLoop) {
             songLoop = false;
             queueLoop = false;
@@ -528,6 +532,10 @@ public class GuildAudioManager extends ListenerAdapter {
     }
 
     public void loopSong(TextChannel channel) {
+        if (djEnabled) {
+            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
+            return;
+        }
         queueLoop = false;
 
         if (songLoop) {
@@ -540,6 +548,10 @@ public class GuildAudioManager extends ListenerAdapter {
     }
 
     public void moveSong(TextChannel channel, int pos1, int pos2) {
+        if (djEnabled) {
+            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
+            return;
+        }
         ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
         AudioTrack song1 = trackList.get(pos1 -1);
         Collections.swap(trackList, pos1 -1, pos2 -1);
