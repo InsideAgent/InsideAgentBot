@@ -131,6 +131,9 @@ public class GuildAudioManager extends ListenerAdapter {
         if (audioPlayer.getPlayingTrack() != null) {
             rawTimeUntilPlay += (audioPlayer.getPlayingTrack().getDuration() - audioPlayer.getPlayingTrack().getPosition());
         }
+        if (rawTimeUntilPlay < 0) {
+            rawTimeUntilPlay = 0;
+        }
         String timeUntilPlay = DurationFormatUtils.formatDuration(rawTimeUntilPlay, "HH:mm:ss");
         embedBuilder.addField("Estimated time until track plays: ", "`" + timeUntilPlay + "`", false);
         embedBuilder.setFooter("From Playlist: ❌");
@@ -148,6 +151,9 @@ public class GuildAudioManager extends ListenerAdapter {
         rawTimeUntilPlay -= playlist.getTracks().get(0).getDuration();
         if (audioPlayer.getPlayingTrack() != null) {
             rawTimeUntilPlay += (audioPlayer.getPlayingTrack().getDuration() - audioPlayer.getPlayingTrack().getPosition());
+        }
+        if (rawTimeUntilPlay < 0) {
+            rawTimeUntilPlay = 0;
         }
         String timeUntilPlay = DurationFormatUtils.formatDuration(rawTimeUntilPlay, "HH:mm:ss");
         if (singleSong) {
@@ -516,7 +522,7 @@ public class GuildAudioManager extends ListenerAdapter {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
-        if(songLoop) {
+        if (songLoop) {
             songLoop = false;
             queueLoop = false;
             channel.sendMessage("Disabled queue loop! \uD83D\uDD01").queue();
@@ -553,8 +559,8 @@ public class GuildAudioManager extends ListenerAdapter {
             return;
         }
         ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
-        AudioTrack song1 = trackList.get(pos1 -1);
-        Collections.swap(trackList, pos1 -1, pos2 -1);
+        AudioTrack song1 = trackList.get(pos1 - 1);
+        Collections.swap(trackList, pos1 - 1, pos2 - 1);
         scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
         channel.sendMessage("Moved song `" + song1.getInfo().author + " - " + song1.getInfo().title + "` to position: `" + pos2 + "`").queue();
     }
