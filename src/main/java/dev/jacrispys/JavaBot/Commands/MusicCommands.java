@@ -1,8 +1,8 @@
 package dev.jacrispys.JavaBot.Commands;
 
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
-import dev.jacrispys.JavaBot.audio.GuildAudioManager;
-import dev.jacrispys.JavaBot.audio.LoadAudioHandler;
+import dev.jacrispys.JavaBot.Audio.GuildAudioManager;
+import dev.jacrispys.JavaBot.Audio.LoadAudioHandler;
 import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -40,7 +40,7 @@ public class MusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                audioHandler.loadAndPlay(event.getTextChannel(), trackUrl, channel, event.getAuthor());
+                audioHandler.loadAndPlay(event.getTextChannel(), trackUrl, channel, event.getAuthor(), false);
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
                 } catch(SQLException ex1) {
@@ -53,7 +53,7 @@ public class MusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                audioHandler.loadAndPlay(event.getTextChannel(), ytSearch, channel, event.getAuthor());
+                audioHandler.loadAndPlay(event.getTextChannel(), ytSearch, channel, event.getAuthor(), false);
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
                 } catch(SQLException ex1) {
@@ -131,6 +131,42 @@ public class MusicCommands extends ListenerAdapter {
             }catch(NumberFormatException ex) {
                 event.getTextChannel().sendMessage("Cannot parse integer positions! Please use the format: `-move [pos1] [pos2]` where pos1,pos2 are numbers!").queue();
                 return;
+            }
+        } else if (((message.toLowerCase().contains("-playtop") && message.split("-playtop ").length > 1) || (message.toLowerCase().contains("-ptop") && message.split("-ptop ").length > 1))) {
+            String trackUrl;
+            if (message.toLowerCase().contains("-play")) {
+                trackUrl = event.getMessage().getContentRaw().split("-play ")[1];
+            } else {
+                trackUrl = event.getMessage().getContentRaw().split("-p ")[1];
+            }
+
+            VoiceChannel channel;
+            try {
+                channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
+                if(channel == null) {
+                    event.getMessage().reply("Could not load song, as you are not in a voice channel!").queue();
+                    return;
+                }
+                new URL(trackUrl);
+                audioHandler.loadAndPlay(event.getTextChannel(), trackUrl, channel, event.getAuthor(), true);
+                try {
+                    MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
+                } catch(SQLException ex1) {
+                    ex1.printStackTrace();
+                }
+            } catch(MalformedURLException ex) {
+                channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
+                if(channel == null) {
+                    event.getMessage().reply("Could not load song, as you are not in a voice channel!").queue();
+                    return;
+                }
+                String ytSearch = ("ytsearch:" + trackUrl);
+                audioHandler.loadAndPlay(event.getTextChannel(), ytSearch, channel, event.getAuthor(), true);
+                try {
+                    MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
+                } catch(SQLException ex1) {
+                    ex1.printStackTrace();
+                }
             }
         }
     }

@@ -1,4 +1,4 @@
-package dev.jacrispys.JavaBot.audio;
+package dev.jacrispys.JavaBot.Audio;
 
 import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifyConfig;
 import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySourceManager;
@@ -81,14 +81,14 @@ public class GuildAudioManager extends ListenerAdapter {
         return this.audioManager;
     }
 
-    public void trackLoaded(TextChannel channel, String trackUrl, AudioTrack track, VoiceChannel voiceChannel) {
+    public void trackLoaded(TextChannel channel, String trackUrl, AudioTrack track, VoiceChannel voiceChannel, boolean playTop) {
         if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
         channel.sendMessageEmbeds(songLoadedMessage(trackUrl, track)).queue();
 
-        play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), track, voiceChannel);
+        play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), track, voiceChannel, playTop);
     }
 
     public void playListLoaded(TextChannel channel, String trackUrl, AudioPlaylist playlist, VoiceChannel voiceChannel) {
@@ -103,12 +103,12 @@ public class GuildAudioManager extends ListenerAdapter {
         }
 
 
-        play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), firstTrack, voiceChannel);
+        play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), firstTrack, voiceChannel, false);
 
         if (!playlist.isSearchResult()) {
             channel.sendMessageEmbeds(playlistLoadedMessage(trackUrl, playlist, false)).queue();
             for (int i = 1; i < playlist.getTracks().size(); i++) {
-                play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), playlist.getTracks().get(i), voiceChannel);
+                play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), playlist.getTracks().get(i), voiceChannel, false);
             }
         } else {
             channel.sendMessageEmbeds(playlistLoadedMessage(trackUrl, playlist, true)).queue();
@@ -198,9 +198,15 @@ public class GuildAudioManager extends ListenerAdapter {
         return this.requester;
     }
 
-    private void play(Guild guild, GuildAudioManager guildAudioManager, AudioTrack track, VoiceChannel voiceChannel) {
+    private void play(Guild guild, GuildAudioManager guildAudioManager, AudioTrack track, VoiceChannel voiceChannel, boolean playTop) {
 
         attachToVoiceChannel(guild, voiceChannel);
+        if(playTop) {
+            ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
+            trackList.add(0, track);
+            scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
+            return;
+        }
         guildAudioManager.scheduler.queue(track);
     }
 
@@ -473,7 +479,7 @@ public class GuildAudioManager extends ListenerAdapter {
     }
 
     protected void djLoaded(TextChannel channel, AudioTrack track, VoiceChannel voiceChannel) {
-        play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), track, voiceChannel);
+        play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), track, voiceChannel, false);
     }
 
 
@@ -568,4 +574,5 @@ public class GuildAudioManager extends ListenerAdapter {
         scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
         channel.sendMessage("Moved song `" + song1.getInfo().author + " - " + song1.getInfo().title + "` to position: `" + pos2 + "`").queue();
     }
+
 }

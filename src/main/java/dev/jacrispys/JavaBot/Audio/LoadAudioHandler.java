@@ -1,4 +1,4 @@
-package dev.jacrispys.JavaBot.audio;
+package dev.jacrispys.JavaBot.Audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -11,12 +11,12 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 
 public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
 
-    public void loadAndPlay(TextChannel channel, final String trackUrl, VoiceChannel voiceChannel, User requester) {
+    public void loadAndPlay(TextChannel channel, final String trackUrl, VoiceChannel voiceChannel, User requester, boolean playTop) {
         guildAudioManager.getAudioManager().loadItemOrdered(guildAudioManager, trackUrl, new AudioLoadResultHandler() {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                guildAudioManager.trackLoaded(channel, trackUrl, audioTrack, voiceChannel);
+                guildAudioManager.trackLoaded(channel, trackUrl, audioTrack, voiceChannel, playTop);
                 guildAudioManager.setRequester(audioTrack, requester);
             }
 
