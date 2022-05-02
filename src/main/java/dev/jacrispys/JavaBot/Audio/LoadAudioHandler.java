@@ -22,7 +22,7 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                guildAudioManager.playListLoaded(channel, trackUrl, audioPlaylist, voiceChannel);
+                guildAudioManager.playListLoaded(channel, trackUrl, audioPlaylist, voiceChannel, playTop);
                 for (AudioTrack track : audioPlaylist.getTracks()) {
                     guildAudioManager.setRequester(track, requester);
                 }

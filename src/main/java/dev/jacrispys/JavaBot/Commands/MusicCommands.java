@@ -134,10 +134,10 @@ public class MusicCommands extends ListenerAdapter {
             }
         } else if (((message.toLowerCase().contains("-playtop") && message.split("-playtop ").length > 1) || (message.toLowerCase().contains("-ptop") && message.split("-ptop ").length > 1))) {
             String trackUrl;
-            if (message.toLowerCase().contains("-play")) {
-                trackUrl = event.getMessage().getContentRaw().split("-play ")[1];
+            if (message.toLowerCase().contains("-playtop")) {
+                trackUrl = event.getMessage().getContentRaw().split("-playtop ")[1];
             } else {
-                trackUrl = event.getMessage().getContentRaw().split("-p ")[1];
+                trackUrl = event.getMessage().getContentRaw().split("-ptop ")[1];
             }
 
             VoiceChannel channel;

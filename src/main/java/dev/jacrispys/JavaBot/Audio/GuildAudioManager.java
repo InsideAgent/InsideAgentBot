@@ -91,7 +91,7 @@ public class GuildAudioManager extends ListenerAdapter {
         play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), track, voiceChannel, playTop);
     }
 
-    public void playListLoaded(TextChannel channel, String trackUrl, AudioPlaylist playlist, VoiceChannel voiceChannel) {
+    public void playListLoaded(TextChannel channel, String trackUrl, AudioPlaylist playlist, VoiceChannel voiceChannel, boolean playTop) {
         if (djEnabled) {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
@@ -103,7 +103,7 @@ public class GuildAudioManager extends ListenerAdapter {
         }
 
 
-        play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), firstTrack, voiceChannel, false);
+        play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), firstTrack, voiceChannel, playTop);
 
         if (!playlist.isSearchResult()) {
             channel.sendMessageEmbeds(playlistLoadedMessage(trackUrl, playlist, false)).queue();
