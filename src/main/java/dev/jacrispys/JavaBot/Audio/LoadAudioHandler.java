@@ -16,16 +16,16 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                guildAudioManager.trackLoaded(channel, trackUrl, audioTrack, voiceChannel, playTop);
                 guildAudioManager.setRequester(audioTrack, requester);
+                guildAudioManager.trackLoaded(channel, trackUrl, audioTrack, voiceChannel, playTop);
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                guildAudioManager.playListLoaded(channel, trackUrl, audioPlaylist, voiceChannel, playTop);
                 for (AudioTrack track : audioPlaylist.getTracks()) {
                     guildAudioManager.setRequester(track, requester);
                 }
+                guildAudioManager.playListLoaded(channel, trackUrl, audioPlaylist, voiceChannel, playTop);
             }
 
             @Override

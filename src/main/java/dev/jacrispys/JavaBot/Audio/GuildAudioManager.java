@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.io.File;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
@@ -405,8 +406,8 @@ public class GuildAudioManager extends ListenerAdapter {
         try {
             TextChannel channel = guild.getTextChannelById(MySQLConnection.getInstance().getMusicChannel(guild));
             EmbedBuilder eb = new EmbedBuilder();
-
-            eb.setTitle("Currently Playing... \uD83C\uDFB5\uD83C\uDFB5\uD83C\uDFB5");
+            User trackSender = requester.get(newSong);
+            eb.setAuthor("|   Currently Playing...", null, trackSender.getAvatarUrl());
             eb.addField(newSong.getInfo().title, "By - " + newSong.getInfo().author, false);
             eb.setColor(Color.decode("#155b5e"));
             assert channel != null;
