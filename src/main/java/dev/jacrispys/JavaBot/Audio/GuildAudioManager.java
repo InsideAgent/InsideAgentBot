@@ -201,7 +201,7 @@ public class GuildAudioManager extends ListenerAdapter {
     private void play(Guild guild, GuildAudioManager guildAudioManager, AudioTrack track, VoiceChannel voiceChannel, boolean playTop) {
 
         attachToVoiceChannel(guild, voiceChannel);
-        if(playTop) {
+        if (playTop) {
             ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
             trackList.add(0, track);
             scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
@@ -266,7 +266,6 @@ public class GuildAudioManager extends ListenerAdapter {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Current Song Queue");
         eb.setColor(Color.decode("#42f5c8"));
-        eb.setFooter("Page " + queuePage + "/" + (int) Math.ceil((float) tracks.size() / 10));
 
         ArrayList<AudioTrack> trackList = new ArrayList<>(tracks.stream().toList());
         for (int i = 0; i <= 10; i++) {
@@ -278,6 +277,20 @@ public class GuildAudioManager extends ListenerAdapter {
             }
         }
         eb.addField("Current Song: " + audioPlayer.getPlayingTrack().getInfo().author + " - " + audioPlayer.getPlayingTrack().getInfo().title, queue.toString(), false);
+
+        String pageNumber = "Page " + queuePage + "/" + (int) Math.ceil((float) scheduler.getTrackQueue().size() / 10);
+        String trackInQueue = "Songs in Queue: " + trackList.size();
+        int queueLength = 0;
+        String queueLengthStr;
+        for(AudioTrack audioTrack : trackList) {
+            queueLength += audioTrack.getDuration();
+        }
+        if (queueLength < 3600000) {
+            queueLengthStr = ("Queue Duration: [" + DurationFormatUtils.formatDuration(queueLength, "mm:ss") + "]");
+        } else {
+            queueLengthStr = ("Queue Duration: [" + DurationFormatUtils.formatDuration(queueLength, "HH:mm:ss") + "]");
+        }
+        eb.setFooter(pageNumber + " | " + trackInQueue + " | " + queueLengthStr);
 
         List<Button> buttons = new ArrayList<>();
         buttons.add(Button.primary("firstPage:" + channel.getGuild().getId(), "⏪"));
@@ -299,12 +312,30 @@ public class GuildAudioManager extends ListenerAdapter {
         for (int i = 0; i <= 10; i++) {
             try {
                 AudioTrack track = trackList.get((page - 1) * 10 + i);
-                queue.append("`").append((page - 1) * 10 + i + 1).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append("` \n");
+                String time;
+                if (track.getDuration() < 3600000) {
+                    time = ("*[" + DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss") + "]*");
+                } else {
+                    time = ("*[" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]*");
+                }
+                queue.append("`").append((page - 1) * 10 + i + 1).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append(" ").append(time).append("` \n");
             } catch (IndexOutOfBoundsException ex) {
                 break;
             }
         }
-        eb.setFooter("Page " + page + "/" + (int) Math.ceil((float) scheduler.getTrackQueue().size() / 10));
+        String pageNumber = "Page " + page + "/" + (int) Math.ceil((float) scheduler.getTrackQueue().size() / 10);
+        String trackInQueue = "Songs in Queue: " + trackList.size();
+        int queueLength = 0;
+        String queueLengthStr;
+        for(AudioTrack audioTrack : trackList) {
+            queueLength += audioTrack.getDuration();
+        }
+        if (queueLength < 3600000) {
+            queueLengthStr = ("Queue Duration: [" + DurationFormatUtils.formatDuration(queueLength, "mm:ss") + "]");
+        } else {
+            queueLengthStr = ("Queue Duration: [" + DurationFormatUtils.formatDuration(queueLength, "HH:mm:ss") + "]");
+        }
+        eb.setFooter(pageNumber + " | " + trackInQueue + " | " + queueLengthStr);
         eb.addField("Current Song: " + audioPlayer.getPlayingTrack().getInfo().author + " - " + audioPlayer.getPlayingTrack().getInfo().title, queue.toString(), false);
         return eb;
 
@@ -320,7 +351,13 @@ public class GuildAudioManager extends ListenerAdapter {
             if (fromButtonGuild != event.getGuild()) return;
 
             switch (buttonName) {
-                case ("firstPage") -> event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), 1).build()).queue();
+                case ("firstPage") -> {
+                    if (queuePage != 1) {
+                        event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), 1).build()).queue();
+                    } else {
+                        event.reply("You are already on the first page!").setEphemeral(true).queue();
+                    }
+                }
                 case ("backPage") -> {
                     if (queuePage <= 1) {
                         if (queuePage == 0) {
@@ -340,7 +377,13 @@ public class GuildAudioManager extends ListenerAdapter {
                     }
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage + 1).build()).queue();
                 }
-                case ("lastPage") -> event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), pages).build()).queue();
+                case ("lastPage") -> {
+                    if (queuePage != pages) {
+                        event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), pages).build()).queue();
+                    } else {
+                        event.reply("You are already on the final page!").setEphemeral(true).queue();
+                    }
+                }
                 default -> System.out.println("wtf");
             }
         } catch (IllegalStateException ex) {
