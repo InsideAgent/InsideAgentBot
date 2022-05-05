@@ -525,9 +525,12 @@ public class GuildAudioManager extends ListenerAdapter {
     }
 
 
+    private BlockingQueue<AudioTrack> hijackQueue;
+
     @SuppressWarnings("all")
     public void enableDJ(TextChannel channel, User sender, Guild guild) {
         if (!djEnabled) {
+            hijackQueue = new LinkedBlockingQueue<>(scheduler.getTrackQueue());
             clearQueue(channel);
             skipTrack(channel);
             djEnabled = true;
@@ -535,6 +538,7 @@ public class GuildAudioManager extends ListenerAdapter {
             djEnabled = false;
             clearQueue(channel);
             skipTrack(channel);
+            scheduler.setQueue(hijackQueue);
             channel.sendMessage("So sad but, the party is over now! :(").queue();
             return;
         }
