@@ -344,7 +344,6 @@ public class GuildAudioManager extends ListenerAdapter {
                 default -> System.out.println("wtf");
             }
         } catch (IllegalStateException ex) {
-            ex.printStackTrace();
         }
     }
 
