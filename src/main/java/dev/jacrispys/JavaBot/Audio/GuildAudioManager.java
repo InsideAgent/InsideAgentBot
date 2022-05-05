@@ -315,9 +315,9 @@ public class GuildAudioManager extends ListenerAdapter {
                 AudioTrack track = trackList.get((page - 1) * 10 + i);
                 String time;
                 if (track.getDuration() < 3600000) {
-                    time = ("*[" + DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss") + "]*");
+                    time = ("[" + DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss") + "]");
                 } else {
-                    time = ("*[" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]*");
+                    time = ("[" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]");
                 }
                 queue.append("`").append((page - 1) * 10 + i + 1).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append(" ").append(time).append("` \n");
             } catch (IndexOutOfBoundsException ex) {
