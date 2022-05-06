@@ -162,7 +162,7 @@ public class GuildAudioManager extends ListenerAdapter {
             embedBuilder.setAuthor("|   Adding song to queue...", null, requester.get(playlist.getTracks().get(0)).getAvatarUrl());
             embedBuilder.setFooter("From Playlist: ✅");
         } else {
-            embedBuilder.setAuthor("|   Playlist to queue...", null, requester.get(playlist.getTracks().get(0)).getAvatarUrl());
+            embedBuilder.setAuthor("|   Adding Playlist to queue...", null, requester.get(playlist.getTracks().get(0)).getAvatarUrl());
             embedBuilder.addField("Playlist Title: ", "`" + playlist.getName() + "`", false);
             embedBuilder.addField("Playlist Size: ", "`" + playlist.getTracks().size() + "`", false);
             embedBuilder.addField("Playlist Link: ", trackUrl, false);
