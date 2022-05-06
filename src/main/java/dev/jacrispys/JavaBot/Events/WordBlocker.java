@@ -1,3 +1,4 @@
+
 package dev.jacrispys.JavaBot.Events;
 
 import dev.jacrispys.JavaBot.Utils.BlockedWords;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class WordBlocker extends ListenerAdapter {
-
+/*
     public void onMessageReceived(MessageReceivedEvent event) {
         if(event.getAuthor().isBot()) return;
         for(BlockedWords blocked : BlockedWords.values()) {
@@ -21,4 +22,6 @@ public class WordBlocker extends ListenerAdapter {
             }
         }
     }
+*/
 }
+

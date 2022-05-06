@@ -22,12 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.io.File;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
@@ -387,8 +386,7 @@ public class GuildAudioManager extends ListenerAdapter {
                 }
                 default -> System.out.println("wtf");
             }
-        } catch (IllegalStateException ex) {
-        }
+        } catch (IllegalStateException ignored) {}
     }
 
 

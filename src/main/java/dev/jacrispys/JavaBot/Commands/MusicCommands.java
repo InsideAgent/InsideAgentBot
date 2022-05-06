@@ -112,6 +112,7 @@ public class MusicCommands extends ListenerAdapter {
         } else if(message.equalsIgnoreCase("-fix")) {
             try {
                 VoiceChannel vc = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+                vc.getManager().setRegion(Region.VIP_US_WEST).queue();
                 vc.getManager().setRegion(Region.AUTOMATIC).queue();
                 event.getMessage().addReaction("\uD83D\uDC4D").queue();
             } catch (NullPointerException ex) {
