@@ -386,7 +386,9 @@ public class GuildAudioManager extends ListenerAdapter {
                 }
                 case("togglePlayer") -> {
                     togglePlayer();
-                    event.editMessage(event.getMessage()).queue();
+                    if(!event.isAcknowledged()) {
+                        event.editMessage(event.getMessage()).queue();
+                    }
                 }
                 case("skipTrack") -> {
                     nowPlayingId = event.getMessage().getIdLong();
@@ -394,8 +396,11 @@ public class GuildAudioManager extends ListenerAdapter {
                 }
                 case("showQueue") -> {
                     displayQueue(event.getTextChannel());
-                    event.editMessage(event.getMessage()).queue();
+                    if(!event.isAcknowledged()) {
+                        event.editMessage(event.getMessage()).queue();
+                    }
                 }
+                default -> System.out.println("wat");
             }
         } catch (IllegalStateException ignored) {}
     }
