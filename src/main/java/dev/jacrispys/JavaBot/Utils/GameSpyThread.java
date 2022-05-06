@@ -46,6 +46,7 @@ public class GameSpyThread extends Thread {
         runningSpies = guildList;
     }
 
+    @SuppressWarnings("unused")
     public Map<Guild, ScheduledExecutorService> getRunningSpies() {
         return runningSpies;
     }
@@ -125,6 +126,7 @@ public class GameSpyThread extends Thread {
             return;
         }
 
+        assert gameSpyChannel != null;
         gameSpyChannel.sendMessage("Currently Crunching numbers from: " + guild.getName()).queue();
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -143,7 +145,7 @@ public class GameSpyThread extends Thread {
                 if (activity.getTimestamps() != null) {
                     long secs = activity.getTimestamps().getElapsedTime(ChronoUnit.SECONDS);
                     time = String.format("%02d:%02d:%02d", secs / 3600, (secs % 3600) / 60, secs % 60);
-                    richValue.append("\n" + member.getAsMention() + " - " + activity.getName() + " for " + time);
+                    richValue.append("\n").append(member.getAsMention()).append(" - ").append(activity.getName()).append(" for ").append(time);
                 }
             }
         }
@@ -161,7 +163,7 @@ public class GameSpyThread extends Thread {
                 Map<Member, Long> dataMap = getTotalTime(guild);
                 long seconds = dataMap.get(member);
                 String time = String.format("%02d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
-                stringBuilder.append(member.getAsMention() + " played for: " + time + "!\n");
+                stringBuilder.append(member.getAsMention()).append(" played for: ").append(time).append("!\n");
             }
             embedBuilder.addField("Playtime this Week!", stringBuilder.toString(), false);
         }catch (Exception ex) {

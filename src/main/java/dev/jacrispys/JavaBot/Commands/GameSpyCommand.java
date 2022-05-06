@@ -18,6 +18,7 @@ public class GameSpyCommand extends ListenerAdapter {
         if (event.isFromType(ChannelType.PRIVATE)) return;
         if (event.getMessage().getContentRaw().equalsIgnoreCase("!gamespy") || event.getMessage().getContentRaw().equalsIgnoreCase("!gamespydump")) {
             Member sender = event.getGuild().getMember(event.getAuthor());
+            assert sender != null;
             for(Role role : sender.getRoles()) {
                 String roleName = role.getName();
                 if(roleName.equalsIgnoreCase("JacrispysRole") || roleName.equalsIgnoreCase("Spy")) {
