@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 
 public class GuildAudioManager extends ListenerAdapter {
@@ -384,11 +386,23 @@ public class GuildAudioManager extends ListenerAdapter {
                         event.reply("You are already on the final page!").setEphemeral(true).queue();
                     }
                 }
-                default -> System.out.println("wtf");
+                case("togglePlayer") -> {
+                    togglePlayer();
+                    event.editMessage(event.getMessage()).queue();
+                }
+                case("skipTrack") -> {
+                    nowPlayingId = event.getMessage().getIdLong();
+                    skipNoMessage();
+                }
+                case("showQueue") -> {
+                    displayQueue(event.getTextChannel());
+                    event.editMessage(event.getMessage()).queue();
+                }
             }
         } catch (IllegalStateException ignored) {}
     }
 
+    private long nowPlayingId = 0;
 
     public void announceNextTrack(Guild guild, AudioTrack newSong) {
         if (djEnabled) {
@@ -403,16 +417,39 @@ public class GuildAudioManager extends ListenerAdapter {
         }
         try {
             TextChannel channel = guild.getTextChannelById(MySQLConnection.getInstance().getMusicChannel(guild));
+
             EmbedBuilder eb = new EmbedBuilder();
             User trackSender = requester.get(newSong);
             eb.setAuthor("|   Currently Playing...", null, trackSender.getAvatarUrl());
             eb.addField(newSong.getInfo().title, "By - " + newSong.getInfo().author, false);
             eb.setColor(Color.decode("#155b5e"));
             assert channel != null;
-            channel.sendMessageEmbeds(eb.build()).queue();
+            List<Button> buttons = new ArrayList<>();
+            buttons.add(Button.success("togglePlayer:" + channel.getGuild().getId(), "Pause/Resume"));
+            buttons.add(Button.primary("skipTrack:" + channel.getGuild().getId(), "Skip"));
+            buttons.add(Button.secondary("showQueue:" + channel.getGuild().getId(), "Show Queue"));
+            buttons.add(Button.danger("remove:" + channel.getGuild().getId(), "✖️"));
+            if(nowPlayingId != 0) {
+                    channel.deleteMessageById(nowPlayingId).queue();
+            }
+            channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue(message -> nowPlayingId = message.getIdLong());
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void togglePlayer() {
+        if(!audioPlayer.isPaused()) {
+            audioPlayer.setPaused(true);
+            return;
+        }
+        audioPlayer.setPaused(false);
+    }
+
+    private void skipNoMessage() {
+        scheduler.nextTrack();
+        queueLoop = false;
+        songLoop = false;
     }
 
     public void clearQueue(TextChannel channel) {
