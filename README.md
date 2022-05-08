@@ -21,8 +21,8 @@
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/InsideAgent/DiscordBot?include_prereleases&style=for-the-badge)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/InsideAgent/DiscordBot?style=for-the-badge)
+[![GitHub release (latest by date including pre-releases)][releases-shield]][releases-url]
+[![GitHub commit activity][commits-shield]][commits-url]
 
 
 
@@ -221,4 +221,9 @@ Project Link: [https://github.com/InsideAgent/DiscordBot](https://github.com/Ins
 [issues-url]: https://github.com/InsideAgent/DiscordBot/issues
 [license-shield]: https://img.shields.io/github/license/InsideAgent/DiscordBot.svg?style=for-the-badge
 [license-url]: https://github.com/InsideAgent/DiscordBot/blob/master/LICENSE.txt
+[releases-shield]: https://img.shields.io/github/v/release/InsideAgent/DiscordBot?include_prereleases&style=for-the-badge
+[releases-url]: https://github.com/InsideAgent/DiscordBot/releases
+[commits-shield]: https://img.shields.io/github/commit-activity/m/InsideAgent/DiscordBot?style=for-the-badge
+[commits-url]: https://github.com/InsideAgent/DiscordBot/commits/master
 [product-screenshot]: images/screenshot.png
+
