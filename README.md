@@ -102,7 +102,7 @@ This project started as a personal challenge/venture, but when I realized how mu
 
 To add this bot to your own discord server, simply click this [link](https://discord.com/api/oauth2/authorize?client_id=786721755560804373&permissions=8&scope=bot) and it choose the server you would like the bot in! 
 
-And just like that the bot is ready to go!
+And just like that the bot is ready to go! (If the bot does not show online, it is because I am waiting for new hardware to run it on, i thank you for your patience.)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
