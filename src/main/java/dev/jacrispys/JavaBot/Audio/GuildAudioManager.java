@@ -13,12 +13,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -31,11 +28,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 
-public class GuildAudioManager extends ListenerAdapter {
+public class GuildAudioManager {
 
     private final AudioPlayerManager audioManager;
-    private final AudioPlayer audioPlayer;
-    private final TrackScheduler scheduler;
+    public final AudioPlayer audioPlayer;
+    public final TrackScheduler scheduler;
     private final AudioPlayerSendHandler sendHandler;
     private final Map<AudioTrack, User> requester = new HashMap<>();
 
@@ -74,7 +71,6 @@ public class GuildAudioManager extends ListenerAdapter {
         this.scheduler = new TrackScheduler(this.audioPlayer, currentGuild);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
-        instance.getJDA().addEventListener(this);
     }
 
     public AudioPlayerManager getAudioManager() {
@@ -159,10 +155,10 @@ public class GuildAudioManager extends ListenerAdapter {
             embedBuilder.addField("Title: ", "`" + playlist.getTracks().get(0).getInfo().title + "`", false);
             embedBuilder.addField("Author: ", "`" + playlist.getTracks().get(0).getInfo().author + "`", false);
             embedBuilder.addField("Link: ", playlist.getTracks().get(0).getInfo().uri, false);
-            embedBuilder.setTitle("Adding song to queue...");
+            embedBuilder.setAuthor("|   Adding song to queue...", null, requester.get(playlist.getTracks().get(0)).getAvatarUrl());
             embedBuilder.setFooter("From Playlist: ✅");
         } else {
-            embedBuilder.setTitle("Adding playlist to queue...");
+            embedBuilder.setAuthor("|   Adding Playlist to queue...", null, requester.get(playlist.getTracks().get(0)).getAvatarUrl());
             embedBuilder.addField("Playlist Title: ", "`" + playlist.getName() + "`", false);
             embedBuilder.addField("Playlist Size: ", "`" + playlist.getTracks().size() + "`", false);
             embedBuilder.addField("Playlist Link: ", trackUrl, false);
@@ -250,7 +246,7 @@ public class GuildAudioManager extends ListenerAdapter {
         audioPlayer.setVolume(i);
     }
 
-    private int queuePage;
+    public static int queuePage;
 
     public void displayQueue(TextChannel channel) {
         if (djEnabled) {
@@ -282,7 +278,7 @@ public class GuildAudioManager extends ListenerAdapter {
         String trackInQueue = "Songs in Queue: " + trackList.size();
         int queueLength = 0;
         String queueLengthStr;
-        for(AudioTrack audioTrack : trackList) {
+        for (AudioTrack audioTrack : trackList) {
             queueLength += audioTrack.getDuration();
         }
         if (queueLength < 3600000) {
@@ -303,104 +299,7 @@ public class GuildAudioManager extends ListenerAdapter {
 
     }
 
-    private EmbedBuilder updateEmbed(MessageEmbed embed, int page) {
-        queuePage = page;
-        EmbedBuilder eb = new EmbedBuilder(embed);
-        eb.clearFields();
-        StringBuilder queue = new StringBuilder();
-        ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
-        for (int i = 0; i <= 10; i++) {
-            try {
-                AudioTrack track = trackList.get((page - 1) * 10 + i);
-                String time;
-                if (track.getDuration() < 3600000) {
-                    time = ("[" + DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss") + "]");
-                } else {
-                    time = ("[" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]");
-                }
-                queue.append("`").append((page - 1) * 10 + i + 1).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append(" ").append(time).append("` \n");
-            } catch (IndexOutOfBoundsException ex) {
-                break;
-            }
-        }
-        String pageNumber = "Page " + page + "/" + (int) Math.ceil((float) scheduler.getTrackQueue().size() / 10);
-        String trackInQueue = "Songs in Queue: " + trackList.size();
-        int queueLength = 0;
-        String queueLengthStr;
-        for(AudioTrack audioTrack : trackList) {
-            queueLength += audioTrack.getDuration();
-        }
-        if (queueLength < 3600000) {
-            queueLengthStr = ("Queue Duration: [" + DurationFormatUtils.formatDuration(queueLength, "mm:ss") + "]");
-        } else {
-            queueLengthStr = ("Queue Duration: [" + DurationFormatUtils.formatDuration(queueLength, "HH:mm:ss") + "]");
-        }
-        eb.setFooter(pageNumber + " | " + trackInQueue + " | " + queueLengthStr);
-        eb.addField("Current Song: " + audioPlayer.getPlayingTrack().getInfo().author + " - " + audioPlayer.getPlayingTrack().getInfo().title, queue.toString(), false);
-        return eb;
-
-
-    }
-
-    @Override
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        try {
-            Guild fromButtonGuild = event.getJDA().getGuildById(event.getComponentId().split(":")[1]);
-            String buttonName = event.getComponentId().split(":")[0];
-            int pages = (int) Math.ceil((float) scheduler.getTrackQueue().size() / 10);
-            if (fromButtonGuild != event.getGuild()) return;
-
-            switch (buttonName) {
-                case ("firstPage") -> {
-                    if (queuePage != 1) {
-                        event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), 1).build()).queue();
-                    } else {
-                        event.reply("You are already on the first page!").setEphemeral(true).queue();
-                    }
-                }
-                case ("backPage") -> {
-                    if (queuePage <= 1) {
-                        if (queuePage == 0) {
-                            event.reply("What? Did you expect page 0 or... HEY WAIT A MINUTE \uD83D\uDE21").setEphemeral(true).queue();
-                        } else {
-                            event.reply("What? Did you expect page 0 or something?").setEphemeral(true).queue();
-                        }
-                        return;
-                    }
-                    event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage - 1).build()).queue();
-                }
-                case ("remove") -> event.getMessage().delete().queue();
-                case ("nextPage") -> {
-                    if (queuePage >= pages) {
-                        event.reply("Cannot go further than the final page!").setEphemeral(true).queue();
-                        return;
-                    }
-                    event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage + 1).build()).queue();
-                }
-                case ("lastPage") -> {
-                    if (queuePage != pages) {
-                        event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), pages).build()).queue();
-                    } else {
-                        event.reply("You are already on the final page!").setEphemeral(true).queue();
-                    }
-                }
-                case("togglePlayer") -> {
-                    togglePlayer();
-                    event.editMessage(event.getMessage()).queue();
-                }
-                case("skipTrack") -> {
-                    nowPlayingId = event.getMessage().getIdLong();
-                    skipNoMessage();
-                }
-                case("showQueue") -> {
-                    displayQueue(event.getTextChannel());
-                    event.editMessage(event.getMessage()).queue();
-                }
-            }
-        } catch (IllegalStateException ignored) {}
-    }
-
-    private long nowPlayingId = 0;
+    public static Map<Guild, Long> nowPlayingId = new HashMap<>();
 
     public void announceNextTrack(Guild guild, AudioTrack newSong) {
         if (djEnabled) {
@@ -427,27 +326,31 @@ public class GuildAudioManager extends ListenerAdapter {
             buttons.add(Button.primary("skipTrack:" + channel.getGuild().getId(), "Skip"));
             buttons.add(Button.secondary("showQueue:" + channel.getGuild().getId(), "Show Queue"));
             buttons.add(Button.danger("remove:" + channel.getGuild().getId(), "✖️"));
-            if(nowPlayingId != 0) {
-                    channel.deleteMessageById(nowPlayingId).queue();
+            if (nowPlayingId.getOrDefault(guild, null) != null) {
+                channel.deleteMessageById(nowPlayingId.get(guild)).queue();
             }
-            channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue(message -> nowPlayingId = message.getIdLong());
+            channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue(message -> nowPlayingId.put(guild, message.getIdLong()));
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
 
-    private void togglePlayer() {
-        if(!audioPlayer.isPaused()) {
-            audioPlayer.setPaused(true);
-            return;
+    public void togglePlayer() {
+        try {
+            this.audioPlayer.setPaused(!audioPlayer.isPaused());
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        audioPlayer.setPaused(false);
     }
 
-    private void skipNoMessage() {
-        scheduler.nextTrack();
-        queueLoop = false;
-        songLoop = false;
+    public void skipNoMessage() {
+        try {
+            this.scheduler.nextTrack();
+            queueLoop = false;
+            songLoop = false;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void clearQueue(TextChannel channel) {
