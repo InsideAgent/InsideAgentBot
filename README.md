@@ -199,7 +199,7 @@ Project Link: [https://github.com/InsideAgent/DiscordBot](https://github.com/Ins
 ## Acknowledgments
 
 * [Jacrispys - Lead Designer and Creator](https://github.com/Jacrispys)
-* [Stilin - Ideas and feature brainstorming ](discordapp.com/users/972699606012031026)
+* [Stilin - Ideas and feature brainstorming ](https://discordapp.com/users/972699606012031026)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
