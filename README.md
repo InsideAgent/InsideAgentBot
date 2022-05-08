@@ -134,7 +134,7 @@ On startup of the bot, you will want to use `!registerguild` to make sure your g
 - `-hijack` - Secret Command 🤫**Only Accessible by certified DJ's!**
 - `-playtop` or `-ptop` - Adds a song to the top of the queue.
 
-_For more examples, please refer to the Docs *COMING SOON*
+_For more examples, please refer to the Docs COMING SOON*
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
