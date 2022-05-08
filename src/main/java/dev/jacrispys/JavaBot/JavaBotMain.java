@@ -3,7 +3,6 @@ package dev.jacrispys.JavaBot;
 import dev.jacrispys.JavaBot.Commands.*;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
 import dev.jacrispys.JavaBot.Events.BotStartup;
-import dev.jacrispys.JavaBot.Events.WordBlocker;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.JDA;
@@ -36,7 +35,6 @@ public class JavaBotMain {
         jda.addEventListener(new RegisterGuildCommand());
         jda.addEventListener(new GameSpyCommand());
         jda.addEventListener(new BotStartup());
-        jda.addEventListener(new WordBlocker());
         jda.addEventListener(new MusicCommands());
         jda.addEventListener(new AudioPlayerButtons());
         gameSpyThread = new GameSpyThread(jda);
