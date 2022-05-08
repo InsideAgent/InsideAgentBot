@@ -97,9 +97,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.DV8FromTheWorld</groupId>
+            <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>e8dc87f5d9</version>
+            <version>5.0.0-alpha.11</version>
         </dependency>
 
         <dependency>
