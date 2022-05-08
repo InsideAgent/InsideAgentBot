@@ -147,6 +147,7 @@ _For more examples, please refer to the Docs *COMING SOON*
 - [ ] Add supplemental features to AudioPlayer
 - [ ] Complete GameSpy
     - [ ] Log specific games, and give weekly reports
+- [ ] Currently obtaining server to achieve near 100% uptime.
 - [ ] New Features, feature requests.
 
 See the [open issues](https://github.com/InsideAgent/DiscordBot/issues) for a full list of proposed features (and known issues).
