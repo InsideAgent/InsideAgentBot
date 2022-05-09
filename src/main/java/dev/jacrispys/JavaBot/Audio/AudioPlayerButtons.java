@@ -116,7 +116,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
         }
         String pageNumber = "Page " + page + "/" + (int) Math.ceil((float) audioManager.scheduler.getTrackQueue().size() / 10);
         String trackInQueue = "Songs in Queue: " + trackList.size();
-        int queueLength = 0;
+        long queueLength = 0;
         String queueLengthStr;
         for (AudioTrack audioTrack : trackList) {
             queueLength += audioTrack.getDuration();
