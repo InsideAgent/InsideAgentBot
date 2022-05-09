@@ -41,7 +41,7 @@
     <a href="https://github.com/InsideAgent/DiscordBot"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/InsideAgent/DiscordBot">View Demo</a>
+    <a href="https://discord.com/api/oauth2/authorize?client_id=786721755560804373&permissions=8&scope=bot">View Demo</a>
     ·
     <a href="https://github.com/InsideAgent/DiscordBot/issues">Report Bug</a>
     ·
