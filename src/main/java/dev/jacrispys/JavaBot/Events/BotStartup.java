@@ -32,8 +32,7 @@ public class BotStartup extends ListenerAdapter {
                     GameSpy gameSpy = new GameSpy(guild);
                     gameSpy.addSpy();
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (Exception ignored) {
                 return;
             }
         }

@@ -11,12 +11,27 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.ResultSet;
+import java.util.concurrent.TimeUnit;
+
 public class GameSpyCommand extends ListenerAdapter {
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
         if (event.isFromType(ChannelType.PRIVATE)) return;
         if (event.getMessage().getContentRaw().equalsIgnoreCase("!gamespy") || event.getMessage().getContentRaw().equalsIgnoreCase("!gamespydump")) {
+                try {
+                    MySQLConnection connection = MySQLConnection.getInstance();
+                    ResultSet rs = connection.queryCommand("select * from inside_agent_bot.guilds where ID=" + event.getGuild().getId());
+                    rs.beforeFirst();
+                    if(!rs.next()) {
+                        event.getTextChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+                        return;
+                    }
+                } catch (Exception ignored) {
+                    event.getTextChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+                    return;
+                }
             Member sender = event.getGuild().getMember(event.getAuthor());
             assert sender != null;
             for(Role role : sender.getRoles()) {

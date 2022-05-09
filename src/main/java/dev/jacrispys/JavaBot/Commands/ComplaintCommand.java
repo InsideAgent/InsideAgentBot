@@ -38,6 +38,18 @@ public class ComplaintCommand extends ListenerAdapter {
             }
             return;
         }
+        try {
+            MySQLConnection connection = MySQLConnection.getInstance();
+            ResultSet rs = connection.queryCommand("select * from inside_agent_bot.guilds where ID=" + event.getGuild().getId());
+            rs.beforeFirst();
+            if (!rs.next()) {
+                event.getTextChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+                return;
+            }
+        } catch (Exception ignored) {
+            event.getTextChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+            return;
+        }
         if (event.getMessage().getMentionedUsers().size() != 1) return;
         User mentionedUser = event.getMessage().getMentionedUsers().get(0);
         User sender = event.getAuthor();
@@ -86,7 +98,7 @@ public class ComplaintCommand extends ListenerAdapter {
                             User mentioned = complaintMention.get(event.getUser());
                             try {
                                 MySQLConnection connection = MySQLConnection.getInstance();
-                                ResultSet rs = connection.queryCommand("SELECT TicketChannel FROM inside_agent_bot.guilds WHERE ID=" + event.getGuild().getId());
+                                ResultSet rs = connection.queryCommand("SELECT TicketChannel FROM inside_agent_bot.guilds WHERE ID=" + Objects.requireNonNull(event.getGuild()).getId());
                                 rs.beforeFirst();
                                 rs.next();
                                 long channelId = rs.getLong("TicketChannel");
@@ -130,9 +142,10 @@ public class ComplaintCommand extends ListenerAdapter {
             } else {
                 event.reply("Only the user who issued the complaint can use this feature!").setEphemeral(true).queue();
             }
-        }catch (Exception ex) { return; }
+        } catch (Exception ignored) {
+        }
 
-}
+    }
 
     public void onModalInteraction(@Nonnull ModalInteractionEvent event) {
         if (event.getModalId().equals("complaint:" + complaintId.get(event.getUser()))) {
