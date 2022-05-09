@@ -41,7 +41,7 @@
     <a href="https://github.com/InsideAgent/DiscordBot"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/InsideAgent/DiscordBot">View Demo</a>
+    <a href="https://discord.com/api/oauth2/authorize?client_id=786721755560804373&permissions=8&scope=bot">View Demo</a>
     ·
     <a href="https://github.com/InsideAgent/DiscordBot/issues">Report Bug</a>
     ·
@@ -133,6 +133,7 @@ On startup of the bot, you will want to use `!registerguild` to make sure your g
 - `-move` - Intakes to numbers and swaps their positions in the queue!
 - `-hijack` - Secret Command 🤫**Only Accessible by certified DJ's!**
 - `-playtop` or `-ptop` - Adds a song to the top of the queue.
+- `-skipto` or `-st` - Skips to the given index in the queue.
 
 *For more examples, please refer to the Docs: COMING SOON*
 
