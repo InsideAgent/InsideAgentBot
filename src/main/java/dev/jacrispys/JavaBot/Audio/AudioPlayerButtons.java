@@ -1,7 +1,6 @@
-package dev.jacrispys.JavaBot.Commands;
+package dev.jacrispys.JavaBot.Audio;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import dev.jacrispys.JavaBot.Audio.GuildAudioManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -12,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-import static dev.jacrispys.JavaBot.Audio.GuildAudioManager.queuePage;
 import static dev.jacrispys.JavaBot.Audio.GuildAudioManager.nowPlayingId;
+import static dev.jacrispys.JavaBot.Audio.GuildAudioManager.queuePage;
 
 public class AudioPlayerButtons extends ListenerAdapter {
 
