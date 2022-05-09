@@ -133,6 +133,7 @@ On startup of the bot, you will want to use `!registerguild` to make sure your g
 - `-move` - Intakes to numbers and swaps their positions in the queue!
 - `-hijack` - Secret Command 🤫**Only Accessible by certified DJ's!**
 - `-playtop` or `-ptop` - Adds a song to the top of the queue.
+- `-skipto` or `-st` - Skips to the given index in the queue.
 
 *For more examples, please refer to the Docs: COMING SOON*
 
