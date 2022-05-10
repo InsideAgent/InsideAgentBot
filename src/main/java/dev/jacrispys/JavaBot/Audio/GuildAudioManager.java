@@ -13,8 +13,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.exceptions.ContextException;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -402,7 +405,7 @@ public class GuildAudioManager {
             buttons.add(Button.secondary("showQueue:" + channel.getGuild().getId(), "Show Queue"));
             buttons.add(Button.danger("remove:" + channel.getGuild().getId(), "✖️"));
             if (nowPlayingId.getOrDefault(guild, null) != null) {
-                channel.deleteMessageById(nowPlayingId.get(guild)).queue();
+                channel.deleteMessageById(nowPlayingId.get(guild)).queue(null, new ErrorHandler().ignore(ErrorResponse.EMPTY_MESSAGE));
             }
             channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue(message -> nowPlayingId.put(guild, message.getIdLong()));
         } catch (SQLException ex) {
@@ -478,7 +481,6 @@ public class GuildAudioManager {
     }
 
     /**
-     *
      * @param channel to send confirmation to.
      *                obtains instance of queue with {@link TrackScheduler#getTrackQueue()} and randomizes it with collections.
      */
@@ -495,7 +497,6 @@ public class GuildAudioManager {
     }
 
     /**
-     *
      * @param channel to send info to.
      *                creates {@link MessageEmbed} with song progress bar among other information about the playing track.
      */
@@ -525,9 +526,8 @@ public class GuildAudioManager {
     }
 
     /**
-     *
      * @param position of track in queue (adjusted for 0 index)
-     * @param channel to send confirmation to.
+     * @param channel  to send confirmation to.
      */
     public void removeTrack(int position, TextChannel channel) {
         if (djEnabled) {
@@ -549,8 +549,7 @@ public class GuildAudioManager {
     }
 
     /**
-     *
-     * @param time using {@link DateTimeFormatter} to later be converted into MS
+     * @param time    using {@link DateTimeFormatter} to later be converted into MS
      * @param channel to send confirmation to.
      */
     public void seekTrack(String time, TextChannel channel) {
@@ -571,9 +570,8 @@ public class GuildAudioManager {
     }
 
     /**
-     *
-     * @param channel to block commands from
-     * @param track private icecast server
+     * @param channel      to block commands from
+     * @param track        private icecast server
      * @param voiceChannel to attach to
      */
     protected void djLoaded(TextChannel channel, AudioTrack track, VoiceChannel voiceChannel) {
@@ -584,10 +582,9 @@ public class GuildAudioManager {
     private BlockingQueue<AudioTrack> hijackQueue;
 
     /**
-     *
      * @param channel to block/send commands from
-     * @param sender instance of current DJ
-     * @param guild to manage
+     * @param sender  instance of current DJ
+     * @param guild   to manage
      */
     @SuppressWarnings("all")
     public void enableDJ(TextChannel channel, User sender, Guild guild) {
@@ -636,7 +633,6 @@ public class GuildAudioManager {
     public boolean songLoop = false;
 
     /**
-     *
      * @param channel to send confirmation to.
      *                manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
      */
@@ -661,7 +657,6 @@ public class GuildAudioManager {
     }
 
     /**
-     *
      * @param channel to send confirmation to.
      *                manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
      */
@@ -682,11 +677,10 @@ public class GuildAudioManager {
     }
 
     /**
-     *
      * @param channel to send confirmation to.
-     * @param pos1 is first track position to move.
-     * @param pos2 is second track position to move
-     *             swaps positions of {@param pos1} & {@param pos2}
+     * @param pos1    is first track position to move.
+     * @param pos2    is second track position to move
+     *                swaps positions of {@param pos1} & {@param pos2}
      */
     public void moveSong(TextChannel channel, int pos1, int pos2) {
         if (djEnabled) {
@@ -701,8 +695,7 @@ public class GuildAudioManager {
     }
 
     /**
-     *
-     * @param channel to send confirmation to.
+     * @param channel     to send confirmation to.
      * @param indexNumber to skip track queue to (adjusted for 0 index)
      */
     public void skipTo(TextChannel channel, int indexNumber) {
