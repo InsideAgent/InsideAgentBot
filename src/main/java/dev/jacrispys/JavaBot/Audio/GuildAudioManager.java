@@ -326,6 +326,10 @@ public class GuildAudioManager {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
+        if(audioPlayer.getPlayingTrack() == null) {
+            channel.sendMessage("Cannot display queue when no track is playing!").queue();
+            return;
+        }
 
         queuePage = 1;
 

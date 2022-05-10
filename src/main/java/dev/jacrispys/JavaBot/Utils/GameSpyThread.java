@@ -32,8 +32,6 @@ public class GameSpyThread extends Thread {
 
     @Override
     public void run() {
-        System.out.println("Thread running!");
-
     }
 
     public void addNewSpy(Guild guild) {
@@ -61,7 +59,7 @@ public class GameSpyThread extends Thread {
                    ResultSet rs = connection.queryCommand("SELECT totalTime FROM inside_agent_bot.gamespyusers WHERE memberId=" + member.getIdLong()
                            + " AND Guild=" + guild.getId());
                    if(!rs.next()) {
-                       connection.executeUpdate("INSERT INTO inside_agent_bot.gamespyusers (Guild, MemberId, totalTime) VALUES (" + guild.getId() +", " + member.getIdLong() + ", 0");
+                       System.out.println("couldn't index user.");
                        continue;
                    }
                    rs.beforeFirst();
