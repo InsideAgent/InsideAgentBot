@@ -408,7 +408,7 @@ public class GuildAudioManager {
             buttons.add(Button.secondary("showQueue:" + channel.getGuild().getId(), "Show Queue"));
             buttons.add(Button.danger("remove:" + channel.getGuild().getId(), "✖️"));
             if (nowPlayingId.getOrDefault(guild, null) != null) {
-                channel.deleteMessageById(nowPlayingId.get(guild)).queue(null, new ErrorHandler().ignore(ErrorResponse.EMPTY_MESSAGE));
+                channel.deleteMessageById(nowPlayingId.get(guild)).queue(null, new ErrorHandler().ignore(ErrorResponse.EMPTY_MESSAGE).handle(ErrorResponse.EMPTY_MESSAGE, (e) -> {}));
             }
             channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue(message -> nowPlayingId.put(guild, message.getIdLong()));
         } catch (SQLException ex) {
