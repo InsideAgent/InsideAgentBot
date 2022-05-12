@@ -18,7 +18,7 @@ public class SpotifyStats implements StatHooks<SpotifyStats> {
     public SpotifyStats(TextChannel channel) {
         this.channel = channel;
         WebAgent webAgent = WebAgent.getInstance();
-        webhookAction = webAgent.getWebHook();
+        webhookAction = webAgent.createWebAgent(channel).getWebHook();
     }
 
     @Override
