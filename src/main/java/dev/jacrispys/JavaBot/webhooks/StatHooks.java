@@ -1,14 +1,22 @@
 package dev.jacrispys.JavaBot.webhooks;
 
+import club.minnced.discord.webhook.external.JDAWebhookClient;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
-import net.dv8tion.jda.api.requests.restaction.WebhookAction;
 
-public interface StatHooks<T> {
+import java.net.URL;
 
-    public void getProfilePicture();
+public interface StatHooks{
 
     SpotifyStats setName(String name);
 
-    public T setProfilePicture();
-    public Webhook build();
+    Webhook build();
+
+    SpotifyStats setIcon(URL url);
+
+    SpotifyStats setIcon(String filePath);
+
+    void sendMessageEmbed(Webhook webhook, MessageEmbed messageEmbed);
+
+    void sendMessage(Webhook webhook, String message);
 }

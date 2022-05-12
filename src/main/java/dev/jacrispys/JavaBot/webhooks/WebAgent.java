@@ -5,9 +5,12 @@ import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.requests.restaction.WebhookAction;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class WebAgent {
 
     private static WebhookAction webAgent;
+    public static String token;
     private static WebAgent INSTANCE;
     private WebAgent() {}
 
@@ -29,7 +32,8 @@ public class WebAgent {
         if(webAgent != null) {
             channel.retrieveWebhooks().queue(webhooks -> {
                 for(Webhook webhook : webhooks) {
-                    if(webhook.getName().equalsIgnoreCase("WebAgent")) {
+
+                    if(Objects.equals(webhook.getToken(), token)) {
                         webhook.delete().queue();
                         webAgent = channel.createWebhook("WebAgent");
                         return;
@@ -38,6 +42,7 @@ public class WebAgent {
             });
         }
         webAgent = channel.createWebhook("WebAgent");
+
         return this;
     }
 
