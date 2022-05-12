@@ -1,7 +1,9 @@
 package dev.jacrispys.JavaBot.Commands;
 
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
+import dev.jacrispys.JavaBot.webhooks.SpotifyStats;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.WebhookType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,9 @@ public class RegisterGuildCommand extends ListenerAdapter {
                 connection.executeCommand("UPDATE guilds SET TicketChannel=" + event.getTextChannel().getId() + " WHERE ID=" + event.getGuild().getId());
                 event.getMessage().reply("Ticket channel successfully set!").queue(m -> m.delete().queueAfter(3, TimeUnit.SECONDS));
                 event.getMessage().delete().queueAfter(3, TimeUnit.SECONDS);
+            } else if(event.getMessage().getContentRaw().equalsIgnoreCase("!testwebhook")) {
+                SpotifyStats stats = new SpotifyStats(event.getTextChannel(), event.getJDA().getSelfUser().getIdLong(), WebhookType.INCOMING);
+                stats.setProfilePicture().genHook("test");
             }
         }catch(Exception ex){
         ex.printStackTrace();
