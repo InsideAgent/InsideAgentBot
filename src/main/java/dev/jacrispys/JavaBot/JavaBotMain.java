@@ -4,6 +4,7 @@ import dev.jacrispys.JavaBot.Audio.AudioPlayerButtons;
 import dev.jacrispys.JavaBot.Commands.*;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
 import dev.jacrispys.JavaBot.Events.BotStartup;
+import dev.jacrispys.JavaBot.Events.InsideAgentShutdown;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.webhooks.SpotifyStats;
@@ -42,6 +43,7 @@ public class JavaBotMain {
         jda.addEventListener(new BotStartup());
         jda.addEventListener(new MusicCommands());
         jda.addEventListener(new AudioPlayerButtons());
+        jda.addEventListener(new InsideAgentShutdown());
         gameSpyThread = new GameSpyThread(jda);
         gameSpyThread.start();
 

@@ -31,7 +31,7 @@ public class RegisterGuildCommand extends ListenerAdapter {
                 event.getMessage().delete().queueAfter(3, TimeUnit.SECONDS);
             } else if(event.getMessage().getContentRaw().equalsIgnoreCase("!testwebhook")) {
                 SpotifyStats spotifyStats = new SpotifyStats(event.getTextChannel());
-                Webhook webhook = spotifyStats.setIcon(new URL("https://ih1.redbubble.net/image.1247372746.0842/st,small,507x507-pad,600x600,f8f8f8.jpg")).setName("Spotify Analyzer").build();
+                Webhook webhook = spotifyStats.setIcon(new URL("https://assets.entrepreneur.com/content/3x2/2000/20150616163611-spotify.jpeg")).setName("Spotify Analyzer").build();
                 spotifyStats.sendMessage(webhook, "web hook testing wooo");
             }
         }catch(Exception ex){
