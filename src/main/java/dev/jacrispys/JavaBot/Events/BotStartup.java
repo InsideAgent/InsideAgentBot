@@ -17,7 +17,13 @@ public class BotStartup extends ListenerAdapter {
 
         // Start GameSpy on enabled servers.
         for (Guild guild : event.getJDA().getGuilds()) {
-            if(guild.getSelfMember().getVoiceState() != null) {
+            guild.getAudioManager().closeAudioConnection();
+            guild.retrieveWebhooks().queue(webhooks -> webhooks.forEach(webhook -> {
+                if (webhook.getOwner() != null && webhook.getOwner().equals(guild.getSelfMember())) {
+                    webhook.delete().queue();
+                }
+            }));
+            if (guild.getSelfMember().getVoiceState() != null) {
                 AudioManager manager = guild.getAudioManager();
                 manager.closeAudioConnection();
             }
@@ -38,9 +44,9 @@ public class BotStartup extends ListenerAdapter {
         }
     }
 
-    protected  void verifyGameSpyData(Guild guild) {
+    protected void verifyGameSpyData(Guild guild) {
         MySQLConnection connection = MySQLConnection.getInstance();
-        for(Member member : guild.getMembers()) {
+        for (Member member : guild.getMembers()) {
             connection.executeCommand("INSERT IGNORE INTO inside_agent_bot.gamespyusers SET Guild=" +
                     guild.getId() + ", MemberId=" + member.getIdLong() + ", totalTime=0");
         }
