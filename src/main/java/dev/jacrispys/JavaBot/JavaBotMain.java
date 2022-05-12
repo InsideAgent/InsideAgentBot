@@ -10,12 +10,12 @@ import dev.jacrispys.JavaBot.webhooks.SpotifyStats;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-
-
+import net.dv8tion.jda.internal.entities.WebhookImpl;
 
 
 public class JavaBotMain {
@@ -29,6 +29,7 @@ public class JavaBotMain {
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
                 .enableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE)
                 .build();
+
 
         MySQLConnection mySQLConnection = new MySQLConnection();
         mySQLConnection.getConnection("inside_agent_bot");

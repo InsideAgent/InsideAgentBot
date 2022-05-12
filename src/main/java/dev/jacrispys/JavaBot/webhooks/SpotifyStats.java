@@ -1,33 +1,33 @@
 package dev.jacrispys.JavaBot.webhooks;
 
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.managers.WebhookManager;
-import net.dv8tion.jda.internal.entities.WebhookImpl;
+import club.minnced.discord.webhook.external.JDAWebhookClient;
+import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.Webhook;
+import net.dv8tion.jda.api.requests.restaction.WebhookAction;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
-import java.util.regex.Pattern;
+import java.io.InputStream;
 
 public class SpotifyStats implements StatHooks<SpotifyStats> {
 
-    private final Webhook webhook;
-    private final WebhookManager webhookManager;
     private final TextChannel channel;
-    private final WebhookClient<SpotifyStats> webhookClient;
+    private WebhookAction webhookAction;
 
-    @SuppressWarnings("unchecked")
-    public SpotifyStats(TextChannel channel, long id, WebhookType type) {
-        this.webhook = new WebhookImpl(channel, id, type).setToken(UUID.randomUUID().toString());
+
+    public SpotifyStats(TextChannel channel) {
         this.channel = channel;
-        this.webhookClient = (WebhookClient<SpotifyStats>) webhook;
-        this.webhookManager = (webhook).getManager();
+        WebAgent webAgent = WebAgent.getInstance();
+        webhookAction = webAgent.getWebHook();
     }
 
     @Override
-    public void genHook(String message) {
-        webhookClient.sendMessage(message).queue();
-        webhook.delete().queue();
+    public Webhook build() {
+        return webhookAction.complete();
+    }
+
+    public void sendMessage(Webhook webhook, String message) {
+        JDAWebhookClient.from(webhook).send(message);
     }
 
     @Override
@@ -36,12 +36,20 @@ public class SpotifyStats implements StatHooks<SpotifyStats> {
     }
 
     @Override
+    public SpotifyStats setName(String name) {
+        webhookAction.setName(name).queue();
+        return this;
+    }
+
+    @Override
     public SpotifyStats setProfilePicture() {
         try {
-            File file = new File("C:\\Users\\jvanz\\Desktop\\Plugins\\DiscordBot\\Images\\Spotify_App_Logo.svg.png");
-            webhookManager.setAvatar(Icon.from(file, Icon.IconType.PNG)).queue();
-        } catch (IOException ignored) {
-            channel.sendMessage("Could not set profile picture!").queue();
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("images/SpotifyIcon.png");
+            Icon icon = Icon.from(inputStream, Icon.IconType.PNG);
+            webhookAction.setAvatar(icon).queue();
+        }catch (IOException ignored) {
+            webhookAction.getChannel().sendMessage("Cannot find file for webhook!").queue();
+            throw new NullPointerException("Could not find correct files for webhook!");
         }
         return this;
     }

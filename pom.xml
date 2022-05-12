@@ -122,6 +122,13 @@
             <systemPath>${basedir}/src/main/resources/libshout-java-2.2.2.jar</systemPath>
         </dependency>
 
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>discord-webhooks</artifactId>
+            <version>0.8.0</version>
+        </dependency>
+
+
     </dependencies>
 
 
