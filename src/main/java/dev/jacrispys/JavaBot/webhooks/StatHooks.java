@@ -6,15 +6,15 @@ import net.dv8tion.jda.api.entities.Webhook;
 
 import java.net.URL;
 
-public interface StatHooks{
+public interface StatHooks<T>{
 
-    SpotifyStats setName(String name);
+    T setName(String name);
 
     Webhook build();
 
-    SpotifyStats setIcon(URL url);
+    T setIcon(URL url);
 
-    SpotifyStats setIcon(String filePath);
+    T setIcon(String filePath);
 
     void sendMessageEmbed(Webhook webhook, MessageEmbed messageEmbed);
 

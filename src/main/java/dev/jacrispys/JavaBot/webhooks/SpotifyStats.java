@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class SpotifyStats implements StatHooks {
+public class SpotifyStats implements StatHooks<SpotifyStats> {
 
     private final TextChannel channel;
     private final WebhookAction webhookAction;
