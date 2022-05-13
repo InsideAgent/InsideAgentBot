@@ -54,9 +54,9 @@ public class GameSpy {
 
     }
 
+
     public void addSpy() {
         spyThread.addNewSpy(guild);
-        System.out.println("starting spies");
     }
 
     public void sendUpdate(Guild guild) {

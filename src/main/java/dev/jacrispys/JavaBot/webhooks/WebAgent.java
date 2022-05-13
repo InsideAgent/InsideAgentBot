@@ -2,26 +2,24 @@ package dev.jacrispys.JavaBot.webhooks;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Webhook;
-import net.dv8tion.jda.api.requests.restaction.WebhookAction;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class WebAgent {
 
-    private static WebhookAction webAgent;
-    public static String token;
+    private static Webhook webAgent;
     private static WebAgent INSTANCE;
-    private WebAgent() {}
+
+    private WebAgent() {
+    }
 
 
     @Nullable
-    public WebhookAction getWebHook() {
+    public Webhook getWebHook() {
         return webAgent != null ? webAgent : null;
     }
 
     public static WebAgent getInstance() {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new WebAgent();
         }
 
@@ -29,19 +27,15 @@ public class WebAgent {
     }
 
     public WebAgent createWebAgent(TextChannel channel) {
-        if(webAgent != null) {
-            channel.retrieveWebhooks().queue(webhooks -> {
-                for(Webhook webhook : webhooks) {
-
-                    if(Objects.equals(webhook.getToken(), token)) {
-                        webhook.delete().queue();
-                        webAgent = channel.createWebhook("WebAgent");
-                        return;
-                    }
+        if (webAgent != null) {
+            channel.getGuild().retrieveWebhooks().queue(webhooks -> webhooks.forEach(webhook -> {
+                if (webhook.getOwner() == channel.getGuild().getSelfMember()) {
+                    webAgent = webhook;
                 }
-            });
+            }));
+            return this;
         }
-        webAgent = channel.createWebhook("WebAgent");
+        webAgent = channel.createWebhook("WebAgent").complete();
 
         return this;
     }

@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Webhook;
-import net.dv8tion.jda.api.requests.restaction.WebhookAction;
+import net.dv8tion.jda.api.managers.WebhookManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,22 +13,21 @@ import java.net.URL;
 
 public class SpotifyStats implements StatHooks<SpotifyStats> {
 
+    @SuppressWarnings("all")
     private final TextChannel channel;
-    private final WebhookAction webhookAction;
+    private final WebhookManager webhookManager;
 
 
     public SpotifyStats(TextChannel channel) {
         this.channel = channel;
         WebAgent webAgent = WebAgent.getInstance();
-        webhookAction = webAgent.createWebAgent(channel).getWebHook();
+        webhookManager = webAgent.createWebAgent(channel).getWebHook().getManager();
+        this.setIcon("images/SpotifyIcon.png");
     }
 
     @Override
     public Webhook build() {
-        Webhook completed = webhookAction.complete();
-        WebAgent.getInstance();
-        WebAgent.token = completed.getToken();
-        return completed;
+        return webhookManager.getWebhook();
     }
 
     @Override
@@ -38,13 +37,13 @@ public class SpotifyStats implements StatHooks<SpotifyStats> {
 
     @Override
     public void sendMessageEmbed(Webhook webhook, MessageEmbed messageEmbed) {
-        JDAWebhookClient.from(webhook).send(messageEmbed);
+        JDAWebhookClient.from(build()).send(messageEmbed);
     }
 
 
     @Override
     public SpotifyStats setName(String name) {
-        webhookAction.setName(name).queue();
+        webhookManager.setName(name).queue();
         return this;
     }
 
@@ -54,9 +53,9 @@ public class SpotifyStats implements StatHooks<SpotifyStats> {
         try {
             InputStream inputStream = url.openStream();
             Icon icon = Icon.from(inputStream, Icon.IconType.UNKNOWN);
-            webhookAction.setAvatar(icon).queue();
+            webhookManager.setAvatar(icon).queue();
         }catch (IOException ignored) {
-            webhookAction.getChannel().sendMessage("Cannot find file for webhook!").queue();
+            webhookManager.getChannel().sendMessage("Cannot find file for webhook!").queue();
             throw new NullPointerException("Could not find correct files for webhook!");
         }
         return this;
@@ -67,9 +66,9 @@ public class SpotifyStats implements StatHooks<SpotifyStats> {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filePath);
             assert inputStream != null;
             Icon icon = Icon.from(inputStream, Icon.IconType.UNKNOWN);
-            webhookAction.setAvatar(icon).queue();
+            webhookManager.setAvatar(icon).queue();
         }catch (IOException ignored) {
-            webhookAction.getChannel().sendMessage("Cannot find file for webhook!").queue();
+            webhookManager.getChannel().sendMessage("Cannot find file for webhook!").queue();
             throw new NullPointerException("Could not find correct files for webhook!");
         }
         return this;

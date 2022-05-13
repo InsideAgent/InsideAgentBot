@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.sql.ResultSet;
@@ -34,8 +36,14 @@ public class GameSpyThread extends Thread {
     public void run() {
     }
 
+    private int spyCount = 0;
+    private final Logger logger = LoggerFactory.getLogger(GameSpyThread.class);
+
     public void addNewSpy(Guild guild) {
         runningSpies.put(guild, runSpy(guild));
+        spyCount++;
+        logger.info("Added New Spy [" + spyCount + "] - {}", GameSpyThread.class.getSimpleName());
+
     }
 
 
