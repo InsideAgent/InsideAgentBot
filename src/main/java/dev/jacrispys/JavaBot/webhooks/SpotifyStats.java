@@ -20,8 +20,9 @@ public class SpotifyStats implements StatHooks<SpotifyStats> {
 
     public SpotifyStats(TextChannel channel) {
         this.channel = channel;
-        WebAgent webAgent = WebAgent.getInstance();
-        webhookManager = webAgent.createWebAgent(channel).getWebHook().getManager();
+        Webhook webAgent = WebAgent.getInstance().createWebAgent(channel).getWebHook();
+        assert webAgent != null;
+        webhookManager = webAgent.getManager();
         this.setIcon("images/SpotifyIcon.png");
     }
 

@@ -15,7 +15,7 @@ public class WebAgent {
 
     @Nullable
     public Webhook getWebHook() {
-        return webAgent != null ? webAgent : null;
+        return webAgent;
     }
 
     public static WebAgent getInstance() {
