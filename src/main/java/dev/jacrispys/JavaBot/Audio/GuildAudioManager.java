@@ -453,6 +453,13 @@ public class GuildAudioManager {
         scheduler.setQueue(new LinkedBlockingQueue<>());
     }
 
+    public void clearQueue() {
+        if (djEnabled) {
+            return;
+        }
+        scheduler.setQueue(new LinkedBlockingQueue<>());
+    }
+
     /**
      * @param channel to send confirmation message to.
      *                if {@link AudioPlayer#isPaused()} does nothing, otherwise pauses player.

@@ -50,7 +50,9 @@ public class TrackScheduler extends AudioEventAdapter {
      *  Starts the next track in the queue, ignores if something is playing.
      */
     public void nextTrack() {
-        audioPlayer.startTrack(queue.poll(), false);
+        AudioTrack nextTrack = queue.poll();
+        audioPlayer.startTrack(nextTrack, false);
+        if(nextTrack == null) InactivityTimer.startInactivity(audioPlayer, guild);
     }
 
 
