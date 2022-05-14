@@ -10,10 +10,12 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class MusicCommands extends ListenerAdapter {
@@ -41,13 +43,14 @@ public class MusicCommands extends ListenerAdapter {
             }
         }
 
-        if (((message.contains("-play") && message.split("-play ").length > 1) || (message.contains("-p") && message.split("-p ").length > 1))) {
+        if (((message.contains("-play") && message.split("-play ").length > 1) || (message.contains("-p") && message.split("-p ").length > 1) || (message.contains("-p") || message.contains("-play") && event.getMessage().getAttachments().size() > 0))) {
             String trackUrl;
             if (message.contains("-play")) {
                 trackUrl = event.getMessage().getContentRaw().split("-play ")[1];
             } else {
                 trackUrl = event.getMessage().getContentRaw().split("-p ")[1];
             }
+
 
             VoiceChannel channel;
             try {
@@ -76,6 +79,12 @@ public class MusicCommands extends ListenerAdapter {
                 } catch (SQLException ex1) {
                     ex1.printStackTrace();
                 }
+            }
+            try {
+                File track = event.getMessage().getAttachments().get(0).downloadToFile().get();
+                audioHandler.loadAndPlay(event.getTextChannel(), String.valueOf(track.toURI()), channel, event.getAuthor(), false);
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
             }
         } else if (message.equalsIgnoreCase("-skip") || message.equalsIgnoreCase("-s")) {
             audioHandler.skipTrack(audioManager, event.getTextChannel());
