@@ -1,6 +1,5 @@
 package dev.jacrispys.JavaBot.webhooks;
 
-import club.minnced.discord.webhook.external.JDAWebhookClient;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
 
@@ -16,6 +15,10 @@ public interface StatHooks<T>{
 
     T setIcon(String filePath);
 
+    /**
+     * @param webhook to send embed from
+     * @param messageEmbed instance of embed to send
+     */
     void sendMessageEmbed(Webhook webhook, MessageEmbed messageEmbed);
 
     void sendMessage(Webhook webhook, String message);
