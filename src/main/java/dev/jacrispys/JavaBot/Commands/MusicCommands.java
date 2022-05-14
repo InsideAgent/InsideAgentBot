@@ -44,8 +44,20 @@ public class MusicCommands extends ListenerAdapter {
         }
 
         if (((message.contains("-play") && message.split("-play ").length > 1) || (message.contains("-p") && message.split("-p ").length > 1) || (message.contains("-p") || message.contains("-play") && event.getMessage().getAttachments().size() > 0))) {
-            String trackUrl;
-            if (message.contains("-play")) {
+            String trackUrl = null;
+            File file;
+            if (event.getMessage().getAttachments().size() > 0) {
+                VoiceChannel channel;
+                channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
+                if (channel == null) {
+                    event.getMessage().reply("Could not load song, as you are not in a voice channel!").queue();
+                    return;
+                }
+                String track = event.getMessage().getAttachments().get(0).getUrl();
+                audioHandler.loadAndPlay(event.getTextChannel(), track, channel, event.getAuthor(), false);
+                return;
+
+            } else if (message.contains("-play")) {
                 trackUrl = event.getMessage().getContentRaw().split("-play ")[1];
             } else {
                 trackUrl = event.getMessage().getContentRaw().split("-p ")[1];
@@ -79,12 +91,6 @@ public class MusicCommands extends ListenerAdapter {
                 } catch (SQLException ex1) {
                     ex1.printStackTrace();
                 }
-            }
-            try {
-                File track = event.getMessage().getAttachments().get(0).downloadToFile().get();
-                audioHandler.loadAndPlay(event.getTextChannel(), String.valueOf(track.toURI()), channel, event.getAuthor(), false);
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
             }
         } else if (message.equalsIgnoreCase("-skip") || message.equalsIgnoreCase("-s")) {
             audioHandler.skipTrack(audioManager, event.getTextChannel());
