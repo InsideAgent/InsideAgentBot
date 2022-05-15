@@ -26,6 +26,7 @@ public class GameSpyThread extends Thread {
     private final JDA jda;
     public Map<Guild, ScheduledExecutorService> runningSpies = new HashMap<>();
     private final MySQLConnection connection = MySQLConnection.getInstance();
+    private final Logger logger = LoggerFactory.getLogger(GameSpyThread.class);
 
 
     public GameSpyThread(JDA jda) {
@@ -34,10 +35,10 @@ public class GameSpyThread extends Thread {
 
     @Override
     public void run() {
+        logger.info("{} - GameSpyThread successfully started!", GameSpyThread.class.getSimpleName());
     }
 
     private int spyCount = 0;
-    private final Logger logger = LoggerFactory.getLogger(GameSpyThread.class);
 
     public void addNewSpy(Guild guild) {
         runningSpies.put(guild, runSpy(guild));

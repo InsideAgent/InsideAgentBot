@@ -13,25 +13,33 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class JavaBotMain {
 
     private static GameSpyThread gameSpyThread;
+    private static final Logger logger = LoggerFactory.getLogger(JavaBotMain.class);
+    private static final String className = JavaBotMain.class.getSimpleName();
 
     public static void main(String[] args) throws Exception {
+        logger.info("{} - Logging into bot & discord servers...", className);
         JDA jda = JDABuilder.createDefault(System.getenv("TOKEN"))
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
                 .enableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE)
                 .build();
+        logger.info("{} - Login Successful!", className);
 
-
+        logger.info("{} - Connecting to MySQL Database...", className);
         MySQLConnection mySQLConnection = new MySQLConnection();
         mySQLConnection.getConnection("inside_agent_bot");
+        logger.info("{} - DB-Connection Successful!", className);
 
         jda.getPresence().setActivity(Activity.streaming("Version-0.1.5 Woo!", "https://www.twitch.tv/jacrispyslive"));
+        logger.info("{} - Starting event listeners...", className);
         jda.addEventListener(new DefaultPrivateMessageResponse());
         jda.addEventListener(new ComplaintCommand());
         jda.addEventListener(new RegisterGuildCommand());
@@ -39,6 +47,8 @@ public class JavaBotMain {
         jda.addEventListener(new BotStartup());
         jda.addEventListener(new MusicCommands());
         jda.addEventListener(new AudioPlayerButtons());
+        logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
+        logger.info("{} - Starting GameSpyThread...", className);
         gameSpyThread = new GameSpyThread(jda);
         gameSpyThread.start();
 

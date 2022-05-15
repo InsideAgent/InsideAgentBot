@@ -133,6 +133,12 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.8</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>23.0.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 

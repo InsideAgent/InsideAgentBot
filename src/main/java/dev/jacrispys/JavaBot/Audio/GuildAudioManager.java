@@ -19,6 +19,8 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -37,6 +39,8 @@ public class GuildAudioManager {
     public final TrackScheduler scheduler;
     private final AudioPlayerSendHandler sendHandler;
     private final Map<AudioTrack, User> requester = new HashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(GuildAudioManager.class);
+    private static final String className = GuildAudioManager.class.getSimpleName();
 
     private boolean djEnabled = false;
 
@@ -51,6 +55,7 @@ public class GuildAudioManager {
     public static synchronized GuildAudioManager getGuildAudioManager(Guild guild) {
         if (audioManagers.get(guild) == null) {
             GuildAudioManager audioManager = new GuildAudioManager(guild);
+            logger.info("{} - Creating new GuildAudioManager for [" + guild.getName() + "]", className);
             audioManagers.put(guild, audioManager);
             if (currentGuild == null) currentGuild = guild;
             return audioManager;
@@ -77,6 +82,7 @@ public class GuildAudioManager {
         this.scheduler = new TrackScheduler(this.audioPlayer, currentGuild);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
+        logger.info("{} - Successfully added GuildAudioManager for [" + currentGuild.getName() + "]", className);
     }
 
     /**
