@@ -43,7 +43,7 @@ public class MusicCommands extends ListenerAdapter {
             }
         }
 
-        if (((message.contains("-play") && message.split("-play ").length > 1) || (message.contains("-p") && message.split("-p ").length > 1) || (message.contains("-p") || message.contains("-play") && event.getMessage().getAttachments().size() > 0))) {
+        if (((message.contains("-play ") && message.split("-play ").length > 1) || (message.contains("-p ") && message.split("-p ").length > 1) || (message.contains("-p") || message.contains("-play") && event.getMessage().getAttachments().size() > 0))) {
             String trackUrl = null;
             File file;
             if (event.getMessage().getAttachments().size() > 0) {
