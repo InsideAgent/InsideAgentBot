@@ -404,6 +404,7 @@ public class GuildAudioManager {
 
             EmbedBuilder eb = new EmbedBuilder();
             User trackSender = requester.get(newSong);
+            if(trackSender == null) trackSender = guild.getJDA().getSelfUser();
             eb.setAuthor("|   Currently Playing...", null, trackSender.getAvatarUrl());
             eb.addField(newSong.getInfo().title, "By - " + newSong.getInfo().author, false);
             eb.setColor(Color.decode("#155b5e"));

@@ -68,7 +68,6 @@ public class GameSpyThread extends Thread {
                    ResultSet rs = connection.queryCommand("SELECT totalTime FROM inside_agent_bot.gamespyusers WHERE memberId=" + member.getIdLong()
                            + " AND Guild=" + guild.getId());
                    if(!rs.next()) {
-                       System.out.println("couldn't index user.");
                        continue;
                    }
                    rs.beforeFirst();
