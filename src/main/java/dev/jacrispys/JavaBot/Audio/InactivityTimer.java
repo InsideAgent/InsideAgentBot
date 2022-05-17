@@ -21,7 +21,7 @@ public class InactivityTimer {
         long startMillis = System.currentTimeMillis();
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         Runnable service = () -> {
-            if(player.getPlayingTrack() != null) {
+            if(player.getPlayingTrack() != null && !player.isPaused()) {
                 executorService.shutdown();
             } else {
                 if(inactivityExpired(startMillis)) {

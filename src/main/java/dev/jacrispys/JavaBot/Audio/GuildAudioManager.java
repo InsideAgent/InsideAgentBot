@@ -429,6 +429,7 @@ public class GuildAudioManager {
     public void togglePlayer() {
         try {
             this.audioPlayer.setPaused(!audioPlayer.isPaused());
+            if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -479,6 +480,7 @@ public class GuildAudioManager {
         if (!audioPlayer.isPaused()) {
             channel.sendMessage("Paused ⏸️").queue();
             audioPlayer.setPaused(true);
+            if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild);
         }
     }
 
