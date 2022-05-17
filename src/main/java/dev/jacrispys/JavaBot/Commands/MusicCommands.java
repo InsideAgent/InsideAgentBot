@@ -112,6 +112,7 @@ public class MusicCommands extends ListenerAdapter {
         } else if (message.equalsIgnoreCase("-dc") || message.equalsIgnoreCase("-disconnect") || message.equalsIgnoreCase("-leave")) {
             event.getGuild().getAudioManager().closeAudioConnection();
             audioManager.clearQueue(event.getTextChannel());
+            audioManager.audioPlayer.destroy();
         } else if (message.equalsIgnoreCase("-move") || message.equalsIgnoreCase("-follow")) {
             if (event.getGuild().getMember(event.getAuthor()).getVoiceState().inAudioChannel()) {
                 event.getGuild().getAudioManager().openAudioConnection(event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel());
