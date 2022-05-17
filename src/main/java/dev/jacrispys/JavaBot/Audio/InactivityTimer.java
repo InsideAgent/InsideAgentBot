@@ -29,6 +29,7 @@ public class InactivityTimer {
                         TextChannel channel = guild.getTextChannelById(MySQLConnection.getInstance().getMusicChannel(guild));
                         assert channel != null;
                         channel.sendMessage("Left the channel due to inactivity!").queue(msg -> msg.delete().queueAfter(3, TimeUnit.SECONDS));
+                        player.destroy();
                     }catch (SQLException ignored) {
                     } finally {
                         GuildAudioManager.getGuildAudioManager(guild).clearQueue();
