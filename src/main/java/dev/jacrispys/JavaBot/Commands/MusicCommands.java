@@ -1,8 +1,8 @@
 package dev.jacrispys.JavaBot.Commands;
 
-import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.Audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.Audio.LoadAudioHandler;
+import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class MusicCommands extends ListenerAdapter {
@@ -43,7 +42,7 @@ public class MusicCommands extends ListenerAdapter {
             }
         }
 
-        if (((message.contains("-play ") && message.split("-play ").length > 1) || (message.contains("-p ") && message.split("-p ").length > 1) || (message.contains("-p") || message.contains("-play") && event.getMessage().getAttachments().size() > 0))) {
+        if (((message.contains("-play ") && message.split("-play ").length > 1) || (message.contains("-p ") && message.split("-p ").length > 1) || ((message.contains("-p ") || message.contains("-play ")) && event.getMessage().getAttachments().size() > 0))) {
             String trackUrl = null;
             File file;
             if (event.getMessage().getAttachments().size() > 0) {
@@ -113,6 +112,7 @@ public class MusicCommands extends ListenerAdapter {
         } else if (message.equalsIgnoreCase("-dc") || message.equalsIgnoreCase("-disconnect") || message.equalsIgnoreCase("-leave")) {
             event.getGuild().getAudioManager().closeAudioConnection();
             audioManager.clearQueue(event.getTextChannel());
+            audioManager.audioPlayer.destroy();
         } else if (message.equalsIgnoreCase("-move") || message.equalsIgnoreCase("-follow")) {
             if (event.getGuild().getMember(event.getAuthor()).getVoiceState().inAudioChannel()) {
                 event.getGuild().getAudioManager().openAudioConnection(event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel());

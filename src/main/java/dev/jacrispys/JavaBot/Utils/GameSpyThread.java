@@ -26,6 +26,7 @@ public class GameSpyThread extends Thread {
     private final JDA jda;
     public Map<Guild, ScheduledExecutorService> runningSpies = new HashMap<>();
     private final MySQLConnection connection = MySQLConnection.getInstance();
+    private final Logger logger = LoggerFactory.getLogger(GameSpyThread.class);
 
 
     public GameSpyThread(JDA jda) {
@@ -34,10 +35,10 @@ public class GameSpyThread extends Thread {
 
     @Override
     public void run() {
+        logger.info("{} - GameSpyThread successfully started!", GameSpyThread.class.getSimpleName());
     }
 
     private int spyCount = 0;
-    private final Logger logger = LoggerFactory.getLogger(GameSpyThread.class);
 
     public void addNewSpy(Guild guild) {
         runningSpies.put(guild, runSpy(guild));
@@ -67,7 +68,6 @@ public class GameSpyThread extends Thread {
                    ResultSet rs = connection.queryCommand("SELECT totalTime FROM inside_agent_bot.gamespyusers WHERE memberId=" + member.getIdLong()
                            + " AND Guild=" + guild.getId());
                    if(!rs.next()) {
-                       System.out.println("couldn't index user.");
                        continue;
                    }
                    rs.beforeFirst();

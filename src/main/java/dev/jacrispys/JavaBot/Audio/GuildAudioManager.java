@@ -19,6 +19,8 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -37,6 +39,8 @@ public class GuildAudioManager {
     public final TrackScheduler scheduler;
     private final AudioPlayerSendHandler sendHandler;
     private final Map<AudioTrack, User> requester = new HashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(GuildAudioManager.class);
+    private static final String className = GuildAudioManager.class.getSimpleName();
 
     private boolean djEnabled = false;
 
@@ -51,6 +55,7 @@ public class GuildAudioManager {
     public static synchronized GuildAudioManager getGuildAudioManager(Guild guild) {
         if (audioManagers.get(guild) == null) {
             GuildAudioManager audioManager = new GuildAudioManager(guild);
+            logger.info("{} - Creating new GuildAudioManager for [" + guild.getName() + "]", className);
             audioManagers.put(guild, audioManager);
             if (currentGuild == null) currentGuild = guild;
             return audioManager;
@@ -77,6 +82,7 @@ public class GuildAudioManager {
         this.scheduler = new TrackScheduler(this.audioPlayer, currentGuild);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
+        logger.info("{} - Successfully added GuildAudioManager for [" + currentGuild.getName() + "]", className);
     }
 
     /**
@@ -398,6 +404,7 @@ public class GuildAudioManager {
 
             EmbedBuilder eb = new EmbedBuilder();
             User trackSender = requester.get(newSong);
+            if(trackSender == null) trackSender = guild.getJDA().getSelfUser();
             eb.setAuthor("|   Currently Playing...", null, trackSender.getAvatarUrl());
             eb.addField(newSong.getInfo().title, "By - " + newSong.getInfo().author, false);
             eb.setColor(Color.decode("#155b5e"));
@@ -408,7 +415,7 @@ public class GuildAudioManager {
             buttons.add(Button.secondary("showQueue:" + channel.getGuild().getId(), "Show Queue"));
             buttons.add(Button.danger("remove:" + channel.getGuild().getId(), "✖️"));
             if (nowPlayingId.getOrDefault(guild, null) != null) {
-                channel.deleteMessageById(nowPlayingId.get(guild)).queue(null, new ErrorHandler().ignore(ErrorResponse.EMPTY_MESSAGE).handle(ErrorResponse.EMPTY_MESSAGE, (e) -> {}));
+                channel.deleteMessageById(nowPlayingId.get(guild)).queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE).handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {}));
             }
             channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue(message -> nowPlayingId.put(guild, message.getIdLong()));
         } catch (SQLException ex) {
@@ -422,6 +429,7 @@ public class GuildAudioManager {
     public void togglePlayer() {
         try {
             this.audioPlayer.setPaused(!audioPlayer.isPaused());
+            if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -472,6 +480,7 @@ public class GuildAudioManager {
         if (!audioPlayer.isPaused()) {
             channel.sendMessage("Paused ⏸️").queue();
             audioPlayer.setPaused(true);
+            if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild);
         }
     }
 
