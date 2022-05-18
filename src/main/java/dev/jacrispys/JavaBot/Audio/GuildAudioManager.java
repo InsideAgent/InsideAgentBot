@@ -11,6 +11,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
+import dev.jacrispys.JavaBot.Utils.SecretData;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
@@ -71,8 +72,8 @@ public class GuildAudioManager {
         AudioSourceManagers.registerLocalSource(audioManager);
 
         SpotifyConfig spotifyConfig = new SpotifyConfig();
-        spotifyConfig.setClientId(System.getenv("SpotifyClientId"));
-        spotifyConfig.setClientSecret(System.getenv("SpotifySecret"));
+        spotifyConfig.setClientId(SecretData.getSpotifyId());
+        spotifyConfig.setClientSecret(SecretData.getSpotifySecret());
         spotifyConfig.setCountryCode("US");
         audioManager.registerSourceManager(new SpotifySourceManager(null, spotifyConfig, audioManager));
 

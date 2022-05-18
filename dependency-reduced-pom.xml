@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.Jacrispys</groupId>
   <artifactId>DiscordBot</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.1.5</version>
   <build>
     <plugins>
       <plugin>
@@ -15,16 +15,9 @@
             <goals>
               <goal>testCompile</goal>
             </goals>
-            <configuration>
-              <proc>only</proc>
-              <annotationProcessors>
-                <annotationProcessor>com.jacrispys.JavaBot.Utils.ExperimentalUtils.ExperimentalProcessor</annotationProcessor>
-              </annotationProcessors>
-            </configuration>
           </execution>
         </executions>
         <configuration>
-          <proc>none</proc>
           <source>17</source>
           <target>17</target>
         </configuration>
@@ -68,6 +61,21 @@
       <url>https://jitpack.io</url>
     </repository>
   </repositories>
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>23.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.OlegKunitsyn</groupId>
+      <artifactId>libshout-java</artifactId>
+      <version>2.2.2</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/src/main/resources/libshout-java-2.2.2.jar</systemPath>
+    </dependency>
+  </dependencies>
   <properties>
     <maven.compiler.target>8</maven.compiler.target>
     <mainClass>dev.jacrispys.JavaBot.JavaBotMain</mainClass>

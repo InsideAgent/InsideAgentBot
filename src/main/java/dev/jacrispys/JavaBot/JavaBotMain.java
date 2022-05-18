@@ -6,6 +6,7 @@ import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessa
 import dev.jacrispys.JavaBot.Events.BotStartup;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
+import dev.jacrispys.JavaBot.Utils.SecretData;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -23,9 +24,13 @@ public class JavaBotMain {
     private static final Logger logger = LoggerFactory.getLogger(JavaBotMain.class);
     private static final String className = JavaBotMain.class.getSimpleName();
 
+    private static final String botToken = SecretData.getToken();
+
     public static void main(String[] args) throws Exception {
+
+
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(System.getenv("TOKEN"))
+        JDA jda = JDABuilder.createDefault(botToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
@@ -51,7 +56,6 @@ public class JavaBotMain {
         logger.info("{} - Starting GameSpyThread...", className);
         gameSpyThread = new GameSpyThread(jda);
         gameSpyThread.start();
-
 
 
     }

@@ -1,5 +1,6 @@
 package dev.jacrispys.JavaBot.Utils.MySQL;
 
+import dev.jacrispys.JavaBot.Utils.SecretData;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -21,7 +22,7 @@ public class MySQLConnection {
     public Connection getConnection(String dataBase) throws Exception {
         try {
             String userName = "Jacrispys";
-            String db_password = System.getenv("DATA_BASE_PASS");
+            String db_password = SecretData.getDataBasePass();
 
             String url = "jdbc:mysql://localhost:3306/" + dataBase;
             Class.forName("com.mysql.cj.jdbc.Driver");
