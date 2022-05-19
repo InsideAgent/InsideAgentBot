@@ -1,6 +1,7 @@
 package dev.jacrispys.JavaBot;
 
 import dev.jacrispys.JavaBot.Audio.AudioPlayerButtons;
+import dev.jacrispys.JavaBot.Audio.InactivityTimer;
 import dev.jacrispys.JavaBot.Commands.*;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
 import dev.jacrispys.JavaBot.Events.BotStartup;
@@ -52,6 +53,7 @@ public class JavaBotMain {
         jda.addEventListener(new BotStartup());
         jda.addEventListener(new MusicCommands());
         jda.addEventListener(new AudioPlayerButtons());
+        jda.addEventListener(new InactivityTimer());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
         logger.info("{} - Starting GameSpyThread...", className);
         gameSpyThread = new GameSpyThread(jda);
