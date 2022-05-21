@@ -27,6 +27,7 @@ public class DebugCommands extends ListenerAdapter {
                         eb.setAuthor("Active Audio Players - [DEBUG]", null, event.getAuthor().getEffectiveAvatarUrl());
                         StringBuilder builder = new StringBuilder();
                         activePlayers().forEach(guild -> builder.append("\n").append(guild.getName()));
+                        eb.setFooter("Enabled Players: " + activePlayers().size() + " \uD83D\uDE40");
                         eb.addField("Guild with Active Players:", builder.toString(), false);
                         event.getMessage().replyEmbeds(eb.build()).queue();
                     default:
