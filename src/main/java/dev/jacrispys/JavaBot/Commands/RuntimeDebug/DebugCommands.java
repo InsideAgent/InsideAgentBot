@@ -2,7 +2,9 @@ package dev.jacrispys.JavaBot.Commands.RuntimeDebug;
 
 import dev.jacrispys.JavaBot.Audio.GuildAudioManager;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +23,16 @@ public class DebugCommands extends ListenerAdapter {
             String message;
             message = (event.getMessage().getContentRaw().toLowerCase().contains("-debug ") ? event.getMessage().getContentRaw().replace("-debug ", "").toLowerCase() : null);
             if (message != null) {
+                assert event.getMember() != null;
+                if(!event.getMember().getPermissions().contains(Permission.ADMINISTRATOR)) {
+                    boolean isDebug = false;
+                    for(Role role : event.getMember().getRoles()) {
+                        if(role.getName().equalsIgnoreCase("Debug")) {
+                            isDebug = true;
+                        }
+                    }
+                    if(!isDebug) return;
+                }
                 switch (message) {
                     case ("getactive"):
                         EmbedBuilder eb = new EmbedBuilder();
