@@ -48,7 +48,7 @@ public class JavaBotMain {
         mySQLConnection.getConnection("inside_agent_bot");
         logger.info("{} - DB-Connection Successful!", className);
 
-        jda.getPresence().setActivity(Activity.streaming("Version-0.1.5 Woo!", "https://www.twitch.tv/jacrispyslive"));
+        jda.getPresence().setActivity(Activity.streaming("Version-0.1.6 Woo!", "https://www.twitch.tv/jacrispyslive"));
         logger.info("{} - Starting event listeners...", className);
         jda.addEventListener(new DefaultPrivateMessageResponse());
         jda.addEventListener(new ComplaintCommand());
