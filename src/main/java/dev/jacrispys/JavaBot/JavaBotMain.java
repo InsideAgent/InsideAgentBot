@@ -4,6 +4,7 @@ import dev.jacrispys.JavaBot.Audio.AudioPlayerButtons;
 import dev.jacrispys.JavaBot.Audio.InactivityTimer;
 import dev.jacrispys.JavaBot.Commands.*;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
+import dev.jacrispys.JavaBot.Commands.RuntimeDebug.DebugCommands;
 import dev.jacrispys.JavaBot.Events.BotStartup;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
@@ -15,6 +16,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.fusesource.jansi.AnsiConsole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +31,8 @@ public class JavaBotMain {
 
     public static void main(String[] args) throws Exception {
 
+        AnsiConsole.systemInstall();
+        logger.info("{} - Jansi Installed.", className);
 
         logger.info("{} - Logging into bot & discord servers...", className);
         JDA jda = JDABuilder.createDefault(botToken)
@@ -54,6 +58,7 @@ public class JavaBotMain {
         jda.addEventListener(new MusicCommands());
         jda.addEventListener(new AudioPlayerButtons());
         jda.addEventListener(new InactivityTimer());
+        jda.addEventListener(new DebugCommands());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
         logger.info("{} - Starting GameSpyThread...", className);
         gameSpyThread = new GameSpyThread(jda);

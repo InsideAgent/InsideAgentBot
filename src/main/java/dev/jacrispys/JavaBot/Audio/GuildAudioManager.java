@@ -93,6 +93,10 @@ public class GuildAudioManager {
         return this.audioManager;
     }
 
+    public static Map<Guild, GuildAudioManager> getAudioManagers() {
+        return Collections.unmodifiableMap(audioManagers);
+    }
+
     /**
      * @param channel      to send messages in
      * @param trackUrl     of the loaded track
