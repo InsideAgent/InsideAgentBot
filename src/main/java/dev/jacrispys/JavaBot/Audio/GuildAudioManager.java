@@ -236,7 +236,7 @@ public class GuildAudioManager {
             channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
             return;
         }
-        channel.sendMessage("Could not play: " + trackUrl + " \nReason:" + exception.getMessage()).queue();
+        channel.sendMessage("Could not play: " + trackUrl + " \n `Reason: " + exception.getLocalizedMessage() + "`").queue();
     }
 
     /**

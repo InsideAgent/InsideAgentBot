@@ -9,10 +9,12 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DebugCommands extends ListenerAdapter {
+    @SuppressWarnings("all")
     private final long DEBUG_SERVER = 786741501014441995L;
 
 
@@ -35,13 +37,23 @@ public class DebugCommands extends ListenerAdapter {
                 }
                 switch (message) {
                     case ("getactive"):
+                    case("active"):
+                    case("players"):
                         EmbedBuilder eb = new EmbedBuilder();
-                        eb.setAuthor("Active Audio Players - [DEBUG]", null, event.getAuthor().getEffectiveAvatarUrl());
+                        eb.setAuthor("Latency Info - [DEBUG]", null, event.getAuthor().getEffectiveAvatarUrl());
                         StringBuilder builder = new StringBuilder();
                         activePlayers().forEach(guild -> builder.append("\n").append(guild.getName()));
                         eb.setFooter("Enabled Players: " + activePlayers().size() + " \uD83D\uDE40");
                         eb.addField("Guild with Active Players:", builder.toString(), false);
                         event.getMessage().replyEmbeds(eb.build()).queue();
+                        break;
+                    case("latency"):
+                    case("ping"):
+                        EmbedBuilder latencyEb = new EmbedBuilder();
+                        latencyEb.setAuthor("Active Audio Players - [DEBUG]", null, event.getAuthor().getEffectiveAvatarUrl());
+                        long latency = Instant.now().toEpochMilli() - (event.getMessage().getTimeCreated().toInstant().toEpochMilli());
+                        latencyEb.addField("Latency: ", "Gateway Latency: `" + event.getJDA().getGatewayPing() + "`Ms \n" + "Server latency: `" + latency + "`Ms", false);
+                        event.getMessage().replyEmbeds(latencyEb.build()).queue();
                     default:
                         break;
                 }
@@ -58,6 +70,7 @@ public class DebugCommands extends ListenerAdapter {
         });
         return activePlayers;
     }
+
 
 
 }

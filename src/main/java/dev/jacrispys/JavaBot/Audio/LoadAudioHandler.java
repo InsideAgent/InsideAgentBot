@@ -37,7 +37,6 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
             @Override
             public void loadFailed(FriendlyException e) {
                 guildAudioManager.trackLoadFailed(channel, trackUrl, e);
-                e.printStackTrace();
             }
         });
 
