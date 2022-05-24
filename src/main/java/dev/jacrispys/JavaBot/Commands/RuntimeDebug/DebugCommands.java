@@ -53,7 +53,9 @@ public class DebugCommands extends ListenerAdapter {
                         latencyEb.setAuthor("Active Audio Players - [DEBUG]", null, event.getAuthor().getEffectiveAvatarUrl());
                         long latency = Instant.now().toEpochMilli() - (event.getMessage().getTimeCreated().toInstant().toEpochMilli());
                         latencyEb.addField("Latency: ", "Gateway Latency: `" + event.getJDA().getGatewayPing() + "`Ms \n" + "Server latency: `" + latency + "`Ms", false);
+                        latencyEb.setFooter("Negative ping what a joke :(");
                         event.getMessage().replyEmbeds(latencyEb.build()).queue();
+                    case(""):
                     default:
                         break;
                 }
