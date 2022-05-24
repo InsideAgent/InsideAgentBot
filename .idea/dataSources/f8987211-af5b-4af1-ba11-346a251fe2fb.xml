@@ -1018,51 +1018,5 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Host>localhost</Host>
       <Plugin>caching_sha2_password</Plugin>
     </user>
-    <table id="287" parent="274" name="gamespyusers">
-      <Engine>InnoDB</Engine>
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </table>
-    <table id="288" parent="274" name="guilds">
-      <Engine>InnoDB</Engine>
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </table>
-    <column id="289" parent="287" name="Guild">
-      <DataType>mediumtext|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-    </column>
-    <column id="290" parent="287" name="MemberId">
-      <DataType>mediumtext|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-    </column>
-    <column id="291" parent="287" name="totalTime">
-      <DataType>int|0s</DataType>
-      <DefaultExpression>0</DefaultExpression>
-      <Position>3</Position>
-    </column>
-    <column id="292" parent="288" name="ID">
-      <DataType>mediumtext|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-    </column>
-    <column id="293" parent="288" name="GameSpy">
-      <DataType>tinyint(1)|0s</DataType>
-      <DefaultExpression>0</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-    </column>
-    <column id="294" parent="288" name="TicketChannel">
-      <DataType>mediumtext|0s</DataType>
-      <Position>3</Position>
-    </column>
-    <column id="295" parent="288" name="GameSpyChannel">
-      <DataType>mediumtext|0s</DataType>
-      <Position>4</Position>
-    </column>
-    <column id="296" parent="288" name="musicChannel">
-      <DataType>mediumtext|0s</DataType>
-      <Position>5</Position>
-    </column>
   </database-model>
 </dataSource>

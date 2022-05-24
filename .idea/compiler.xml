@@ -7,17 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="DiscordBot" />
+        <module name="InsideAgent" />
       </profile>
-      <profile name="Experimental" enabled="true" />
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="DevBot" target="17" />
+      <module name="DiscordBot" target="17" />
+      <module name="InsideAgent" target="17" />
     </bytecodeTargetLevel>
-  </component>
-  <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="DiscordBot" options="" />
-    </option>
   </component>
 </project>

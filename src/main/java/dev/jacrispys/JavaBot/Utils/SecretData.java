@@ -1,6 +1,5 @@
 package dev.jacrispys.JavaBot.Utils;
 
-import dev.jacrispys.JavaBot.JavaBotMain;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.Map;
