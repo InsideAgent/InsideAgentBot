@@ -543,8 +543,9 @@ public class GuildAudioManager {
         float div = ((float) track.getPosition() / (float) track.getDuration() * 20);
         int duration = Math.round(div);
         String emoji = ("\uD83D\uDD18");
-        if (duration > 20) duration = 20;
-        durationSlider = durationSlider.substring(0, duration) + emoji + durationSlider.substring(duration + 1);
+        if(duration > 19) duration = 19;
+            durationSlider = durationSlider.substring(0, duration) + emoji + durationSlider.substring(duration + 1);
+
         String time = "[" + DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + "/" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]";
         assert getRequester() != null;
         eb.addField("-Requested By: ", getRequester().get(track).getAsMention() + "\n" + durationSlider + "\n" + time, false);
