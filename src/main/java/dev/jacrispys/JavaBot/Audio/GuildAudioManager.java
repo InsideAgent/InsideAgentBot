@@ -7,6 +7,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeHttpContextFilter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -83,6 +84,8 @@ public class GuildAudioManager {
         this.scheduler = new TrackScheduler(this.audioPlayer, currentGuild);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
+        YoutubeHttpContextFilter.setPSID("JwhxUOZ3N5Qbz3BAB3ybQA8Ab-X5nt5MZANyYjetvYQDj4U7kbB9YSPeDNGaQaLdVa-D3Q.");
+        YoutubeHttpContextFilter.setPAPISID("LWUfqoKaYkxteUy6/AYuE3IMHL6pXy7qSu");
         logger.info("{} - Successfully added GuildAudioManager for [" + currentGuild.getName() + "]", className);
     }
 

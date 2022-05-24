@@ -50,8 +50,8 @@ public class ComplaintCommand extends ListenerAdapter {
             event.getTextChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
             return;
         }
-        if (event.getMessage().getMentionedUsers().size() != 1) return;
-        User mentionedUser = event.getMessage().getMentionedUsers().get(0);
+        if (event.getMessage().getMentions().getUsers().size() != 1) return;
+        User mentionedUser = event.getMessage().getMentions().getUsers().get(0);
         User sender = event.getAuthor();
         if (mentionedUser.isBot()) {
             defendAllRobots(event);
