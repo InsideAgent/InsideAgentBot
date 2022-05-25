@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dev.Jacrispys</groupId>
-    <artifactId>InsideAgent</artifactId>
+    <artifactId>InsideAgentDev</artifactId>
     <version>0.1.6</version>
     <build>
         <plugins>

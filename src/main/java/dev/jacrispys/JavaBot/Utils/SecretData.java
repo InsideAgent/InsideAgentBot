@@ -10,7 +10,7 @@ public class SecretData {
 
 
     public static String getToken() {
-         return (String) loginInfo.get("TOKEN");
+        return (String) loginInfo.get("TOKEN");
     }
 
     public static String getSpotifySecret() {
@@ -25,7 +25,16 @@ public class SecretData {
         return (String) loginInfo.get("DATA_BASE_PASS");
     }
 
+    public static String getPSID() {
+        return (String) loginInfo.get("YOUTUBE_PSID");
+    }
+
+    public static String getPAPISID() {
+        return (String) loginInfo.get("YOUTUBE_PAPISID");
+    }
+
     public static Object getCustomData(String key) {
         return loginInfo.get(key);
     }
+
 }

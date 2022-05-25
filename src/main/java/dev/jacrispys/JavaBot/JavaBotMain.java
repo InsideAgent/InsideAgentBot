@@ -1,9 +1,14 @@
 package dev.jacrispys.JavaBot;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import dev.jacrispys.JavaBot.Audio.AudioPlayerButtons;
 import dev.jacrispys.JavaBot.Audio.InactivityTimer;
-import dev.jacrispys.JavaBot.Commands.*;
+import dev.jacrispys.JavaBot.Commands.Audio.GenericMusicCommands;
+import dev.jacrispys.JavaBot.Commands.ComplaintCommand;
+import dev.jacrispys.JavaBot.Commands.GameSpyCommand;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
+import dev.jacrispys.JavaBot.Commands.RegisterGuildCommand;
 import dev.jacrispys.JavaBot.Commands.RuntimeDebug.DebugCommands;
 import dev.jacrispys.JavaBot.Events.BotStartup;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
@@ -26,6 +31,7 @@ public class JavaBotMain {
     private static GameSpyThread gameSpyThread;
     private static final Logger logger = LoggerFactory.getLogger(JavaBotMain.class);
     private static final String className = JavaBotMain.class.getSimpleName();
+    public static AudioPlayerManager audioManager;
 
     private static final String botToken = SecretData.getToken();
 
@@ -48,6 +54,8 @@ public class JavaBotMain {
         mySQLConnection.getConnection("inside_agent_bot");
         logger.info("{} - DB-Connection Successful!", className);
 
+        audioManager = new DefaultAudioPlayerManager();
+
         jda.getPresence().setActivity(Activity.streaming("Version-0.1.6 Woo!", "https://www.twitch.tv/jacrispyslive"));
         logger.info("{} - Starting event listeners...", className);
         jda.addEventListener(new DefaultPrivateMessageResponse());
@@ -55,7 +63,7 @@ public class JavaBotMain {
         jda.addEventListener(new RegisterGuildCommand());
         jda.addEventListener(new GameSpyCommand());
         jda.addEventListener(new BotStartup());
-        jda.addEventListener(new MusicCommands());
+        jda.addEventListener(new GenericMusicCommands());
         jda.addEventListener(new AudioPlayerButtons());
         jda.addEventListener(new InactivityTimer());
         jda.addEventListener(new DebugCommands());

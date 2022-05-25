@@ -5,7 +5,6 @@ import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySource
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeHttpContextFilter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -34,9 +33,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 
-public class GuildAudioManager {
+import static dev.jacrispys.JavaBot.JavaBotMain.audioManager;
 
-    private final AudioPlayerManager audioManager;
+public class GuildAudioManager {
     public final AudioPlayer audioPlayer;
     public final TrackScheduler scheduler;
     private final AudioPlayerSendHandler sendHandler;
@@ -68,7 +67,6 @@ public class GuildAudioManager {
 
 
     protected GuildAudioManager(Guild instance) {
-        this.audioManager = new DefaultAudioPlayerManager();
         this.audioPlayer = audioManager.createPlayer();
         AudioSourceManagers.registerLocalSource(audioManager);
 
@@ -84,8 +82,8 @@ public class GuildAudioManager {
         this.scheduler = new TrackScheduler(this.audioPlayer, currentGuild);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
-        YoutubeHttpContextFilter.setPSID("JwhxUOZ3N5Qbz3BAB3ybQA8Ab-X5nt5MZANyYjetvYQDj4U7kbB9YSPeDNGaQaLdVa-D3Q.");
-        YoutubeHttpContextFilter.setPAPISID("LWUfqoKaYkxteUy6/AYuE3IMHL6pXy7qSu");
+        YoutubeHttpContextFilter.setPSID(SecretData.getPSID());
+        YoutubeHttpContextFilter.setPAPISID(SecretData.getPAPISID());
         logger.info("{} - Successfully added GuildAudioManager for [" + currentGuild.getName() + "]", className);
     }
 
@@ -93,7 +91,7 @@ public class GuildAudioManager {
      * @return instance of AudioManager
      */
     public AudioPlayerManager getAudioManager() {
-        return this.audioManager;
+        return audioManager;
     }
 
     public static Map<Guild, GuildAudioManager> getAudioManagers() {
