@@ -2,23 +2,22 @@ package dev.jacrispys.JavaBot.Commands.Audio;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.internal.interactions.CommandDataImpl;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class SlashMusicCommands extends ListenerAdapter {
 
     public SlashMusicCommands(JDA jda, List<Guild> guilds) {
-
+        guilds.forEach(this::updateGuildCommands);
     }
 
     protected void updateGuildCommands(Guild guild) {
+        System.out.println("adding commands to: " + guild.getName());
         guild.updateCommands().addCommands(
                 Commands.slash("play", "Add a link to most streaming platforms, or use its name to search!")
                         .addOption(OptionType.STRING, "url/search", "Track to search for."),
@@ -47,10 +46,15 @@ public class SlashMusicCommands extends ListenerAdapter {
                 Commands.slash("remove", "Removes a song from the queue at a given index number!")
                         .addOption(OptionType.INTEGER, "Index", "Index to remove from queue!"),
                 Commands.slash("seek", "Takes in arg in the form of HH:mm:ss that seeks to that time in the current song!")
-                        .addOption(OptionType.INTEGER, "Hours", "", false));
+                        .addOption(OptionType.INTEGER, "Hours", "", false)
+                        .addOption(OptionType.INTEGER, "Minutes", "", true)
+                        .addOption(OptionType.INTEGER, "Seconds", "", true)).queue();
 
 
     }
 
-
+    @Override
+    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        super.onSlashCommandInteraction(event);
+    }
 }
