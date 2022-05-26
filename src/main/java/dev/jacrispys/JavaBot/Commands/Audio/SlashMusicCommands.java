@@ -3,6 +3,7 @@ package dev.jacrispys.JavaBot.Commands.Audio;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -12,17 +13,20 @@ import java.util.List;
 
 public class SlashMusicCommands extends ListenerAdapter {
 
-    public SlashMusicCommands(JDA jda, List<Guild> guilds) {
+    public SlashMusicCommands() {
+
+    }
+
+    public void initCommands(JDA jda, List<Guild> guilds) {
         guilds.forEach(this::updateGuildCommands);
     }
 
     protected void updateGuildCommands(Guild guild) {
-            System.out.println("adding commands to: " + guild.getName());
             guild.updateCommands().addCommands(
                     Commands.slash("play", "Add a link to most streaming platforms, or use its name to search!")
-                            .addOption(OptionType.STRING, "url/search", "Track to search for."),
+                            .addOption(OptionType.STRING, "url", "Track to search for."),
                     Commands.slash("p", "Add a link to most streaming platforms, or use its name to search!")
-                            .addOption(OptionType.STRING, "url/search", "Track to search for."),
+                            .addOption(OptionType.STRING, "url", "Track to search for."),
                     Commands.slash("skip", "Skips the current song!"),
                     Commands.slash("s", "Skips the current song!"),
                     Commands.slash("volume", "A number 1-500 to adjust volume!")
@@ -44,11 +48,11 @@ public class SlashMusicCommands extends ListenerAdapter {
                     Commands.slash("songinfo", "Shows info about the song, including a progress bar, the song requester, and Title/Author!"),
                     Commands.slash("info", "Shows info about the song, including a progress bar, the song requester, and Title/Author!"),
                     Commands.slash("remove", "Removes a song from the queue at a given index number!")
-                            .addOption(OptionType.INTEGER, "Index", "Index to remove from queue!"),
+                            .addOption(OptionType.INTEGER, "index", "Index to remove from queue!"),
                     Commands.slash("seek", "Takes in arg in the form of HH:mm:ss that seeks to that time in the current song!")
-                            .addOption(OptionType.INTEGER, "Hours", "", false)
-                            .addOption(OptionType.INTEGER, "Minutes", "", true)
-                            .addOption(OptionType.INTEGER, "Seconds", "", true)).queue();
+                            .addOption(OptionType.INTEGER, "minutes", "number of minutes", true)
+                            .addOption(OptionType.INTEGER, "seconds", "number of seconds", true)
+                            .addOption(OptionType.INTEGER, "hours", "(Optional) Number of hours", false)).queue();
 
 
 

@@ -59,7 +59,7 @@ public class JavaBotMain {
 
         jda.getPresence().setActivity(Activity.streaming("Version-0.1.6 Woo!", "https://www.twitch.tv/jacrispyslive"));
         logger.info("{} - Starting event listeners...", className);
-        jda.addEventListener(new SlashMusicCommands(jda, jda.getGuilds()));
+        jda.addEventListener(new SlashMusicCommands());
         jda.addEventListener(new DefaultPrivateMessageResponse());
         jda.addEventListener(new ComplaintCommand());
         jda.addEventListener(new RegisterGuildCommand());
