@@ -84,9 +84,9 @@ public class SlashMusicCommands extends ListenerAdapter {
                 Commands.slash("st", "Skips the queue to a given index.")
                         .addOption(OptionType.INTEGER, "index", "Index to skip to.", true),
                 Commands.slash("fileplay", "adds a song to the queue")
-                        .addOption(OptionType.ATTACHMENT, "url", "track to add to queue", true),
+                        .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true),
                 Commands.slash("fp", "adds a song to the queue")
-                        .addOption(OptionType.ATTACHMENT, "index", "track to add to queue", true)
+                        .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true)
                 ).queue();
     }
 
@@ -99,29 +99,36 @@ public class SlashMusicCommands extends ListenerAdapter {
         GuildAudioManager audioManager = GuildAudioManager.getGuildAudioManager(event.getGuild());
         LoadAudioHandler audioHandler = new LoadAudioHandler(audioManager);
         switch (commandName) {
-            case "play","p","ptop","playtop" -> {
+            case "play","p","ptop","playtop","fileplay","fp" -> {
                 VoiceChannel channel;
                 assert event.getMember() != null;
                 assert event.getGuild() != null;
                 channel = (VoiceChannel) event.getGuild().getMember(event.getMember()).getVoiceState().getChannel();
-                String track = event.getOption("url").getAsString();
-                if (channel == null) {
-                    event.reply("Could not load song, as you are not in a voice channel!").setEphemeral(true).queue();
-                    return;
-                }
-                try {
-                    new URL(track);
-                } catch (MalformedURLException ignored) {
-                    String searchMethod = "ytsearch";
-                    if(event.getOption("search") != null) {
-                        searchMethod = event.getOption("search").getAsString();
+
+                String track = null;
+                if(!(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp"))) {
+                    track = event.getOption("url").getAsString();
+                    if (channel == null) {
+                        event.reply("Could not load song, as you are not in a voice channel!").setEphemeral(true).queue();
+                        return;
                     }
-                      switch (searchMethod.toLowerCase()) {
-                        case ("spsearch:") -> searchMethod = "spsearch:";
-                        case ("amsearch:") -> searchMethod = "amsearch:";
-                        default -> searchMethod = "ytsearch:";
-                    };
-                    track = searchMethod + track;
+                    try {
+                        new URL(track);
+                    } catch (MalformedURLException ignored) {
+                        String searchMethod = "ytsearch";
+                        if (event.getOption("search") != null) {
+                            searchMethod = event.getOption("search").getAsString();
+                        }
+                        switch (searchMethod.toLowerCase()) {
+                            case ("spsearch:") -> searchMethod = "spsearch:";
+                            case ("amsearch:") -> searchMethod = "amsearch:";
+                            default -> searchMethod = "ytsearch:";
+                        }
+                        track = searchMethod + track;
+                    }
+                }
+                if(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp")) {
+                    track = event.getOption("file").getAsAttachment().getUrl();
                 }
                 boolean playTop = (commandName.equalsIgnoreCase("ptop") || commandName.equalsIgnoreCase("playtop"));
                 audioHandler.loadAndPlay(event.getTextChannel(), track, channel, event.getUser(), playTop);
