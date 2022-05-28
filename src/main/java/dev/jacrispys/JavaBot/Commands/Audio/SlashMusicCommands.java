@@ -53,7 +53,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                 Commands.slash("q", "Shows a Embed of songs (10 per page) with page selectors, and a button to remove the message!"),
                 Commands.slash("shuffle", "Shuffles the current queue."),
                 Commands.slash("song", "Shows info about the song, including a progress bar, the song requester, and Title/Author!"),
-                Commands.slash("songinfo", "Shows info about the song, including a progress bar, the song requester, and Title/Author!"),
+                Commands.slash("song-info", "Shows info about the song, including a progress bar, the song requester, and Title/Author!"),
                 Commands.slash("info", "Shows info about the song, including a progress bar, the song requester, and Title/Author!"),
                 Commands.slash("remove", "Removes a song from the queue at a given index number!")
                         .addOption(OptionType.INTEGER, "index", "Index to remove from queue!", true),
