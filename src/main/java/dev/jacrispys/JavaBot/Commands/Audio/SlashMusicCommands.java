@@ -90,7 +90,7 @@ public class SlashMusicCommands extends ListenerAdapter {
         GuildAudioManager audioManager = GuildAudioManager.getGuildAudioManager(event.getGuild());
         LoadAudioHandler audioHandler = new LoadAudioHandler(audioManager);
         switch (commandName) {
-            case "play","p","ptop","playtop","fileplay","fp" -> {
+            case "play","playtop","fileplay" -> {
                 VoiceChannel channel;
                 assert event.getMember() != null;
                 assert event.getGuild() != null;
@@ -118,10 +118,10 @@ public class SlashMusicCommands extends ListenerAdapter {
                         track = searchMethod + track;
                     }
                 }
-                if(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp")) {
+                if(event.getName().equalsIgnoreCase("fileplay")) {
                     track = event.getOption("file").getAsAttachment().getUrl();
                 }
-                boolean playTop = (commandName.equalsIgnoreCase("ptop") || commandName.equalsIgnoreCase("playtop"));
+                boolean playTop = (commandName.equalsIgnoreCase("playtop"));
                 audioHandler.loadAndPlay(event.getTextChannel(), track, channel, event.getUser(), playTop);
                 event.reply("added to queue").setEphemeral(true).queue();
             }
