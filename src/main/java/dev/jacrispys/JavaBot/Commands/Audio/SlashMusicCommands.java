@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
 public class SlashMusicCommands extends ListenerAdapter {
 
@@ -93,12 +94,13 @@ public class SlashMusicCommands extends ListenerAdapter {
             case "play","playtop","fileplay" -> {
                 VoiceChannel channel;
                 assert event.getMember() != null;
-                assert event.getGuild() != null;
-                channel = (VoiceChannel) event.getGuild().getMember(event.getMember()).getVoiceState().getChannel();
+                assert event.getMember().getVoiceState() != null;
+                assert event.getMember().getVoiceState().getChannel() != null;
+                channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
 
                 String track = null;
                 if(!(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp"))) {
-                    track = event.getOption("url").getAsString();
+                    track = Objects.requireNonNull(event.getOption("url")).getAsString();
                     if (channel == null) {
                         event.reply("Could not load song, as you are not in a voice channel!").setEphemeral(true).queue();
                         return;
@@ -108,7 +110,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                     } catch (MalformedURLException ignored) {
                         String searchMethod = "ytsearch";
                         if (event.getOption("search") != null) {
-                            searchMethod = event.getOption("search").getAsString();
+                            searchMethod = Objects.requireNonNull(event.getOption("search")).getAsString();
                         }
                         switch (searchMethod.toLowerCase()) {
                             case ("spsearch:") -> searchMethod = "spsearch:";
@@ -119,7 +121,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                     }
                 }
                 if(event.getName().equalsIgnoreCase("fileplay")) {
-                    track = event.getOption("file").getAsAttachment().getUrl();
+                    track = Objects.requireNonNull(event.getOption("file")).getAsAttachment().getUrl();
                 }
                 boolean playTop = (commandName.equalsIgnoreCase("playtop"));
                 audioHandler.loadAndPlay(event.getTextChannel(), track, channel, event.getUser(), playTop);
