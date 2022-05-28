@@ -30,13 +30,7 @@ public class SlashMusicCommands extends ListenerAdapter {
     protected void updateJdaCommands(JDA jda) {
         jda.updateCommands().addCommands(
                 Commands.slash("play", "Add a link to most streaming platforms, or use its name to search!")
-                        .addOption(OptionType.STRING, "url", "Track to search for.", true)
-                        .addOptions(new OptionData(OptionType.STRING, "search", "Method to search for track with.", false)
-                                .addChoice("spotify", "spsearch:")
-                                .addChoice("apple", "amsearch:")
-                                .addChoice("youtube", "ytsearch:")),
-                Commands.slash("p", "Add a link to most streaming platforms, or use its name to search!")
-                        .addOption(OptionType.STRING, "url", "Track to search for.", true)
+                        .addOption(OptionType.STRING, "query", "Track to search for.", true)
                         .addOptions(new OptionData(OptionType.STRING, "search", "Method to search for track with.", false)
                                 .addChoice("spotify", "spsearch:")
                                 .addChoice("apple", "amsearch:")
@@ -68,24 +62,21 @@ public class SlashMusicCommands extends ListenerAdapter {
                         .addOption(OptionType.INTEGER, "hours", "(Optional) Number of hours", false),
                 Commands.slash("fix", "Fixes connectivity by changing regions."),
                 Commands.slash("loop", "Enables/Disables loop (skipping resets loops)")
-                        .addOption(OptionType.STRING, "loop-queue", "Choose between loop or queue", false),
+                        .addOptions(new OptionData(OptionType.STRING, "type", "Choose between loop or queue", false)
+                                .addChoice("queue", "queue")
+                                .addChoice("song", "song")),
                 Commands.slash("move", "Swaps positions of two index's in the queue.")
                         .addOption(OptionType.INTEGER, "pos1", "position one to move.", true)
                         .addOption(OptionType.INTEGER, "pos2", "second position to mve.", true),
                 Commands.slash("hijack", "Secret Command \uD83E\uDD2BOnly Accessible by certified DJ's!"),
                 Commands.slash("playtop", "adds a song to the top of queue")
-                        .addOption(OptionType.STRING, "url", "track to add to queue", true)
-                        .addOption(OptionType.STRING, "method", "Method to search for track with.", false),
-                Commands.slash("ptop", "adds a song to the top of queue")
-                        .addOption(OptionType.STRING, "url", "track to add to queue", true)
-                        .addOption(OptionType.STRING, "method", "Method to search for track with.", false),
+                        .addOption(OptionType.STRING, "query", "track to add to queue", true)
+                        .addOptions(new OptionData(OptionType.STRING, "search", "Method to search for track with.", false)
+                                        .addChoice("spotify", "spsearch:")
+                                        .addChoice("apple", "amsearch:")),
                 Commands.slash("skipto", "Skips the queue to a given index.")
                         .addOption(OptionType.INTEGER, "index", "Index to skip to.", true),
-                Commands.slash("st", "Skips the queue to a given index.")
-                        .addOption(OptionType.INTEGER, "index", "Index to skip to.", true),
                 Commands.slash("fileplay", "adds a song to the queue")
-                        .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true),
-                Commands.slash("fp", "adds a song to the queue")
                         .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true)
                 ).queue();
     }
