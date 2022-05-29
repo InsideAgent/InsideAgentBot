@@ -37,11 +37,9 @@ public class SlashMusicCommands extends ListenerAdapter {
                                 .addChoice("apple", "amsearch:")
                                 .addChoice("youtube", "ytsearch:")),
                 Commands.slash("skip", "Skips the current song!"),
-                Commands.slash("s", "Skips the current song!"),
                 Commands.slash("volume", "A number 1-500 to adjust volume!")
                         .addOption(OptionType.INTEGER, "volume", " 1-500", true),
                 Commands.slash("clear", "Clears the queue."),
-                Commands.slash("c", "Clears the queue."),
                 Commands.slash("stop", "Pauses the currently playing audio."),
                 Commands.slash("pause", "Pauses the currently playing audio."),
                 Commands.slash("resume", "Resumes the currently playing audio."),
@@ -126,6 +124,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                 boolean playTop = (commandName.equalsIgnoreCase("playtop"));
                 event.reply(Objects.requireNonNull(audioHandler.loadAndPlay(track, channel, event.getUser(), playTop))).setEphemeral(true).queue();
             }
+            case "skip" -> event.reply(audioHandler.skipTrack(audioManager)).setEphemeral(true).queue();
             default -> event.reply(event.getCommandString()).setEphemeral(true).queue();
         }
     }

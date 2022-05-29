@@ -276,10 +276,13 @@ public class GuildAudioManager {
      */
     public Message skipTrack() {
         GuildAudioManager manager = getGuildAudioManager(currentGuild);
+        AudioTrack track = manager.audioPlayer.getPlayingTrack();
         manager.scheduler.nextTrack();
         MessageBuilder message = new MessageBuilder();
         if (queueLoop || songLoop) {
             message.append("Track skipped! Loop was disabled!");
+        } else {
+            message.append("Skipped track: `").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append("`!");
         }
         queueLoop = false;
         songLoop = false;
