@@ -4,6 +4,8 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import dev.jacrispys.JavaBot.Audio.AudioPlayerButtons;
 import dev.jacrispys.JavaBot.Audio.InactivityTimer;
+import dev.jacrispys.JavaBot.Commands.Audio.GenericMusicCommands;
+import dev.jacrispys.JavaBot.Commands.Audio.SlashMusicCommands;
 import dev.jacrispys.JavaBot.Commands.ComplaintCommand;
 import dev.jacrispys.JavaBot.Commands.GameSpyCommand;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
@@ -57,11 +59,13 @@ public class JavaBotMain {
 
         jda.getPresence().setActivity(Activity.streaming("Version-0.1.6 Woo!", "https://www.twitch.tv/jacrispyslive"));
         logger.info("{} - Starting event listeners...", className);
+        jda.addEventListener(new SlashMusicCommands());
         jda.addEventListener(new DefaultPrivateMessageResponse());
         jda.addEventListener(new ComplaintCommand());
         jda.addEventListener(new RegisterGuildCommand());
         jda.addEventListener(new GameSpyCommand());
         jda.addEventListener(new BotStartup());
+        jda.addEventListener(new GenericMusicCommands());
         jda.addEventListener(new AudioPlayerButtons());
         jda.addEventListener(new InactivityTimer());
         jda.addEventListener(new DebugCommands());
