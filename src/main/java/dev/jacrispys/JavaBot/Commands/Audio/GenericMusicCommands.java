@@ -107,16 +107,9 @@ public class GenericMusicCommands extends ListenerAdapter {
         } else if (message.equalsIgnoreCase("-shuffle")) {
             event.getTextChannel().sendMessage(audioManager.shufflePlayer()).queue();
         } else if (message.equalsIgnoreCase("-dc") || message.equalsIgnoreCase("-disconnect") || message.equalsIgnoreCase("-leave")) {
-            event.getGuild().getAudioManager().closeAudioConnection();
-            event.getTextChannel().sendMessage(audioManager.clearQueue()).queue();
-            audioManager.audioPlayer.destroy();
+            event.getTextChannel().sendMessage(audioManager.disconnectBot()).queue();
         } else if (message.equalsIgnoreCase("-move") || message.equalsIgnoreCase("-follow")) {
-            if (event.getGuild().getMember(event.getAuthor()).getVoiceState().inAudioChannel()) {
-                event.getGuild().getAudioManager().openAudioConnection(event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel());
-                event.getTextChannel().sendMessage("Following! ✈️").queue();
-            } else {
-                event.getTextChannel().sendMessage("You are not in a VoiceChannel that I can access!").queue();
-            }
+            audioManager.followUser(event.getMember());
         } else if (message.equalsIgnoreCase("-song") || message.equalsIgnoreCase("-info")) {
             event.getTextChannel().sendMessage(audioManager.sendTrackInfo()).queue();
         } else if (message.equalsIgnoreCase("-q") || message.equalsIgnoreCase("-queue")) {

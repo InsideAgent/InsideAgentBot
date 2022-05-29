@@ -48,7 +48,6 @@ public class SlashMusicCommands extends ListenerAdapter {
                 Commands.slash("disconnect", "Disconnects the bot from its channel!"),
                 Commands.slash("follow", "moves the bot to your current channel!"),
                 Commands.slash("queue", "Shows a Embed of songs (10 per page) with page selectors, and a button to remove the message!"),
-                Commands.slash("q", "Shows a Embed of songs (10 per page) with page selectors, and a button to remove the message!"),
                 Commands.slash("shuffle", "Shuffles the current queue."),
                 Commands.slash("song", "Shows info about the song, including a progress bar, the song requester, and Title/Author!"),
                 Commands.slash("song-info", "Shows info about the song, including a progress bar, the song requester, and Title/Author!"),
@@ -90,6 +89,7 @@ public class SlashMusicCommands extends ListenerAdapter {
         LoadAudioHandler audioHandler = new LoadAudioHandler(audioManager);
         switch (commandName) {
             case "play","playtop","fileplay" -> {
+                event.deferReply().setEphemeral(true).queue();
                 VoiceChannel channel;
                 assert event.getMember() != null;
                 assert event.getMember().getVoiceState() != null;
@@ -122,10 +122,37 @@ public class SlashMusicCommands extends ListenerAdapter {
                     track = Objects.requireNonNull(event.getOption("file")).getAsAttachment().getUrl();
                 }
                 boolean playTop = (commandName.equalsIgnoreCase("playtop"));
-                event.reply(Objects.requireNonNull(audioHandler.loadAndPlay(track, channel, event.getUser(), playTop))).setEphemeral(true).queue();
+                event.getHook().editOriginal(Objects.requireNonNull(audioHandler.loadAndPlay(track, channel, event.getUser(), playTop))).queue();
             }
-            case "skip" -> event.reply(audioHandler.skipTrack(audioManager)).setEphemeral(true).queue();
-            default -> event.reply(event.getCommandString()).setEphemeral(true).queue();
+            case "skip" -> event.reply(audioHandler.skipTrack(audioManager)).queue();
+            case "volume" -> event.reply(audioManager.setVolume(Objects.requireNonNull(event.getOption("volume")).getAsInt())).queue();
+            case "clear" -> event.reply(audioManager.clearQueue()).queue();
+            case "stop","pause" -> event.reply(audioManager.pausePlayer()).queue();
+            case "resume" -> event.reply(audioManager.resumePlayer()).queue();
+            case "dc","leave","disconnect" -> event.reply(audioManager.disconnectBot()).queue();
+            case "follow" -> event.reply(audioManager.followUser(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
+            case "queue" -> event.reply(audioManager.displayQueue()).setEphemeral(true).queue();
+            case "shuffle" -> event.reply(audioManager.shufflePlayer()).queue();
+            case "song","song-info","info" -> event.reply(audioManager.sendTrackInfo()).setEphemeral(true).queue();
+            case "remove" -> event.reply(audioManager.removeTrack(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
+            case "seek" -> {
+                StringBuilder stringBuilder = new StringBuilder();
+                if (event.getOption("hours") != null) {
+                    if(Objects.requireNonNull(event.getOption("hours")).getAsInt() < 10) stringBuilder.append("0");
+                    stringBuilder.append(Objects.requireNonNull(event.getOption("hours")).getAsInt()).append(":");
+                }
+                if(Objects.requireNonNull(event.getOption("minutes")).getAsInt() < 10) stringBuilder.append("0");
+                stringBuilder.append(Objects.requireNonNull(event.getOption("minutes")).getAsInt()).append(":");
+                if(Objects.requireNonNull(event.getOption("seconds")).getAsInt() < 10) stringBuilder.append("0");
+                stringBuilder.append(Objects.requireNonNull(event.getOption("seconds")).getAsInt());
+                event.reply(audioManager.seekTrack(stringBuilder.toString())).queue();
+            }
+            case "fix" -> event.reply(audioManager.fixAudio(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
+            case "loop" -> event.reply(Objects.requireNonNull(event.getOption("type")).getAsString().equalsIgnoreCase("queue") ? audioManager.loopQueue() : audioManager.loopSong()).queue();
+            case "move" -> event.reply(audioManager.moveSong(Objects.requireNonNull(event.getOption("pos1")).getAsInt(), Objects.requireNonNull(event.getOption("pos2")).getAsInt())).queue();
+            case "hijack" -> event.reply(audioManager.enableDJ(event.getUser(), event.getGuild())).queue();
+            case "skipto" -> event.reply(audioManager.skipTo(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
+            default -> event.reply("Could not find a commands registered as: `" + commandName + "`, please report this!").setEphemeral(true).queue();
         }
     }
 }

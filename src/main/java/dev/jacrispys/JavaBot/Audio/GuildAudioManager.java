@@ -15,6 +15,7 @@ import dev.jacrispys.JavaBot.Utils.SecretData;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -144,7 +145,7 @@ public class GuildAudioManager {
     private MessageEmbed djEnabledEmbed(JDA jda) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(Color.decode("e03131"));
-        embedBuilder.setAuthor( "Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬", null, jda.getSelfUser().getEffectiveAvatarUrl());
+        embedBuilder.setAuthor( "|   Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬", null, jda.getSelfUser().getEffectiveAvatarUrl());
         return embedBuilder.build();
     }
 
@@ -689,6 +690,42 @@ public class GuildAudioManager {
         scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
         MessageBuilder message = new MessageBuilder();
         message.append("Successfully removed: ").append(String.valueOf((startSize - indexNumber) > 0 ? indexNumber : startSize)).append(" songs from the queue!");
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
+    }
+
+    public Message followUser(Member sender) {
+        MessageBuilder message = new MessageBuilder();
+        if (Objects.requireNonNull(sender.getVoiceState()).inAudioChannel()) {
+            sender.getGuild().getAudioManager().openAudioConnection(sender.getVoiceState().getChannel());
+            message.append("Following! ✈️");
+        } else {
+            message.append("You are not in a VoiceChannel that I can access!");
+        }
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
+    }
+
+    public Message fixAudio(Member sender) {
+        MessageBuilder message = new MessageBuilder();
+        if(sender.getVoiceState() != null && sender.getVoiceState().inAudioChannel() && sender.getVoiceState().getChannel() != null) {
+            VoiceChannel vc = (VoiceChannel) sender.getVoiceState().getChannel();
+            vc.getManager().setRegion(Region.US_WEST).queue();
+            vc.getManager().setRegion(Region.AUTOMATIC).queue();
+            message.append("Re-established audio connection \uD83D\uDC4D");
+        } else {
+            message.append("Could not locate your voice channel!");
+        }
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
+    }
+
+    public Message disconnectBot() {
+        MessageBuilder message = new MessageBuilder();
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setColor(Color.CYAN);
+        eb.setAuthor("|  Destroyed audio player and cleared queue! (Disconnecting ☮️)", null, currentGuild.getJDA().getSelfUser().getEffectiveAvatarUrl());
+        message.setEmbeds(eb.build());
+        currentGuild.getAudioManager().closeAudioConnection();
+        clearQueue();
+        audioPlayer.destroy();
         return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
