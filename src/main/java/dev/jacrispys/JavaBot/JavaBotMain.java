@@ -57,7 +57,7 @@ public class JavaBotMain {
 
         audioManager = new DefaultAudioPlayerManager();
 
-        jda.getPresence().setActivity(Activity.streaming("Version-0.1.6 Woo!", "https://www.twitch.tv/jacrispyslive"));
+        jda.getPresence().setActivity(Activity.streaming("Version-0.1.7 Woo!", "https://www.twitch.tv/jacrispyslive"));
         logger.info("{} - Starting event listeners...", className);
         jda.addEventListener(new SlashMusicCommands());
         jda.addEventListener(new DefaultPrivateMessageResponse());
