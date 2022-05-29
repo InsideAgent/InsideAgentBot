@@ -718,12 +718,12 @@ public class GuildAudioManager {
     }
 
     public Message disconnectBot() {
+        currentGuild.getAudioManager().closeAudioConnection();
         MessageBuilder message = new MessageBuilder();
         EmbedBuilder eb = new EmbedBuilder();
         eb.setColor(Color.CYAN);
         eb.setAuthor("|  Destroyed audio player and cleared queue! (Disconnecting ☮️)", null, currentGuild.getJDA().getSelfUser().getEffectiveAvatarUrl());
         message.setEmbeds(eb.build());
-        currentGuild.getAudioManager().closeAudioConnection();
         clearQueue();
         audioPlayer.destroy();
         return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();

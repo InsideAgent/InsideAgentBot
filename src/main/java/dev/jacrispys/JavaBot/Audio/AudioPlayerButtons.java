@@ -52,7 +52,11 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     }
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage - 1).build()).queue();
                 }
-                case ("remove") -> event.getMessage().delete().queue();
+                case ("remove") -> {
+                    if(event.getMessage().isEphemeral()) {
+                        event.editMessageEmbeds(new EmbedBuilder().setAuthor(".", null, event.getGuild().getSelfMember().getEffectiveAvatarUrl()).build()).queue();
+                    } else event.getMessage().delete().queue();
+                }
                 case ("nextPage") -> {
                     if (queuePage >= pages) {
                         if (!event.isAcknowledged()) {
