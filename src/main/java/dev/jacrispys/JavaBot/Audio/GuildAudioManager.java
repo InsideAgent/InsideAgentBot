@@ -276,9 +276,7 @@ public class GuildAudioManager {
      *  Skip's the current track by using {@link TrackScheduler#nextTrack()}
      */
     public Message skipTrack() {
-        GuildAudioManager manager = getGuildAudioManager(currentGuild);
-        AudioTrack track = manager.audioPlayer.getPlayingTrack();
-        manager.scheduler.nextTrack();
+        AudioTrack track = audioPlayer.getPlayingTrack();
         MessageBuilder message = new MessageBuilder();
         if (queueLoop || songLoop) {
             message.append("Track skipped! Loop was disabled!");
@@ -287,6 +285,7 @@ public class GuildAudioManager {
         }
         queueLoop = false;
         songLoop = false;
+        scheduler.nextTrack();
         return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
@@ -434,6 +433,7 @@ public class GuildAudioManager {
     /**
      * copy of {@link GuildAudioManager#skipTrack()} without a confirmation message.
      */
+    @SuppressWarnings("unused")
     public void skipNoMessage() {
         try {
             this.scheduler.nextTrack();
@@ -718,7 +718,6 @@ public class GuildAudioManager {
     }
 
     public Message disconnectBot() {
-        currentGuild.getAudioManager().closeAudioConnection();
         MessageBuilder message = new MessageBuilder();
         EmbedBuilder eb = new EmbedBuilder();
         eb.setColor(Color.CYAN);
@@ -726,6 +725,7 @@ public class GuildAudioManager {
         message.setEmbeds(eb.build());
         clearQueue();
         audioPlayer.destroy();
+        currentGuild.getAudioManager().closeAudioConnection();
         return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
