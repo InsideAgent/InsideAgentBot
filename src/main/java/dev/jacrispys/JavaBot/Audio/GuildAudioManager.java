@@ -13,8 +13,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.Utils.SecretData;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.ErrorResponse;
@@ -99,34 +102,23 @@ public class GuildAudioManager {
     }
 
     /**
-     * @param channel      to send messages in
      * @param trackUrl     of the loaded track
      * @param track        instance of loaded track
      * @param voiceChannel to attach bot to
      * @param playTop      is {@link Boolean} for whether the loaded track should be placed at the top of the queue
      */
-    public void trackLoaded(TextChannel channel, String trackUrl, AudioTrack track, VoiceChannel voiceChannel, boolean playTop) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
-        channel.sendMessageEmbeds(songLoadedMessage(trackUrl, track)).queue();
-
-        play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), track, voiceChannel, playTop);
+    public MessageEmbed trackLoaded(String trackUrl, AudioTrack track, VoiceChannel voiceChannel, boolean playTop) {
+        play(voiceChannel.getGuild(), getGuildAudioManager(voiceChannel.getGuild()), track, voiceChannel, playTop);
+        return djEnabled ? djEnabledEmbed(voiceChannel.getJDA()) : songLoadedMessage(trackUrl, track);
     }
 
     /**
-     * @param channel      to send messages in
      * @param trackUrl     of the loaded track
      * @param playlist     instance of loaded playlist
      * @param voiceChannel to attach bot to
      * @param playTop      is {@link Boolean} for whether the loaded track should be placed at the top of the queue
      */
-    public void playListLoaded(TextChannel channel, String trackUrl, AudioPlaylist playlist, VoiceChannel voiceChannel, boolean playTop) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public MessageEmbed playListLoaded(String trackUrl, AudioPlaylist playlist, VoiceChannel voiceChannel, boolean playTop) {
         AudioTrack firstTrack = playlist.getSelectedTrack();
 
         if (firstTrack == null) {
@@ -134,22 +126,32 @@ public class GuildAudioManager {
         }
 
 
-        play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), firstTrack, voiceChannel, playTop);
+        play(voiceChannel.getGuild(), getGuildAudioManager(voiceChannel.getGuild()), firstTrack, voiceChannel, playTop);
 
         if (!playlist.isSearchResult()) {
-            channel.sendMessageEmbeds(playlistLoadedMessage(trackUrl, playlist, false)).queue();
             for (int i = 1; i < playlist.getTracks().size(); i++) {
-                play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), playlist.getTracks().get(i), voiceChannel, false);
+                play(voiceChannel.getGuild(), getGuildAudioManager(voiceChannel.getGuild()), playlist.getTracks().get(i), voiceChannel, false);
             }
+            return djEnabled ? djEnabledEmbed(voiceChannel.getJDA()) : playlistLoadedMessage(trackUrl, playlist, false);
         } else {
-            channel.sendMessageEmbeds(playlistLoadedMessage(trackUrl, playlist, true)).queue();
+            return djEnabled ? djEnabledEmbed(voiceChannel.getJDA()) : playlistLoadedMessage(trackUrl, playlist, true);
         }
+    }
+
+    /**
+     * @param jda to get self instance
+     */
+    private MessageEmbed djEnabledEmbed(JDA jda) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setColor(Color.decode("e03131"));
+        embedBuilder.setAuthor( "Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬", null, jda.getSelfUser().getEffectiveAvatarUrl());
+        return embedBuilder.build();
     }
 
     /**
      * @param trackUrl of loaded song
      * @param track    instance of loaded track
-     * @return a {@link MessageEmbed} to be sent and managed by {@link GuildAudioManager#trackLoaded(TextChannel, String, AudioTrack, VoiceChannel, boolean)} }
+     * @return a {@link MessageEmbed} to be sent and managed by {@link GuildAudioManager#trackLoaded(String, AudioTrack, VoiceChannel, boolean)} }
      */
     private MessageEmbed songLoadedMessage(String trackUrl, AudioTrack track) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -181,7 +183,7 @@ public class GuildAudioManager {
      * @param trackUrl   of loaded playlist
      * @param playlist   instance of AudioPlaylist
      * @param singleSong to determine whether the track was a playlist or a single song from a playlist
-     * @return a {@link MessageEmbed} for {@link GuildAudioManager#playListLoaded(TextChannel, String, AudioPlaylist, VoiceChannel, boolean)} to manage and send.
+     * @return a {@link MessageEmbed} for {@link GuildAudioManager#playListLoaded(String, AudioPlaylist, VoiceChannel, boolean)} to manage and send.
      */
     private MessageEmbed playlistLoadedMessage(String trackUrl, AudioPlaylist playlist, boolean singleSong) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -216,28 +218,22 @@ public class GuildAudioManager {
     }
 
     /**
-     * @param channel  to send error message to.
      * @param trackUrl part of {@param channel} message.
      */
-    public void trackNotFound(TextChannel channel, String trackUrl) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
-        channel.sendMessage("Could not find: " + trackUrl).queue();
+    public Message trackNotFound(String trackUrl) {
+        MessageBuilder message = new MessageBuilder();
+        message.append("Could not find: ").append(trackUrl);
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
     /**
-     * @param channel   to send error message to.
      * @param trackUrl  part of {@param channel} message.
      * @param exception is a non-blocking error.
      */
-    public void trackLoadFailed(TextChannel channel, String trackUrl, FriendlyException exception) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
-        channel.sendMessage("Could not play: " + trackUrl + " \n `Reason: " + exception.getLocalizedMessage() + "`").queue();
+    public Message trackLoadFailed(String trackUrl, FriendlyException exception) {
+        MessageBuilder message = new MessageBuilder();
+        message.append("Could not play: ").append(trackUrl).append(" \n `Reason: ").append(exception.getLocalizedMessage()).append("`");
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
     /**
@@ -276,21 +272,18 @@ public class GuildAudioManager {
     }
 
     /**
-     * @param channel to send confirmation message to.
-     *                Skip's the current track by using {@link TrackScheduler#nextTrack()}
+     *  Skip's the current track by using {@link TrackScheduler#nextTrack()}
      */
-    public void skipTrack(TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
-        GuildAudioManager manager = getGuildAudioManager(channel.getGuild());
+    public Message skipTrack() {
+        GuildAudioManager manager = getGuildAudioManager(currentGuild);
         manager.scheduler.nextTrack();
+        MessageBuilder message = new MessageBuilder();
         if (queueLoop || songLoop) {
-            channel.sendMessage("Track skipped! Loop was disabled!").queue();
+            message.append("Track skipped! Loop was disabled!");
         }
         queueLoop = false;
         songLoop = false;
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
     /**
@@ -311,36 +304,29 @@ public class GuildAudioManager {
     }
 
     /**
-     * @param i       volume # 1-100 for normal audio, 500 max (distortion)
-     * @param channel to send confirmation message.
+     * @param i volume # 1-100 for normal audio, 500 max (distortion)
      */
-    public void setVolume(int i, TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message setVolume(int i) {
+        MessageBuilder message = new MessageBuilder();
         if (i < 0 || i > 500) {
-            channel.sendMessage("Volume must be between 1-500!").queue();
-            return;
+            message.append("Volume must be between 1-500!");
+        } else {
+            message.append("Volume is currently set at: ").append(String.valueOf(i));
         }
-        channel.sendMessage("Volume is currently set at: " + i).queue();
         audioPlayer.setVolume(i);
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
     public static int queuePage;
 
     /**
-     * @param channel to send confirmation message to.
      *                creates a Dynamic {@link MessageEmbed} with multiple {@link Button} to search pages for the current queue
      */
-    public void displayQueue(TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message displayQueue() {
         if(audioPlayer.getPlayingTrack() == null) {
-            channel.sendMessage("Cannot display queue when no track is playing!").queue();
-            return;
+            MessageBuilder message = new MessageBuilder();
+            message.append("Cannot display queue when no track is playing!");
+            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
         }
 
         queuePage = 1;
@@ -378,13 +364,13 @@ public class GuildAudioManager {
         eb.setFooter(pageNumber + " | " + trackInQueue + " | " + queueLengthStr);
 
         List<Button> buttons = new ArrayList<>();
-        buttons.add(Button.primary("firstPage:" + channel.getGuild().getId(), "⏪"));
-        buttons.add(Button.primary("backPage:" + channel.getGuild().getId(), "◀️"));
-        buttons.add(Button.danger("remove:" + channel.getGuild().getId(), "✖️"));
-        buttons.add(Button.primary("nextPage:" + channel.getGuild().getId(), "▶️"));
-        buttons.add(Button.primary("lastPage:" + channel.getGuild().getId(), "⏩"));
+        buttons.add(Button.primary("firstPage:" + currentGuild.getId(), "⏪"));
+        buttons.add(Button.primary("backPage:" + currentGuild.getId(), "◀️"));
+        buttons.add(Button.danger("remove:" + currentGuild.getId(), "✖️"));
+        buttons.add(Button.primary("nextPage:" + currentGuild.getId(), "▶️"));
+        buttons.add(Button.primary("lastPage:" + currentGuild.getId(), "⏩"));
 
-        channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue();
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : (new MessageBuilder().setEmbeds(eb.build()).setActionRows(ActionRow.of(buttons)).build());
 
     }
 
@@ -399,7 +385,7 @@ public class GuildAudioManager {
             try {
                 TextChannel channel = guild.getTextChannelById(MySQLConnection.getInstance().getMusicChannel(guild));
                 assert channel != null;
-                channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
+                channel.sendMessageEmbeds(djEnabledEmbed(guild.getJDA())).queue();
                 return;
             } catch (SQLException ex) {
                 return;
@@ -442,7 +428,7 @@ public class GuildAudioManager {
     }
 
     /**
-     * copy of {@link GuildAudioManager#skipTrack(TextChannel)} without a confirmation message.
+     * copy of {@link GuildAudioManager#skipTrack()} without a confirmation message.
      */
     public void skipNoMessage() {
         try {
@@ -455,84 +441,62 @@ public class GuildAudioManager {
     }
 
     /**
-     * @param channel to send confirmation message to.
      *                Clears current queue with {@link TrackScheduler#setQueue(BlockingQueue)} by creating a blank {@link LinkedBlockingQueue<AudioTrack>}
      */
-    public void clearQueue(TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
-        channel.sendMessage("Clearing queue!").queue();
+    public Message clearQueue() {
+        MessageBuilder message = new MessageBuilder();
+        message.append("Clearing queue!");
         scheduler.setQueue(new LinkedBlockingQueue<>());
-    }
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
 
-    public void clearQueue() {
-        if (djEnabled) {
-            return;
-        }
-        scheduler.setQueue(new LinkedBlockingQueue<>());
     }
 
     /**
-     * @param channel to send confirmation message to.
      *                if {@link AudioPlayer#isPaused()} does nothing, otherwise pauses player.
      */
-    public void pausePlayer(TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message pausePlayer() {
+        MessageBuilder message = new MessageBuilder();
         if (!audioPlayer.isPaused()) {
-            channel.sendMessage("Paused ⏸️").queue();
+            message.append("Paused ⏸️");
             audioPlayer.setPaused(true);
             if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild);
         }
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
     /**
-     * @param channel to send confirmation message to.
      *                if {@link AudioPlayer#isPaused()} unpauses the player.
      */
-    public void resumePlayer(TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message resumePlayer() {
+        MessageBuilder message = new MessageBuilder();
         if (audioPlayer.isPaused()) {
-            channel.sendMessage("Resumed ▶️").queue();
+            message.append("Resumed ▶️");
             audioPlayer.setPaused(false);
         }
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
     /**
-     * @param channel to send confirmation to.
      *                obtains instance of queue with {@link TrackScheduler#getTrackQueue()} and randomizes it with collections.
      */
-    public void shufflePlayer(TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message shufflePlayer() {
+        MessageBuilder message = new MessageBuilder();
         ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
         Collections.shuffle(trackList);
         BlockingQueue<AudioTrack> tracks = new LinkedBlockingQueue<>(trackList);
         scheduler.setQueue(tracks);
-        channel.sendMessage("Shuffling! \uD83C\uDFB2").queue();
+        message.append("Shuffling! \uD83C\uDFB2");
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
     /**
-     * @param channel to send info to.
-     *                creates {@link MessageEmbed} with song progress bar among other information about the playing track.
+     * creates {@link MessageEmbed} with song progress bar among other information about the playing track.
      */
-    public void sendTrackInfo(TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message sendTrackInfo() {
         if (audioPlayer.getPlayingTrack() == null) {
-            channel.sendMessage("Cannot get track info as no song is playing!").queue();
-            return;
+            MessageBuilder message = new MessageBuilder();
+            message.append("Cannot get track info as no song is playing!");
+            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
         }
         AudioTrack track = audioPlayer.getPlayingTrack();
         EmbedBuilder eb = new EmbedBuilder();
@@ -548,60 +512,55 @@ public class GuildAudioManager {
         assert getRequester() != null;
         eb.addField("-Requested By: ", getRequester().get(track).getAsMention() + "\n" + durationSlider + "\n" + time, false);
 
-        channel.sendMessageEmbeds(eb.build()).queue();
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : new MessageBuilder().setEmbeds(eb.build()).build();
     }
 
     /**
      * @param position of track in queue (adjusted for 0 index)
-     * @param channel  to send confirmation to.
      */
-    public void removeTrack(int position, TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message removeTrack(int position) {
         BlockingQueue<AudioTrack> tracks = scheduler.getTrackQueue();
         AudioTrack removed = tracks.stream().toList().get(position - 1);
+        MessageBuilder message = new MessageBuilder();
         if (removed != null) {
-            channel.sendMessage("Successfully Removed: `" + removed.getInfo().author + " - " + removed.getInfo().title + "` from the queue!").queue();
+            message.append("Successfully Removed: `").append(removed.getInfo().author).append(" - ").append(removed.getInfo().title).append("` from the queue!");
             ArrayList<AudioTrack> trackList = new ArrayList<>(tracks.stream().toList());
             trackList.remove(position - 1);
             tracks = new LinkedBlockingQueue<>(trackList);
             scheduler.setQueue(tracks);
         } else {
-            channel.sendMessage("Could not locate track at position: " + position + "!").queue();
+            message.append("Could not locate track at position: ").append(String.valueOf(position)).append("!");
         }
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
 
     }
 
     /**
      * @param time    using {@link DateTimeFormatter} to later be converted into MS
-     * @param channel to send confirmation to.
      */
-    public void seekTrack(String time, TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message seekTrack(String time) {
         try {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
             Function<String, String> adjust = input -> input.indexOf(":", 3) >= 0
                     ? input : "00:" + input;
             long millis = dtf.parse(adjust.apply(time)).get(ChronoField.MILLI_OF_DAY);
             audioPlayer.getPlayingTrack().setPosition(millis);
-            channel.sendMessage("Seeking to: " + time + "!").queue();
+            MessageBuilder message = new MessageBuilder();
+            message.append("Seeking to: ").append(time).append("!");
+            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
         } catch (Exception ex) {
-            channel.sendMessage("Invalid use of seek! Please use the format 'HH:mm:ss'").queue();
+            MessageBuilder message = new MessageBuilder();
+            message.append("Invalid use of seek! Please use the format 'HH:mm:ss'");
+            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
         }
     }
 
     /**
-     * @param channel      to block commands from
      * @param track        private icecast server
      * @param voiceChannel to attach to
      */
-    protected void djLoaded(TextChannel channel, AudioTrack track, VoiceChannel voiceChannel) {
-        play(channel.getGuild(), getGuildAudioManager(channel.getGuild()), track, voiceChannel, false);
+    protected void djLoaded(AudioTrack track, VoiceChannel voiceChannel) {
+        play(voiceChannel.getGuild(), getGuildAudioManager(voiceChannel.getGuild()), track, voiceChannel, false);
     }
 
 
@@ -613,26 +572,27 @@ public class GuildAudioManager {
      * @param guild   to manage
      */
     @SuppressWarnings("all")
-    public void enableDJ(TextChannel channel, User sender, Guild guild) {
+    public Message enableDJ(User sender, Guild guild) {
         if (!djEnabled) {
             hijackQueue = new LinkedBlockingQueue<>(scheduler.getTrackQueue());
-            clearQueue(channel);
-            skipTrack(channel);
+            clearQueue();
+            skipTrack();
             djEnabled = true;
         } else {
             djEnabled = false;
-            clearQueue(channel);
-            skipTrack(channel);
+            clearQueue();
+            skipTrack();
             scheduler.setQueue(hijackQueue);
-            channel.sendMessage("So sad but, the party is over now! :(").queue();
-            return;
+            MessageBuilder message = new MessageBuilder();
+            message.append("So sad but, the party is over now! :(");
+            return message.build();
         }
         VoiceChannel vc = (VoiceChannel) guild.getMember(sender).getVoiceState().getChannel();
         this.getAudioManager().loadItemOrdered(this, "http://10.0.0.109:8000/mixxx", new AudioLoadResultHandler() {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                djLoaded(channel, audioTrack, vc);
+                djLoaded(audioTrack, vc);
             }
 
             @Override
@@ -650,7 +610,7 @@ public class GuildAudioManager {
 
             }
         });
-        channel.sendMessage("This bot has now been taken over by DJ " + sender.getAsMention() + "! ヽ(⌐■_■)ノ♬").queue();
+        return new MessageBuilder().setEmbeds(djEnabledEmbed(guild.getJDA())).build();
 
 
     }
@@ -659,76 +619,62 @@ public class GuildAudioManager {
     public boolean songLoop = false;
 
     /**
-     * @param channel to send confirmation to.
-     *                manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
+     *  manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
      */
-    public void loopQueue(TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message loopQueue() {
+        MessageBuilder message = new MessageBuilder();
         if (songLoop) {
             songLoop = false;
             queueLoop = false;
-            channel.sendMessage("Disabled queue loop! \uD83D\uDD01").queue();
+            message.append("Disabled queue loop! \uD83D\uDD01 \n");
         }
 
         if (queueLoop) {
             queueLoop = false;
-            channel.sendMessage("Disabled queue loop! \uD83D\uDD01").queue();
-            return;
+            message.append("Disabled queue loop! \uD83D\uDD01");
+            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
         }
         queueLoop = true;
-        channel.sendMessage("Enabled queue loop! \uD83D\uDD01").queue();
+        message.append("Enabled queue loop! \uD83D\uDD01");
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
     /**
-     * @param channel to send confirmation to.
-     *                manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
+     *  manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
      */
-    public void loopSong(TextChannel channel) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message loopSong() {
+        MessageBuilder message = new MessageBuilder();
         queueLoop = false;
 
         if (songLoop) {
             songLoop = false;
-            channel.sendMessage("Disabled song loop! \uD83D\uDD02").queue();
-            return;
+            message.append("Disabled song loop! \uD83D\uDD02");
+            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
         }
         songLoop = true;
-        channel.sendMessage("Enabled song loop! \uD83D\uDD02").queue();
+        message.append("Enabled song loop! \uD83D\uDD02");
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
     /**
-     * @param channel to send confirmation to.
      * @param pos1    is first track position to move.
      * @param pos2    is second track position to move
      *                swaps positions of {@param pos1} & {@param pos2}
      */
-    public void moveSong(TextChannel channel, int pos1, int pos2) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message moveSong(int pos1, int pos2) {
         ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
         AudioTrack song1 = trackList.get(pos1 - 1);
         Collections.swap(trackList, pos1 - 1, pos2 - 1);
         scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
-        channel.sendMessage("Moved song `" + song1.getInfo().author + " - " + song1.getInfo().title + "` to position: `" + pos2 + "`").queue();
+        MessageBuilder message = new MessageBuilder();
+        message.append("Moved song `").append(song1.getInfo().author).append(" - ").append(song1.getInfo().title).append("` to position: `").append(String.valueOf(pos2)).append("`");
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
     /**
-     * @param channel     to send confirmation to.
      * @param indexNumber to skip track queue to (adjusted for 0 index)
      */
-    public void skipTo(TextChannel channel, int indexNumber) {
-        if (djEnabled) {
-            channel.sendMessage("Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬").queue();
-            return;
-        }
+    public Message skipTo(int indexNumber) {
         indexNumber -= 1;
         ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
         int startSize = scheduler.getTrackQueue().size();
@@ -738,7 +684,9 @@ public class GuildAudioManager {
             trackList.clear();
         }
         scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
-        channel.sendMessage("Successfully removed: " + ((startSize - indexNumber) > 0 ? indexNumber : startSize) + " songs from the queue!").queue();
+        MessageBuilder message = new MessageBuilder();
+        message.append("Successfully removed: ").append(String.valueOf((startSize - indexNumber) > 0 ? indexNumber : startSize)).append(" songs from the queue!");
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(currentGuild.getJDA())).build() : message.build();
     }
 
 }

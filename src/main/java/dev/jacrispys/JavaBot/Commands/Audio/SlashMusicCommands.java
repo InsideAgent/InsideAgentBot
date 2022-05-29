@@ -100,7 +100,7 @@ public class SlashMusicCommands extends ListenerAdapter {
 
                 String track = null;
                 if(!(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp"))) {
-                    track = Objects.requireNonNull(event.getOption("url")).getAsString();
+                    track = Objects.requireNonNull(event.getOption("query")).getAsString();
                     if (channel == null) {
                         event.reply("Could not load song, as you are not in a voice channel!").setEphemeral(true).queue();
                         return;
@@ -124,8 +124,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                     track = Objects.requireNonNull(event.getOption("file")).getAsAttachment().getUrl();
                 }
                 boolean playTop = (commandName.equalsIgnoreCase("playtop"));
-                audioHandler.loadAndPlay(event.getTextChannel(), track, channel, event.getUser(), playTop);
-                event.reply("added to queue").setEphemeral(true).queue();
+                event.reply(Objects.requireNonNull(audioHandler.loadAndPlay(track, channel, event.getUser(), playTop))).setEphemeral(true).queue();
             }
             default -> event.reply(event.getCommandString()).setEphemeral(true).queue();
         }

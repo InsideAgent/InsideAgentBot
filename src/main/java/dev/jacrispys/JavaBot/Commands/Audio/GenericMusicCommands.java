@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
@@ -43,8 +42,7 @@ public class GenericMusicCommands extends ListenerAdapter {
         }
 
         if (((message.contains("-play ") && message.split("-play ").length > 1) || (message.contains("-p ") && message.split("-p ").length > 1) || ((message.contains("-p ") || message.contains("-play ")) && event.getMessage().getAttachments().size() > 0))) {
-            String trackUrl = null;
-            File file;
+            String trackUrl;
             if (event.getMessage().getAttachments().size() > 0) {
                 VoiceChannel channel;
                 channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
@@ -53,7 +51,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String track = event.getMessage().getAttachments().get(0).getUrl();
-                audioHandler.loadAndPlay(event.getTextChannel(), track, channel, event.getAuthor(), false);
+                event.getTextChannel().sendMessage(audioHandler.loadAndPlay(track, channel, event.getAuthor(), false));
                 return;
 
             } else if (message.contains("-play")) {
@@ -71,7 +69,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                audioHandler.loadAndPlay(event.getTextChannel(), trackUrl, channel, event.getAuthor(), false);
+                event.getTextChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getAuthor(), false));
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -84,7 +82,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                audioHandler.loadAndPlay(event.getTextChannel(), ytSearch, channel, event.getAuthor(), false);
+                event.getTextChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getAuthor(), false));
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -92,26 +90,25 @@ public class GenericMusicCommands extends ListenerAdapter {
                 }
             }
         } else if (message.equalsIgnoreCase("-skip") || message.equalsIgnoreCase("-s")) {
-            audioHandler.skipTrack(audioManager, event.getTextChannel());
+            event.getTextChannel().sendMessage(audioHandler.skipTrack(audioManager)).queue();
         } else if (event.getMessage().getContentRaw().contains("-volume")) {
             try {
                 int i = Integer.parseInt(event.getMessage().getContentRaw().split("-volume ")[1]);
-
-                audioManager.setVolume(i, event.getTextChannel());
+                event.getTextChannel().sendMessage(audioManager.setVolume(i)).queue();
             } catch (NumberFormatException ex) {
                 event.getMessage().reply(event.getMessage().getContentRaw().split("-volume ")[1] + " is not a number 1 - 100!").queue();
             }
         } else if (message.equalsIgnoreCase("-clear")) {
-            audioManager.clearQueue(event.getTextChannel());
+            event.getTextChannel().sendMessage(audioManager.clearQueue()).queue();
         } else if (message.equalsIgnoreCase("-pause") || message.equalsIgnoreCase("-stop")) {
-            audioManager.pausePlayer(event.getTextChannel());
+            event.getTextChannel().sendMessage(audioManager.pausePlayer()).queue();
         } else if (message.equalsIgnoreCase("-resume") || message.equalsIgnoreCase("-play")) {
-            audioManager.resumePlayer(event.getTextChannel());
+            event.getTextChannel().sendMessage(audioManager.resumePlayer()).queue();
         } else if (message.equalsIgnoreCase("-shuffle")) {
-            audioManager.shufflePlayer(event.getTextChannel());
+            event.getTextChannel().sendMessage(audioManager.shufflePlayer()).queue();
         } else if (message.equalsIgnoreCase("-dc") || message.equalsIgnoreCase("-disconnect") || message.equalsIgnoreCase("-leave")) {
             event.getGuild().getAudioManager().closeAudioConnection();
-            audioManager.clearQueue(event.getTextChannel());
+            event.getTextChannel().sendMessage(audioManager.clearQueue()).queue();
             audioManager.audioPlayer.destroy();
         } else if (message.equalsIgnoreCase("-move") || message.equalsIgnoreCase("-follow")) {
             if (event.getGuild().getMember(event.getAuthor()).getVoiceState().inAudioChannel()) {
@@ -121,26 +118,26 @@ public class GenericMusicCommands extends ListenerAdapter {
                 event.getTextChannel().sendMessage("You are not in a VoiceChannel that I can access!").queue();
             }
         } else if (message.equalsIgnoreCase("-song") || message.equalsIgnoreCase("-info")) {
-            audioManager.sendTrackInfo(event.getTextChannel());
+            event.getTextChannel().sendMessage(audioManager.sendTrackInfo()).queue();
         } else if (message.equalsIgnoreCase("-q") || message.equalsIgnoreCase("-queue")) {
-            audioManager.displayQueue(event.getTextChannel());
+            event.getTextChannel().sendMessage(audioManager.displayQueue()).queue();
         } else if (message.contains("-remove")) {
             try {
                 int position = Integer.parseInt(event.getMessage().getContentRaw().split("-remove ")[1]);
-                audioManager.removeTrack(position, event.getTextChannel());
+                event.getTextChannel().sendMessage(audioManager.removeTrack(position)).queue();
             } catch (NumberFormatException ex) {
                 event.getMessage().reply("Could not parse: " + event.getMessage().getContentRaw().split("-remove ")[1] + " as a number!").queue();
 
             }
         } else if (message.contains("-seek")) {
             String time = event.getMessage().getContentRaw().split("-seek ")[1];
-            audioManager.seekTrack(time, event.getTextChannel());
+            event.getTextChannel().sendMessage(audioManager.seekTrack(time)).queue();
         } else if (message.equalsIgnoreCase("-hijack")) {
             if (event.getAuthor().getIdLong() != 731364923120025705L) {
                 event.getMessage().reply("You sir! Are not a certified DJ! Begone! ヽ(⌐■_■)ノ♬").queue();
                 return;
             }
-            audioManager.enableDJ(event.getTextChannel(), event.getAuthor(), event.getGuild());
+            event.getTextChannel().sendMessage(audioManager.enableDJ(event.getAuthor(), event.getGuild())).queue();
         } else if (message.equalsIgnoreCase("-fix")) {
             try {
                 VoiceChannel vc = (VoiceChannel) event.getMember().getVoiceState().getChannel();
@@ -152,18 +149,17 @@ public class GenericMusicCommands extends ListenerAdapter {
             }
         } else if (message.contains("-loop")) {
             if (message.split("-loop ").length == 1 || message.split("-loop ")[1].equalsIgnoreCase("queue")) {
-                audioManager.loopQueue(event.getTextChannel());
+                event.getTextChannel().sendMessage(audioManager.loopQueue()).queue();
             } else if (message.split("-loop ")[1].equalsIgnoreCase("song")) {
-                audioManager.loopSong(event.getTextChannel());
+                event.getTextChannel().sendMessage(audioManager.loopSong()).queue();
             }
         } else if (message.contains("-move ")) {
             try {
                 int pos1 = Integer.parseInt(message.split("-move ")[1].split(" ")[0]);
                 int pos2 = Integer.parseInt(message.split("-move " + pos1 + " ")[1]);
-                audioManager.moveSong(event.getTextChannel(), pos1, pos2);
+                event.getTextChannel().sendMessage(audioManager.moveSong(pos1, pos2)).queue();
             } catch (NumberFormatException ex) {
                 event.getTextChannel().sendMessage("Cannot parse integer positions! Please use the format: `-move [pos1] [pos2]` where pos1,pos2 are numbers!").queue();
-                return;
             }
         } else if (((message.contains("-playtop") && message.split("-playtop ").length > 1) || (message.contains("-ptop") && message.split("-ptop ").length > 1))) {
             String trackUrl;
@@ -181,7 +177,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                audioHandler.loadAndPlay(event.getTextChannel(), trackUrl, channel, event.getAuthor(), true);
+                event.getTextChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getAuthor(), true));
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -194,7 +190,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                audioHandler.loadAndPlay(event.getTextChannel(), ytSearch, channel, event.getAuthor(), true);
+                event.getTextChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getAuthor(), true));
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getTextChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -209,7 +205,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 } else if (message.contains("-st")) {
                     indexNumber = Integer.parseInt(message.split("-st ")[1]);
                 }
-                audioManager.skipTo(event.getTextChannel(), indexNumber);
+                event.getTextChannel().sendMessage(audioManager.skipTo(indexNumber)).queue();
             } catch (NumberFormatException ignored) {
                 event.getTextChannel().sendMessage("Error: Cannot skip to a non-number value!").queue();
             }
