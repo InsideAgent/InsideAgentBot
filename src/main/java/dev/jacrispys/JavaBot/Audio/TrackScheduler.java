@@ -41,6 +41,7 @@ public class TrackScheduler extends AudioEventAdapter {
      *  startTrack will return true if no song is playing, as the boolean is noInterrupt
      * if false, offers the track to the queue
      */
+    @SuppressWarnings("all")
     public void queue(AudioTrack track) {
         if(!audioPlayer.startTrack(track, true)) {
             this.queue.offer(track);
@@ -57,6 +58,7 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
 
+    @SuppressWarnings("all")
     public void onTrackEnd(AudioPlayer audioPlayer, AudioTrack track, AudioTrackEndReason endReason) {
         if(GuildAudioManager.getGuildAudioManager(guild).queueLoop) {
             this.queue.offer(track.makeClone());
