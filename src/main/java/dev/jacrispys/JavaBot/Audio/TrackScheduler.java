@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -63,11 +64,14 @@ public class TrackScheduler extends AudioEventAdapter {
 
         if(endReason.mayStartNext) {
             if(GuildAudioManager.getGuildAudioManager(guild).songLoop) {
-                audioPlayer.startTrack(track.makeClone(), false);
+                AudioTrack loopedTrack = track.makeClone();
+                User requester = Objects.requireNonNull(GuildAudioManager.getGuildAudioManager(guild).getRequester()).get(track);
+                audioPlayer.startTrack(loopedTrack, false);
+                Objects.requireNonNull(GuildAudioManager.getGuildAudioManager(guild).getRequester()).remove(track);
+                GuildAudioManager.getGuildAudioManager(guild).setRequester(loopedTrack, requester);
                 return;
             }
             nextTrack();
-            Objects.requireNonNull(GuildAudioManager.getGuildAudioManager(guild).getRequester()).remove(track);
         }
     }
 

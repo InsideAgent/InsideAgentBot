@@ -4,6 +4,7 @@ import dev.jacrispys.JavaBot.Audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.Audio.LoadAudioHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -131,7 +132,7 @@ public class SlashMusicCommands extends ListenerAdapter {
             case "resume" -> event.reply(audioManager.resumePlayer()).queue();
             case "dc","leave","disconnect" -> event.reply(audioManager.disconnectBot()).queue();
             case "follow" -> event.reply(audioManager.followUser(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
-            case "queue" -> event.reply(audioManager.displayQueue()).setEphemeral(true).queue();
+            case "queue" -> event.reply(audioManager.displayQueue()).queue();
             case "shuffle" -> event.reply(audioManager.shufflePlayer()).queue();
             case "song","song-info","info" -> event.reply(audioManager.sendTrackInfo()).setEphemeral(true).queue();
             case "remove" -> event.reply(audioManager.removeTrack(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
@@ -148,7 +149,13 @@ public class SlashMusicCommands extends ListenerAdapter {
                 event.reply(audioManager.seekTrack(stringBuilder.toString())).queue();
             }
             case "fix" -> event.reply(audioManager.fixAudio(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
-            case "loop" -> event.reply(Objects.requireNonNull(event.getOption("type")).getAsString().equalsIgnoreCase("queue") ? audioManager.loopQueue() : audioManager.loopSong()).queue();
+            case "loop" -> {
+                Message message;
+                if(event.getOption("type") != null) {
+                    message = Objects.requireNonNull(event.getOption("type")).getAsString().equalsIgnoreCase("queue") ? audioManager.loopQueue() : audioManager.loopSong();
+                } else message = audioManager.loopQueue();
+                event.reply(message).queue();
+            }
             case "move" -> event.reply(audioManager.moveSong(Objects.requireNonNull(event.getOption("pos1")).getAsInt(), Objects.requireNonNull(event.getOption("pos2")).getAsInt())).queue();
             case "hijack" -> event.reply(audioManager.enableDJ(event.getUser(), event.getGuild())).queue();
             case "skipto" -> event.reply(audioManager.skipTo(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();

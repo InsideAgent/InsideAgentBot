@@ -10,6 +10,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static dev.jacrispys.JavaBot.Audio.GuildAudioManager.nowPlayingId;
 import static dev.jacrispys.JavaBot.Audio.GuildAudioManager.queuePage;
@@ -54,7 +55,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
                 }
                 case ("remove") -> {
                     if(event.getMessage().isEphemeral()) {
-                        event.editMessageEmbeds(new EmbedBuilder().setAuthor(".", null, event.getGuild().getSelfMember().getEffectiveAvatarUrl()).build()).queue();
+                        event.editMessageEmbeds(new EmbedBuilder().setAuthor(".", null, Objects.requireNonNull(event.getGuild()).getSelfMember().getEffectiveAvatarUrl()).build()).queue();
                     } else event.getMessage().delete().queue();
                 }
                 case ("nextPage") -> {
@@ -90,7 +91,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     }
                 }
                 case ("showQueue") -> {
-                    event.getTextChannel().sendMessage(audioManager.displayQueue()).queue();
+                    event.reply(audioManager.displayQueue()).setEphemeral(true).queue();
                     if (!event.isAcknowledged()) {
                         event.editMessage(event.getMessage()).queue();
                     }
