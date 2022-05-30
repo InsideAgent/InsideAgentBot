@@ -40,6 +40,7 @@ public class InactivityTimer extends ListenerAdapter {
                     } finally {
                         player.destroy();
                         GuildAudioManager.getGuildAudioManager(guild).clearQueue();
+                        GuildAudioManager.getGuildAudioManager(guild).resumePlayer();
                         if(guild.getSelfMember().getVoiceState() != null) {
                             guild.getAudioManager().closeAudioConnection();
                         }
