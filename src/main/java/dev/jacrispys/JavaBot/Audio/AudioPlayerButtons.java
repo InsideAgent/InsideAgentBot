@@ -83,12 +83,12 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     }
                 }
                 case ("skipTrack") -> {
+                    event.deferReply().setEphemeral(true).queue();
                     nowPlayingId.put(fromButtonGuild, event.getMessage().getIdLong());
-                    if(event.isAcknowledged()) return;
                     if(audioManager.audioPlayer.getPlayingTrack() == null) {
-                        event.editMessage(event.getMessage()).queue();
+                        event.getHook().editOriginal(event.getMessage()).queue();
                     } else {
-                        event.reply(audioManager.skipTrack()).queue();
+                        event.getHook().editOriginal(audioManager.skipTrack()).queue();
                     }
                 }
                 case ("showQueue") -> {
