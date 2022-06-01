@@ -101,7 +101,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                 if(!(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp"))) {
                     track = Objects.requireNonNull(event.getOption("query")).getAsString();
                     if (channel == null) {
-                        event.reply("Could not load song, as you are not in a voice channel!").setEphemeral(true).queue();
+                        event.getHook().editOriginal("Could not load song, as you are not in a voice channel!").queue();
                         return;
                     }
                     try {
