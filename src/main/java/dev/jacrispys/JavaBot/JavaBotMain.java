@@ -1,7 +1,10 @@
 package dev.jacrispys.JavaBot;
 
+import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifyConfig;
+import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import dev.jacrispys.JavaBot.Audio.AudioPlayerButtons;
 import dev.jacrispys.JavaBot.Audio.InactivityTimer;
 import dev.jacrispys.JavaBot.Commands.Audio.GenericMusicCommands;
@@ -10,7 +13,7 @@ import dev.jacrispys.JavaBot.Commands.ComplaintCommand;
 import dev.jacrispys.JavaBot.Commands.GameSpyCommand;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
 import dev.jacrispys.JavaBot.Commands.RegisterGuildCommand;
-import dev.jacrispys.JavaBot.Commands.RuntimeDebug.DebugCommands;
+import dev.jacrispys.JavaBot.Commands.RuntimeDebug.GenericDebugCommands;
 import dev.jacrispys.JavaBot.Events.BotStartup;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
@@ -56,6 +59,13 @@ public class JavaBotMain {
         logger.info("{} - DB-Connection Successful!", className);
 
         audioManager = new DefaultAudioPlayerManager();
+        AudioSourceManagers.registerLocalSource(audioManager);
+        SpotifyConfig spotifyConfig = new SpotifyConfig();
+        spotifyConfig.setClientId(SecretData.getSpotifyId());
+        spotifyConfig.setClientSecret(SecretData.getSpotifySecret());
+        spotifyConfig.setCountryCode("US");
+        audioManager.registerSourceManager(new SpotifySourceManager(null, spotifyConfig, audioManager));
+        AudioSourceManagers.registerRemoteSources(audioManager);
 
         jda.getPresence().setActivity(Activity.streaming("Version-0.1.7 Woo!", "https://www.twitch.tv/jacrispyslive"));
         logger.info("{} - Starting event listeners...", className);
@@ -68,7 +78,7 @@ public class JavaBotMain {
         jda.addEventListener(new GenericMusicCommands());
         jda.addEventListener(new AudioPlayerButtons());
         jda.addEventListener(new InactivityTimer());
-        jda.addEventListener(new DebugCommands());
+        jda.addEventListener(new GenericDebugCommands());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
         logger.info("{} - Starting GameSpyThread...", className);
         gameSpyThread = new GameSpyThread(jda);
