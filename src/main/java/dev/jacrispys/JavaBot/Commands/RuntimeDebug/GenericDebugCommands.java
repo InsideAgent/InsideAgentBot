@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DebugCommands extends ListenerAdapter {
+public class GenericDebugCommands extends ListenerAdapter {
     @SuppressWarnings("all")
     private final long DEBUG_SERVER = 786741501014441995L;
 
