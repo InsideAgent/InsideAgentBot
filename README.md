@@ -144,8 +144,8 @@ On startup of the bot, you will want to use `!registerguild` to make sure your g
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] ~~Complete Core AudioPlayer Features~~
-- [ ] Add supplemental features to AudioPlayer
+- [x] ~~Complete Core AudioPlayer Features~~
+- [x] ~~Add supplemental features to AudioPlayer~~
 - [ ] Complete GameSpy
     - [ ] Log specific games, and give weekly reports
 - [ ] Currently obtaining server to achieve near 100% uptime.
