@@ -708,6 +708,11 @@ public class GuildAudioManager {
 
     public Message disconnectBot() {
         try {
+            if(!jdaInstance.getGuildById(currentGuild).getAudioManager().isConnected()) {
+                logger.error("Could not remove disconnected bot from VC!");
+            } else {
+                jdaInstance.getGuildById(currentGuild).getAudioManager().closeAudioConnection();
+            }
             MessageBuilder message = new MessageBuilder();
             EmbedBuilder eb = new EmbedBuilder();
             eb.setColor(Color.CYAN);
@@ -715,11 +720,6 @@ public class GuildAudioManager {
             message.setEmbeds(eb.build());
             clearQueue();
             audioPlayer.destroy();
-            if(!jdaInstance.getGuildById(currentGuild).getAudioManager().isConnected()) {
-                logger.error("Could not remove disconnected bot from VC!");
-            } else {
-                jdaInstance.getGuildById(currentGuild).getAudioManager().closeAudioConnection();
-            }
             return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         } catch (Exception ex) {
             ex.printStackTrace();
