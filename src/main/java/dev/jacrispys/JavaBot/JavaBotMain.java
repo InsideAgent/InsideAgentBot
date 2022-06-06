@@ -15,6 +15,7 @@ import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessa
 import dev.jacrispys.JavaBot.Commands.RegisterGuildCommand;
 import dev.jacrispys.JavaBot.Commands.RuntimeDebug.GenericDebugCommands;
 import dev.jacrispys.JavaBot.Events.BotStartup;
+import dev.jacrispys.JavaBot.Utils.CLI;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.Utils.SecretData;
@@ -83,6 +84,9 @@ public class JavaBotMain {
         logger.info("{} - Starting GameSpyThread...", className);
         gameSpyThread = new GameSpyThread(jda);
         gameSpyThread.start();
+
+        logger.info("{} - Enabling command line interface...", className);
+        new CLI(jda);
 
 
     }
