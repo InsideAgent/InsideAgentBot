@@ -267,6 +267,10 @@ public class GuildAudioManager {
     public Message skipTrack() {
         AudioTrack track = audioPlayer.getPlayingTrack();
         MessageBuilder message = new MessageBuilder();
+        if(track == null) {
+            message.append("Could not skip track, as no track was playing!");
+            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        }
         if (queueLoop || songLoop) {
             message.append("Track skipped! Loop was disabled!");
         } else {
@@ -292,6 +296,7 @@ public class GuildAudioManager {
             AudioManager manager = guild.getAudioManager();
             manager.openAudioConnection(channel);
             manager.setSendingHandler(sendHandler);
+            manager.setAutoReconnect(true);
         }
     }
 
@@ -413,7 +418,7 @@ public class GuildAudioManager {
     public void togglePlayer() {
         try {
             this.audioPlayer.setPaused(!audioPlayer.isPaused());
-            if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, jdaInstance.getGuildById(currentGuild));
+            if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild, jdaInstance);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -452,7 +457,7 @@ public class GuildAudioManager {
         if (!audioPlayer.isPaused()) {
             message.append("Paused ⏸️");
             audioPlayer.setPaused(true);
-            if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, jdaInstance.getGuildById(currentGuild));
+            if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild, jdaInstance);
         }
         return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
@@ -708,10 +713,10 @@ public class GuildAudioManager {
 
     public Message disconnectBot() {
         try {
-            if(!jdaInstance.getGuildById(currentGuild).getAudioManager().isConnected()) {
+            if(!Objects.requireNonNull(jdaInstance.getGuildById(currentGuild)).getAudioManager().isConnected()) {
                 logger.error("Could not remove disconnected bot from VC!");
             } else {
-                jdaInstance.getGuildById(currentGuild).getAudioManager().closeAudioConnection();
+                Objects.requireNonNull(jdaInstance.getGuildById(currentGuild)).getAudioManager().closeAudioConnection();
             }
             MessageBuilder message = new MessageBuilder();
             EmbedBuilder eb = new EmbedBuilder();

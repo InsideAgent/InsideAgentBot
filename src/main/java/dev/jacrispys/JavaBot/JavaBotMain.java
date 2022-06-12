@@ -15,7 +15,6 @@ import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessa
 import dev.jacrispys.JavaBot.Commands.RegisterGuildCommand;
 import dev.jacrispys.JavaBot.Commands.RuntimeDebug.GenericDebugCommands;
 import dev.jacrispys.JavaBot.Events.BotStartup;
-import dev.jacrispys.JavaBot.Utils.CLI;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.Utils.SecretData;
@@ -39,6 +38,7 @@ public class JavaBotMain {
     public static AudioPlayerManager audioManager;
 
     private static final String botToken = SecretData.getToken();
+    private static final String devToken = SecretData.getToken(true);
 
     public static void main(String[] args) throws Exception {
 
@@ -46,7 +46,7 @@ public class JavaBotMain {
         logger.info("{} - Jansi Installed.", className);
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(botToken)
+        JDA jda = JDABuilder.createDefault(devToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
@@ -86,7 +86,11 @@ public class JavaBotMain {
         gameSpyThread.start();
 
         logger.info("{} - Enabling command line interface...", className);
-        new CLI(jda);
+
+
+
+
+
 
 
     }

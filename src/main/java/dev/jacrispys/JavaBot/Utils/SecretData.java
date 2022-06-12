@@ -13,6 +13,8 @@ public class SecretData {
         return (String) loginInfo.get("TOKEN");
     }
 
+    public static String getToken(boolean dev) { return dev ? (String) loginInfo.get("TOKEN-DEV") : (String) loginInfo.get("TOKEN"); }
+
     public static String getSpotifySecret() {
         return (String) loginInfo.get("SPOTIFY_SECRET");
     }
