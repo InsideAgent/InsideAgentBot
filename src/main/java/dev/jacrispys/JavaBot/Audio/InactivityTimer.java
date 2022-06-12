@@ -28,7 +28,7 @@ public class InactivityTimer extends ListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(InactivityTimer.class);
 
     private static boolean inactivityExpired(long inactiveStart) {
-        return Duration.ofMillis(System.currentTimeMillis() - inactiveStart).toMillis() >= Duration.ofSeconds(3).toMillis();
+        return Duration.ofMillis(System.currentTimeMillis() - inactiveStart).toMillis() >= Duration.ofMinutes(15).toMillis();
     }
 
     @SuppressWarnings("all")
