@@ -715,6 +715,7 @@ public class GuildAudioManager {
         try {
             if(!Objects.requireNonNull(jdaInstance.getGuildById(currentGuild)).getAudioManager().isConnected()) {
                 logger.error("Could not remove disconnected bot from VC!");
+                Objects.requireNonNull(jdaInstance.getGuildById(currentGuild)).getAudioManager().closeAudioConnection();
             } else {
                 Objects.requireNonNull(jdaInstance.getGuildById(currentGuild)).getAudioManager().closeAudioConnection();
             }

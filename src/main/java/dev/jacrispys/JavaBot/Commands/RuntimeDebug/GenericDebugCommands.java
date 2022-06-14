@@ -50,7 +50,7 @@ public class GenericDebugCommands extends ListenerAdapter {
                     case("latency"):
                     case("ping"):
                         EmbedBuilder latencyEb = new EmbedBuilder();
-                        latencyEb.setAuthor("Active Audio Players - [DEBUG]", null, event.getAuthor().getEffectiveAvatarUrl());
+                        latencyEb.setAuthor("Inside Agent Latency - [DEBUG]", null, event.getAuthor().getEffectiveAvatarUrl());
                         long latency = Instant.now().toEpochMilli() - (event.getMessage().getTimeCreated().toInstant().toEpochMilli());
                         latencyEb.addField("Latency: ", "Gateway Latency: `" + event.getJDA().getGatewayPing() + "`Ms \n" + "Server latency: `" + latency + "`Ms", false);
                         latencyEb.setFooter("Negative ping what a joke :(");
