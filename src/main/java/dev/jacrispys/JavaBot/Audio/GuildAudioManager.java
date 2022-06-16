@@ -371,6 +371,8 @@ public class GuildAudioManager {
 
     }
 
+    
+
     public static Map<Guild, Long> nowPlayingId = new HashMap<>();
 
     /**

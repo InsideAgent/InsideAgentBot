@@ -3,6 +3,7 @@ package dev.jacrispys.JavaBot.Commands.RuntimeDebug;
 import dev.jacrispys.JavaBot.Audio.GuildAudioManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -20,6 +21,7 @@ public class GenericDebugCommands extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if(event.isFromType(ChannelType.PRIVATE)) return;
         if (event.getGuild() == event.getJDA().getGuildById(DEBUG_SERVER)) {
             if (event.getAuthor().isBot()) return;
             String message;
