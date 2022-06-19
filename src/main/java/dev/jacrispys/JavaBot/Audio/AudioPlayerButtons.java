@@ -77,11 +77,8 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     }
                 }
                 case ("togglePlayer") -> {
-                    event.deferReply().queue();
                     audioManager.togglePlayer();
-                    if (!event.isAcknowledged()) {
-                        event.getHook().editOriginal(event.getMessage()).queue();
-                    } else event.getHook().editOriginal(event.getMessage()).queue();
+                    event.editMessage(event.getMessage()).queue();
                 }
                 case ("skipTrack") -> {
                     event.deferReply().queue();
