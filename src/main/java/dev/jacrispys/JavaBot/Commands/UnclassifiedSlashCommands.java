@@ -27,9 +27,9 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
     protected void updateJdaCommands(JDA jda) {
         jda.updateCommands()
                 .addCommands(
-                        Commands.slash("nick", "Sets the nickname of this bot, or a user.")
+                        Commands.slash("setnick", "Sets the nickname of this bot, or a user.")
                                 .addOption(OptionType.STRING, "nickname", "The nickname to give the user", true)
-                                .addOption(OptionType.USER, "target", "User to set nickname.")
+                                .addOption(OptionType.USER, "target", "User to set nickname.", false)
                 ).queue();
     }
 
@@ -40,7 +40,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         String commandName = event.getName();
         switch (commandName) {
-            case "nick" -> {
+            case "setnick" -> {
                 User target;
                 if (event.getOption("target") != null) {
                     target = event.getOption("target").getAsUser();
@@ -48,7 +48,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 event.getGuild().getMember(target).modifyNickname(event.getOption("nickname").getAsString()).queue();
                 event.reply(target.getAsMention() + " has successfully been nicknamed as: " + event.getOption("nickname").getAsString()).setEphemeral(true).queue();
             }
-            default -> event.reply("Unknown command! Please try again.").queue();
+            default -> event.reply("Could not find a command registered as: `" + commandName + "`, please report this!").setEphemeral(true).queue();
         }
     }
 }
