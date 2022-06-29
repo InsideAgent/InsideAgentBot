@@ -7,19 +7,23 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BotStartup extends ListenerAdapter {
 
     public void onReady(@NotNull ReadyEvent event) {
+        List<CommandData> commands = new ArrayList<>();
 
-        event.getJDA().getGuildById(770453637620170843L).getSelfMember().modifyNickname("Stevie Wynne Levine").queue();
+        commands.addAll(new SlashMusicCommands().updateJdaCommands());
+        commands.addAll(new UnclassifiedSlashCommands().updateJdaCommands());
 
-        new SlashMusicCommands().initCommands(event.getJDA(), event.getJDA().getGuilds());
-        new UnclassifiedSlashCommands().initCommands(event.getJDA(), event.getJDA().getGuilds());
+        event.getJDA().updateCommands().addCommands(commands).queue();
 
         // Start GameSpy on enabled servers.
         for (Guild guild : event.getJDA().getGuilds()) {

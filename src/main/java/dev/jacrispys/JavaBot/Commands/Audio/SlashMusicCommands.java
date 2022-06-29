@@ -9,12 +9,15 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,13 +27,14 @@ public class SlashMusicCommands extends ListenerAdapter {
 
     }
 
-    public void initCommands(JDA jda, List<Guild> guilds) {
-        updateJdaCommands(jda);
+    public void initCommands(List<Guild> guilds) {
+        updateJdaCommands();
         guilds.forEach(this::updateGuildCommands);
     }
 
-    protected void updateJdaCommands(JDA jda) {
-        jda.updateCommands().addCommands(
+    public List<CommandData> updateJdaCommands() {
+        List<CommandData> commands = new ArrayList<>();
+        Collections.addAll(commands,
                 Commands.slash("play", "Add a link to most streaming platforms, or use its name to search!")
                         .addOption(OptionType.STRING, "query", "Track to search for.", true)
                         .addOptions(new OptionData(OptionType.STRING, "search", "Method to search for track with.", false)
@@ -77,7 +81,8 @@ public class SlashMusicCommands extends ListenerAdapter {
                         .addOption(OptionType.INTEGER, "index", "Index to skip to.", true),
                 Commands.slash("fileplay", "adds a song to the queue")
                         .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true)
-                ).queue();
+                );
+        return commands;
     }
 
     protected void updateGuildCommands(Guild guild) {
