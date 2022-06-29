@@ -1,6 +1,7 @@
 package dev.jacrispys.JavaBot.Events;
 
 import dev.jacrispys.JavaBot.Commands.Audio.SlashMusicCommands;
+import dev.jacrispys.JavaBot.Commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -15,7 +16,10 @@ public class BotStartup extends ListenerAdapter {
 
     public void onReady(@NotNull ReadyEvent event) {
 
+        event.getJDA().getGuildById(770453637620170843L).getSelfMember().modifyNickname("Stevie Wynne Levine").queue();
+
         new SlashMusicCommands().initCommands(event.getJDA(), event.getJDA().getGuilds());
+        new UnclassifiedSlashCommands().initCommands(event.getJDA(), event.getJDA().getGuilds());
 
         // Start GameSpy on enabled servers.
         for (Guild guild : event.getJDA().getGuilds()) {

@@ -14,6 +14,7 @@ import dev.jacrispys.JavaBot.Commands.GameSpyCommand;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
 import dev.jacrispys.JavaBot.Commands.RegisterGuildCommand;
 import dev.jacrispys.JavaBot.Commands.RuntimeDebug.GenericDebugCommands;
+import dev.jacrispys.JavaBot.Commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.Events.BotStartup;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
@@ -80,6 +81,7 @@ public class JavaBotMain {
         jda.addEventListener(new AudioPlayerButtons());
         jda.addEventListener(new InactivityTimer());
         jda.addEventListener(new GenericDebugCommands());
+        jda.addEventListener(new UnclassifiedSlashCommands());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
         logger.info("{} - Starting GameSpyThread...", className);
         gameSpyThread = new GameSpyThread(jda);
