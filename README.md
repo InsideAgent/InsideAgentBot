@@ -102,7 +102,7 @@ This project started as a personal challenge/venture, but when I realized how mu
 
 To add this bot to your own discord server, simply click this [link](https://discord.com/api/oauth2/authorize?client_id=786721755560804373&permissions=8&scope=bot%20applications.commands) and it choose the server you would like the bot in! 
 
-And just like that the bot is ready to go! (If the bot does not show online, it is because I am waiting for new hardware to run it on, i thank you for your patience.)
+And just like that the bot is ready to go!
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -148,7 +148,7 @@ _(Note Current commands with '-' are deprecated and should use slash commands in
 - [x] ~~Add supplemental features to AudioPlayer~~
 - [ ] Complete GameSpy
     - [ ] Log specific games, and give weekly reports
-- [ ] Currently obtaining server to achieve near 100% uptime.
+- [x] ~~Currently obtaining server to achieve near 100% uptime.~~
 - [ ] New Features, feature requests.
 
 See the [open issues](https://github.com/InsideAgent/DiscordBot/issues) for a full list of proposed features (and known issues).
