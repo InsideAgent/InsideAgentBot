@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dataSource name="inside_agent_bot@localhost">
+<dataSource name="Jacrispys@localhost">
   <database-model serializer="dbm" dbms="MYSQL" family-id="MYSQL" format-version="4.32">
     <root id="1"/>
     <collation id="2" parent="1" name="armscii8_general_ci">

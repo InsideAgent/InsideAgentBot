@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal" created-in="IU-213.7172.25">
-    <data-source name="inside_agent_bot@localhost" uuid="f8987211-af5b-4af1-ba11-346a251fe2fb">
+    <data-source name="Jacrispys@localhost" uuid="f8987211-af5b-4af1-ba11-346a251fe2fb">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" exact-version="0" />
+      <user-name>root</user-name>
+      <schema-mapping />
+    </data-source>
+    <data-source name="Jacrispys@localhost [2]" uuid="7bb155f5-a1a1-4496-91af-0240856ce1c6">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" exact-version="0" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>Jacrispys</user-name>
       <schema-mapping />
     </data-source>
   </component>

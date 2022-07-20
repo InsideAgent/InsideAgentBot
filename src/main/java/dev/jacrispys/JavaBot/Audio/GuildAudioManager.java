@@ -133,7 +133,7 @@ public class GuildAudioManager {
      */
     private MessageEmbed djEnabledEmbed(JDA jda) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(Color.decode("e03131"));
+        embedBuilder.setColor(Color.decode("#e03131"));
         embedBuilder.setAuthor( "|   Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬", null, jda.getSelfUser().getEffectiveAvatarUrl());
         return embedBuilder.build();
     }
@@ -550,7 +550,11 @@ public class GuildAudioManager {
             return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         } catch (Exception ex) {
             MessageBuilder message = new MessageBuilder();
-            message.append("Invalid use of seek! Please use the format 'HH:mm:ss'");
+            if(audioPlayer.getPlayingTrack() != null) {
+                message.append("Invalid use of seek! Please use the format 'HH:mm:ss'");
+            } else {
+                message.append("No track found playing! Please play a track to use this feature!");
+            }
             return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         }
     }
@@ -573,6 +577,9 @@ public class GuildAudioManager {
      */
     @SuppressWarnings("all")
     public Message enableDJ(User sender, Guild guild) {
+        if(sender.getIdLong() != 731364923120025705L) {
+            return new MessageBuilder().setContent("You sir! Are not a certified DJ! Begone! ヽ(⌐■_■)ノ♬").build();
+        }
         if (!djEnabled) {
             hijackQueue = new LinkedBlockingQueue<>(scheduler.getTrackQueue());
             clearQueue();

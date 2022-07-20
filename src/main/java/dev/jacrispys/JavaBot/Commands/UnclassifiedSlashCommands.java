@@ -1,5 +1,6 @@
 package dev.jacrispys.JavaBot.Commands;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -39,6 +40,10 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
         String commandName = event.getName();
         switch (commandName) {
             case "setnick" -> {
+                if(!event.getMember().hasPermission(Permission.NICKNAME_MANAGE)) {
+                    event.reply("You do not have permission to use this command!").setEphemeral(true).queue();
+                    return;
+                }
                 User target;
                 if (event.getOption("target") != null) {
                     target = event.getOption("target").getAsUser();

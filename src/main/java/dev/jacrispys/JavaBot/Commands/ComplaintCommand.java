@@ -44,8 +44,10 @@ public class ComplaintCommand extends ListenerAdapter {
             rs.beforeFirst();
             if (!rs.next()) {
                 event.getTextChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+                rs.close();
                 return;
             }
+            rs.close();
         } catch (Exception ignored) {
             event.getTextChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
             return;
@@ -102,6 +104,7 @@ public class ComplaintCommand extends ListenerAdapter {
                                 rs.beforeFirst();
                                 rs.next();
                                 long channelId = rs.getLong("TicketChannel");
+                                rs.close();
                                 TextChannel tickets = event.getGuild().getTextChannelById(channelId);
                                 if (tickets != null) {
                                     if (event.getGuild().getBoostTier().ordinal() <= 1) {
