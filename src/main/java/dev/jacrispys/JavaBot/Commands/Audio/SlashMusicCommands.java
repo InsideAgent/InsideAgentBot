@@ -5,6 +5,7 @@ import dev.jacrispys.JavaBot.Audio.LoadAudioHandler;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -88,6 +89,14 @@ public class SlashMusicCommands extends ListenerAdapter {
 
     protected void updateGuildCommands(Guild guild) {
     }
+    protected void updateMusicChannel(Guild guild, TextChannel channel) {
+        try {
+            MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
@@ -102,6 +111,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                     assert event.getMember().getVoiceState() != null;
                     assert event.getMember().getVoiceState().getChannel() != null;
                     channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+                    updateMusicChannel(event.getGuild(), event.getTextChannel());
 
                     String track = null;
                     if (!(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp"))) {
@@ -130,11 +140,6 @@ public class SlashMusicCommands extends ListenerAdapter {
                     }
                     boolean playTop = (commandName.equalsIgnoreCase("playtop"));
                     event.getHook().editOriginal(Objects.requireNonNull(audioHandler.loadAndPlay(track, channel, event.getUser(), playTop))).queue();
-                try {
-                    MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(event.getGuild()), event.getTextChannel().getIdLong());
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
             }
             case "skip" -> event.reply(audioHandler.skipTrack(audioManager)).queue();
             case "volume" -> event.reply(audioManager.setVolume(Objects.requireNonNull(event.getOption("volume")).getAsInt())).queue();
@@ -170,7 +175,9 @@ public class SlashMusicCommands extends ListenerAdapter {
             case "move" -> event.reply(audioManager.moveSong(Objects.requireNonNull(event.getOption("pos1")).getAsInt(), Objects.requireNonNull(event.getOption("pos2")).getAsInt())).queue();
             case "hijack" -> event.reply(audioManager.enableDJ(event.getUser(), event.getGuild())).queue();
             case "skipto" -> event.reply(audioManager.skipTo(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
-            default -> throw new IllegalStateException("Unexpected value: " + commandName);
+            default -> {
+                if (!event.isAcknowledged()) event.reply("Could not find a command registered as: `" + commandName + "`, please report this!").setEphemeral(true).queue();
+            }
         }
     }
 }

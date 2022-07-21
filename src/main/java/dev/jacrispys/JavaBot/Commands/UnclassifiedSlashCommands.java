@@ -40,7 +40,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
         String commandName = event.getName();
         switch (commandName) {
             case "setnick" -> {
-                if(!event.getMember().hasPermission(Permission.NICKNAME_MANAGE)) {
+                if (!event.getMember().hasPermission(Permission.NICKNAME_MANAGE)) {
                     event.reply("You do not have permission to use this command!").setEphemeral(true).queue();
                     return;
                 }
@@ -52,10 +52,8 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 event.reply(target.getAsMention() + " has successfully been nicknamed as: " + event.getOption("nickname").getAsString()).setEphemeral(true).queue();
             }
             default -> {
-                if (event.isAcknowledged()) {
-                    return;
-                }
-                event.reply("Could not find a command registered as: `" + commandName + "`, please report this!").setEphemeral(true).queue();
+                if (!event.isAcknowledged())
+                    event.reply("Could not find a command registered as: `" + commandName + "`, please report this!").setEphemeral(true).queue();
             }
         }
     }
