@@ -8,6 +8,6 @@ assignees: []
 body:
  - type: markdown
    attributes:
-    label: "Check List:"
+    value: "## Check List:"
     options: 
      - label: "I Have checked the [issues](https://github.com/InsideAgent/InsideAgentBot/issues) for duplicates."
