@@ -9,5 +9,6 @@ body:
  - type: markdown
    attributes:
     value: "## Check List:"
-    options: 
-     - label: "I Have checked the [issues](https://github.com/InsideAgent/InsideAgentBot/issues) for duplicates."
+ - type: checkboxes
+   attributes:
+    label: "I Have checked the [issues](https://github.com/InsideAgent/InsideAgentBot/issues) for duplicates."
