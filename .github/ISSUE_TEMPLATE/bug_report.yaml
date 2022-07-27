@@ -7,6 +7,7 @@ assignees: ''
 
 body:
  - type: markdown
-   attributes: 
+   attributes:
     label: Check List:
-    value: [] - Checked Issues for a duplicate issue.
+    options: 
+     - label: I Have checked the [issues](https://github.com/InsideAgent/InsideAgentBot/issues) for duplicates.
