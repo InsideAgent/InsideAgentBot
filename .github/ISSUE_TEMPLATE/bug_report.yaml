@@ -1,0 +1,12 @@
+
+name: Bug report
+description: Create a report to help us improve
+title: "[Bug]: "
+labels: ["bug", "Incomplete"]
+assignees: ''
+
+body:
+ - type: markdown
+   attributes: 
+    label: Check List:
+    value: [] - Checked Issues for a duplicate issue.
