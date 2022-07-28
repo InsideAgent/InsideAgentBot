@@ -39,9 +39,6 @@ body:
       render: bash
     validations:
       required: false
-  - type: markdown
-    attributes:
-      value: "## Please attach any other files/screenshots/videos below!"
   - type: textarea
     attributes:
-      label: "Add Files Here!"
+      label: "Please attach any other files/screenshots/videos below!"
