@@ -26,3 +26,5 @@ body:
   - type: textarea
     attributes:
       label: "Please attach any other files/screenshots/videos/information below!"
+    validations:
+      required: true
