@@ -20,7 +20,7 @@ body:
         requried: true
       - label: "I have external evidence to attach to this report (photo/video/files/links)."
 - type: input
-  id: description
+  id: desc
   attributes:
    label: Description
    description: "What does this bug do? What does it affect?"
