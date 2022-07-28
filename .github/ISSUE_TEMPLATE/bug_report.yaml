@@ -1,7 +1,7 @@
 name: Bug report
 description: File a new bug report.
-title: "[Bug]: "
-labels: [ "bug", "Incomplete" ]
+title: "[Bug] 🐞: "
+labels: [ "bug🐞", "Incomplete" ]
 body:
   - type: checkboxes
     id: bug-reqs
@@ -42,3 +42,6 @@ body:
   - type: markdown
     attributes:
       value: "## Please attach any other files/screenshots/videos below!"
+  - type: textarea
+    attributes:
+      label: "Add Files Here!"
