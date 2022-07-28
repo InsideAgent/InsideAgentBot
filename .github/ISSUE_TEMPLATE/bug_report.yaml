@@ -1,8 +1,8 @@
-name: "Bug report"
-description: "Create a report to help us improve"
+name: Bug report
+description: File a new bug report.
 title: "[Bug]: "
 labels: ["bug", "Incomplete"]
-
+assignes: []
 body:
  - type: checkboxes
    id: bug-reqs
