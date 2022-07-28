@@ -6,15 +6,12 @@ labels: ["bug", "Incomplete"]
 assignees: []
 
 body:
- - type: markdown
-   attributes:
-    value: "## Check List:"
  - type: checkboxes
-   id: cat-preferences
+   id: bug-reqs
    attributes:
-    label: What kinds of cats do you like?
-    description: You may select more than one.
+    label: "#Bug Report Check List"
+    description: Please read all options thoroughly.
     options:
-      - label: Orange cat (required. Everyone likes orange cats.)
+      - label: "I have searched the [issues](https://github.com/InsideAgent/InsideAgentBot/issues) page for duplicates."
         required: true
       - label: "**Black cat**"
