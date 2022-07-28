@@ -2,7 +2,6 @@ name: Bug report
 description: File a new bug report.
 title: "[Bug]: "
 labels: [ "bug", "Incomplete" ]
-assignes: "Jacrispy"
 body:
   - type: checkboxes
     id: bug-reqs
