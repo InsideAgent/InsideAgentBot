@@ -1,6 +1,6 @@
 name: Bug report
 description: File a new bug report.
-title: "[Bug] 🐞: "
+title: "[Bug 🐞]: "
 labels: [ "bug🐞", "Incomplete" ]
 body:
   - type: checkboxes
