@@ -9,7 +9,7 @@ body:
  - type: checkboxes
    id: bug-reqs
    attributes:
-    label: "#Bug Report Check List"
+    label: "# Bug Report Check List"
     description: Please read all options thoroughly.
     options:
       - label: "I have searched the [issues](https://github.com/InsideAgent/InsideAgentBot/issues) page for duplicates."
