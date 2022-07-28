@@ -11,7 +11,7 @@ body:
     value: "## Check List:"
  - type: checkboxes
    attributes:
-    label: "I Have checked the [issues](https://github.com/InsideAgent/InsideAgentBot/issues) for duplicates."
+    label: "I Have checked the issues page."
     options: 
       - label: "Test"
      required: true
