@@ -95,7 +95,6 @@ public class AudioPlayerButtons extends ListenerAdapter {
                         event.editMessage(event.getMessage()).queue();
                     }
                 }
-                default -> System.out.println("wat");
             }
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -59,7 +59,7 @@ public class ComplaintCommand extends ListenerAdapter {
             defendAllRobots(event);
             return;
         }
-        UUID uuid = UUID.randomUUID();
+        UUID  uuid = UUID.randomUUID();
         if (complaintId.get(sender) != null || complaintMention.get(sender) != null) {
             event.getMessage().reply("Cannot create a complaint when you already have an pending request! (Use !clearcomplaint to clear the request!)").queue(m -> m.delete().queueAfter(3, TimeUnit.SECONDS));
             event.getMessage().delete().queue();
@@ -142,8 +142,6 @@ public class ComplaintCommand extends ListenerAdapter {
                         complaintMention.remove(event.getUser());
                     }
                 }
-            } else {
-                event.reply("Only the user who issued the complaint can use this feature!").setEphemeral(true).queue();
             }
         } catch (Exception ignored) {
         }

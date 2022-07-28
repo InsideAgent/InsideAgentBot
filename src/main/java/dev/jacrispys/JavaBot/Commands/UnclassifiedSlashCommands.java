@@ -8,10 +8,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class UnclassifiedSlashCommands extends ListenerAdapter {
 
@@ -26,9 +29,12 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
 
     public List<CommandData> updateJdaCommands() {
         List<CommandData> commands = new ArrayList<>();
-        commands.add(Commands.slash("setnick", "Sets the nickname of this bot, or a user.")
+        Collections.addAll(commands,
+                Commands.slash("setnick", "Sets the nickname of this bot, or a user.")
                 .addOption(OptionType.STRING, "nickname", "The nickname to give the user", true)
-                .addOption(OptionType.USER, "target", "User to set nickname.", false));
+                .addOption(OptionType.USER, "target", "User to set nickname.", false),
+                Commands.slash("embedbuilder", "builds an embed")
+                        .addOption(OptionType.CHANNEL, "channel", "Channel to send the embed to."));
         return commands;
     }
 
@@ -50,6 +56,13 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 } else target = event.getJDA().getSelfUser();
                 event.getGuild().getMember(target).modifyNickname(event.getOption("nickname").getAsString()).queue();
                 event.reply(target.getAsMention() + " has successfully been nicknamed as: " + event.getOption("nickname").getAsString()).setEphemeral(true).queue();
+            }
+            case "embedbuilder" -> {
+                event.deferReply(true).queue();
+                UUID id = UUID.randomUUID();
+                String buttonId = "builder:" + id;
+                EmbedCLI.addEmbedCLI((event.getOption("channel") != null ? event.getOption("channel").getAsMessageChannel() : event.getTextChannel()), id.toString());
+                event.getHook().editOriginal("Click Below!").setActionRow(Button.primary(buttonId, "Edit Embed?")).queue();
             }
             default -> {
                 if (!event.isAcknowledged())

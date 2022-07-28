@@ -7,14 +7,11 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import dev.jacrispys.JavaBot.Audio.AudioPlayerButtons;
 import dev.jacrispys.JavaBot.Audio.InactivityTimer;
+import dev.jacrispys.JavaBot.Commands.*;
 import dev.jacrispys.JavaBot.Commands.Audio.GenericMusicCommands;
 import dev.jacrispys.JavaBot.Commands.Audio.SlashMusicCommands;
-import dev.jacrispys.JavaBot.Commands.ComplaintCommand;
-import dev.jacrispys.JavaBot.Commands.GameSpyCommand;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
-import dev.jacrispys.JavaBot.Commands.RegisterGuildCommand;
 import dev.jacrispys.JavaBot.Commands.RuntimeDebug.GenericDebugCommands;
-import dev.jacrispys.JavaBot.Commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.Events.BotStartup;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
@@ -47,7 +44,7 @@ public class JavaBotMain {
         logger.info("{} - Jansi Installed.", className);
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(botToken)
+        JDA jda = JDABuilder.createDefault(devToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
@@ -82,6 +79,7 @@ public class JavaBotMain {
         jda.addEventListener(new InactivityTimer());
         jda.addEventListener(new GenericDebugCommands());
         jda.addEventListener(new UnclassifiedSlashCommands());
+        jda.addEventListener(EmbedCLI.getInstance());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
         logger.info("{} - Starting GameSpyThread...", className);
         gameSpyThread = new GameSpyThread(jda);

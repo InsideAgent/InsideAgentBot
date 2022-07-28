@@ -175,9 +175,6 @@ public class SlashMusicCommands extends ListenerAdapter {
             case "move" -> event.reply(audioManager.moveSong(Objects.requireNonNull(event.getOption("pos1")).getAsInt(), Objects.requireNonNull(event.getOption("pos2")).getAsInt())).queue();
             case "hijack" -> event.reply(audioManager.enableDJ(event.getUser(), event.getGuild())).queue();
             case "skipto" -> event.reply(audioManager.skipTo(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
-            default -> {
-                if (!event.isAcknowledged()) event.reply("Could not find a command registered as: `" + commandName + "`, please report this!").setEphemeral(true).queue();
-            }
         }
     }
 }
