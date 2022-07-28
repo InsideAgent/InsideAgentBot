@@ -25,4 +25,4 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: "Please attach any other files/screenshots/videos below!"
+      label: "Please attach any other files/screenshots/videos/information below!"
