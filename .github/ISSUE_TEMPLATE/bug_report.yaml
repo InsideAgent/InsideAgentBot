@@ -41,4 +41,5 @@ body:
   validations:
     required: false
  - type: markdown
+   id: final-notes
    value: "## Please attach any other files/screenshots/videos below!"
