@@ -1,45 +1,45 @@
 name: Bug report
 description: File a new bug report.
 title: "[Bug]: "
-labels: ["bug", "Incomplete"]
-assignes: []
+labels: [ "bug", "Incomplete" ]
+assignes: "Jacrispy"
 body:
- - type: checkboxes
-   id: bug-reqs
-   attributes:
-    label: "Bug Report Check List"
-    description: Please read all options thoroughly.
-    options:
-      - label: "I have searched the [issues](https://github.com/InsideAgent/InsideAgentBot/issues) page for duplicates."
-        required: true
-      - label: "I have a reproducer, or other proof the bug exists."
-        required: true
-      - label: "I have checked the [Pull Request](https://github.com/InsideAgent/InsideAgentBot/pulls) page for solutions to my problem."
-        required: true
-      - label: "This is a legitimate bug report to help improve this application."
-        requried: true
-      - label: "I have external evidence to attach to this report (photo/video/files/links)."
-- type: input
-  id: desc
-  attributes:
-   label: Description
-   description: "What does this bug do? What does it affect?"
-   placeholder: "Begin typing here."
-  validations:
-   required: true
- - type: textarea
-  id: repro
-  attributes:
-    label: Reproduction steps
-    description: "How do you trigger this bug? Please walk us through it step by step."
-    value: |
+  - type: checkboxes
+    id: bug-reqs
+    attributes:
+      label: "Bug Report Check List"
+      description: Please read all options thoroughly.
+      options:
+        - label: "I have searched the [issues](https://github.com/InsideAgent/InsideAgentBot/issues) page for duplicates."
+          required: true
+        - label: "I have a reproducer, or other proof the bug exists."
+          required: true
+        - label: "I have checked the [Pull Request](https://github.com/InsideAgent/InsideAgentBot/pulls) page for solutions to my problem."
+          required: true
+        - label: "This is a legitimate bug report to help improve this application."
+          required: true
+        - label: "I have external evidence to attach to this report (photo/video/files/links)."
+  - type: input
+    id: desc
+    attributes:
+      label: Description
+      description: "What does this bug do? What does it affect?"
+      placeholder: "Begin typing here."
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: "How do you trigger this bug? Please walk us through it step by step."
+      value: |
       1.
       2.
       3.
       ...
-    render: bash
-  validations:
-    required: false
- - type: markdown
-   id: final-notes
-   value: "## Please attach any other files/screenshots/videos below!"
+      render: bash
+    validations:
+      required: false
+  - type: markdown
+    attributes:
+      value: "## Please attach any other files/screenshots/videos below!"
