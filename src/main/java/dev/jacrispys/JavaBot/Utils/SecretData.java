@@ -10,30 +10,38 @@ public class SecretData {
     private static Yaml yaml = new Yaml();
     private static Map<String, Object> loginInfo;
 
-    public static void initLoginInfo() {
+    public static void initLoginInfo() throws IOException {
         yaml = new Yaml();
-        loginInfo = yaml.load(SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml"));
+        loginInfo = yaml.load(generateSecretData());
     }
 
-    public static void generateSecretData() throws Exception {
+    protected static InputStream generateSecretData() throws IOException {
         if (SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml") == null) {
             File file = new File("src/main/resources/loginInfo.yml");
             if (file.getParentFile() != null) file.getParentFile().mkdirs();
-            if(file.createNewFile()) {
-                try {
-                    yaml = new Yaml();
-                    Map<String, Object> fileInfo = new HashMap<>();
+            if (file.createNewFile()) {
+                Map<String, Object> fileInfo = new HashMap<>();
+                fileInfo.put("DATA_BASE_PASS", " ");
+                fileInfo.put("TOKEN", " ");
+                fileInfo.put("DEV-TOKEN", " ");
+                fileInfo.put("SPOTIFY_CLIENT_ID", " ");
+                fileInfo.put("SPOTIFY_SECRET", " ");
+                fileInfo.put("YOUTUBE_PSID", " ");
+                fileInfo.put("YOUTUBE_PAPISID", " ");
+                FileWriter writer = new FileWriter(file.getPath());
+                fileInfo.keySet().forEach(key -> {
+                    try {
+                        writer.write(key + ": " + fileInfo.get(key) + "\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+                writer.flush();
+                writer.close();
+                return new FileInputStream(file);
+            } else throw new FileNotFoundException("Could not create required config file!");
 
-                    fileInfo.put("TOKEN", " ");
-                    fileInfo.put("DEV-TOKEN", " ");
-                    FileWriter writer = new FileWriter(file.getPath());
-                    yaml.dump(fileInfo, writer);
-                } catch (FileNotFoundException ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-        }
+        } else return SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml");
     }
 
 

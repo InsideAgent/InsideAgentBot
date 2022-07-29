@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>dev.Jacrispys</groupId>
   <artifactId>InsideAgentDev</artifactId>
-  <version>0.1.7</version>
+  <version>0.1.8</version>
   <build>
     <plugins>
       <plugin>

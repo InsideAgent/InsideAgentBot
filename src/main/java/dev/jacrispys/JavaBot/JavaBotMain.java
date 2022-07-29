@@ -27,6 +27,8 @@ import org.fusesource.jansi.AnsiConsole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.ConfigurationException;
+
 
 public class JavaBotMain {
 
@@ -35,22 +37,22 @@ public class JavaBotMain {
     private static final String className = JavaBotMain.class.getSimpleName();
     public static AudioPlayerManager audioManager;
 
-    private static String botToken;
-    private static String devToken;
-
     public static void main(String[] args) throws Exception {
 
         AnsiConsole.systemInstall();
         logger.info("{} - Jansi Installed.", className);
 
         logger.info("{} - Installing & loading data Files.", className);
-        SecretData.generateSecretData();
         SecretData.initLoginInfo();
-        devToken = SecretData.getToken(true);
-        botToken = SecretData.getToken();
+        String devToken = SecretData.getToken(true);
+        String botToken = SecretData.getToken();
+
+        if(devToken == null || botToken == null) {
+            throw new ConfigurationException("Config file MUST contain VALID values for all fields!");
+        }
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(botToken)
+        JDA jda = JDABuilder.createDefault(devToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
