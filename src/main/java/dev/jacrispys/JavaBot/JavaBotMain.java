@@ -35,13 +35,19 @@ public class JavaBotMain {
     private static final String className = JavaBotMain.class.getSimpleName();
     public static AudioPlayerManager audioManager;
 
-    private static final String botToken = SecretData.getToken();
-    private static final String devToken = SecretData.getToken(true);
+    private static String botToken;
+    private static String devToken;
 
     public static void main(String[] args) throws Exception {
 
         AnsiConsole.systemInstall();
         logger.info("{} - Jansi Installed.", className);
+
+        logger.info("{} - Installing & loading data Files.", className);
+        SecretData.generateSecretData();
+        SecretData.initLoginInfo();
+        devToken = SecretData.getToken(true);
+        botToken = SecretData.getToken();
 
         logger.info("{} - Logging into bot & discord servers...", className);
         JDA jda = JDABuilder.createDefault(botToken)
@@ -86,11 +92,6 @@ public class JavaBotMain {
         gameSpyThread.start();
 
         logger.info("{} - Enabling command line interface...", className);
-
-
-
-
-
 
 
     }

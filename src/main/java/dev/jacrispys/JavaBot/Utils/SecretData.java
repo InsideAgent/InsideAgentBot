@@ -2,18 +2,48 @@ package dev.jacrispys.JavaBot.Utils;
 
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SecretData {
-    private static final Yaml yaml = new Yaml();
-    private static final Map<String, Object> loginInfo = yaml.load(SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml"));
+    private static Yaml yaml = new Yaml();
+    private static Map<String, Object> loginInfo;
+
+    public static void initLoginInfo() {
+        yaml = new Yaml();
+        loginInfo = yaml.load(SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml"));
+    }
+
+    public static void generateSecretData() throws Exception {
+        if (SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml") == null) {
+            File file = new File("src/main/resources/loginInfo.yml");
+            if (file.getParentFile() != null) file.getParentFile().mkdirs();
+            if(file.createNewFile()) {
+                try {
+                    yaml = new Yaml();
+                    Map<String, Object> fileInfo = new HashMap<>();
+
+                    fileInfo.put("TOKEN", " ");
+                    fileInfo.put("DEV-TOKEN", " ");
+                    FileWriter writer = new FileWriter(file.getPath());
+                    yaml.dump(fileInfo, writer);
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        }
+    }
 
 
     public static String getToken() {
         return (String) loginInfo.get("TOKEN");
     }
 
-    public static String getToken(boolean dev) { return dev ? (String) loginInfo.get("TOKEN-DEV") : (String) loginInfo.get("TOKEN"); }
+    public static String getToken(boolean dev) {
+        return dev ? (String) loginInfo.get("TOKEN-DEV") : (String) loginInfo.get("TOKEN");
+    }
 
     public static String getSpotifySecret() {
         return (String) loginInfo.get("SPOTIFY_SECRET");
