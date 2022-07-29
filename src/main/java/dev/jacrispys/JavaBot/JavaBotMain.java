@@ -44,7 +44,7 @@ public class JavaBotMain {
         logger.info("{} - Jansi Installed.", className);
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(devToken)
+        JDA jda = JDABuilder.createDefault(botToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
@@ -66,7 +66,7 @@ public class JavaBotMain {
         audioManager.registerSourceManager(new SpotifySourceManager(null, spotifyConfig, audioManager));
         AudioSourceManagers.registerRemoteSources(audioManager);
 
-        jda.getPresence().setActivity(Activity.streaming("Version-0.1.7 Woo!", "https://www.twitch.tv/jacrispyslive"));
+        jda.getPresence().setActivity(Activity.streaming("Version-0.1.8 Woo!", "https://www.twitch.tv/jacrispyslive"));
         logger.info("{} - Starting event listeners...", className);
         jda.addEventListener(new SlashMusicCommands());
         jda.addEventListener(new DefaultPrivateMessageResponse());
