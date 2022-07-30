@@ -42,7 +42,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
     protected void updateGuildCommands(Guild guild) {
     }
 
-    @Override
+    @Override @SuppressWarnings("all")
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         String commandName = event.getName();
         switch (commandName) {
