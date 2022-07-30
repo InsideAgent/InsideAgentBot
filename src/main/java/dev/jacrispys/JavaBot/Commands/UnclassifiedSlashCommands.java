@@ -34,7 +34,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 .addOption(OptionType.STRING, "nickname", "The nickname to give the user", true)
                 .addOption(OptionType.USER, "target", "User to set nickname.", false),
                 Commands.slash("embedbuilder", "builds an embed")
-                        .addOption(OptionType.CHANNEL, "channel", "Channel to send the embed to."));
+                        .addOption(OptionType.CHANNEL, "channel", "Channel to send the embed to.").addOptions());
         return commands;
     }
 
@@ -59,6 +59,10 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
             }
             case "embedbuilder" -> {
                 event.deferReply(true).queue();
+                if(!(event.getMember().getPermissions(event.getOption("channel").getAsTextChannel()).contains(Permission.MESSAGE_SEND))) {
+                    event.getHook().editOriginal("You do not have permission to send embeds in this channel!").queue();
+                    return;
+                }
                 UUID id = UUID.randomUUID();
                 String buttonId = "builder:" + id;
                 EmbedCLI.addEmbedCLI((event.getOption("channel") != null ? event.getOption("channel").getAsMessageChannel() : event.getTextChannel()), id.toString());
