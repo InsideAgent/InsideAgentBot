@@ -24,7 +24,7 @@ public class MySQLConnection {
             String userName = "Jacrispys";
             String db_password = SecretData.getDataBasePass();
 
-            String url = "jdbc:mysql://localhost:3306/" + dataBase;
+            String url = "jdbc:mysql://" + SecretData.getDBHost() + ":3306/" + dataBase;
             Class.forName("com.mysql.cj.jdbc.Driver");
             if (this.connection == null) {
                 Connection connection = DriverManager.getConnection(url, userName, db_password);

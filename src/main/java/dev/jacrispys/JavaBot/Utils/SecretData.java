@@ -28,6 +28,7 @@ public class SecretData {
                 fileInfo.put("SPOTIFY_SECRET", " ");
                 fileInfo.put("YOUTUBE_PSID", " ");
                 fileInfo.put("YOUTUBE_PAPISID", " ");
+                fileInfo.put("DB_HOST", "localhost");
                 FileWriter writer = new FileWriter(file.getPath());
                 fileInfo.keySet().forEach(key -> {
                     try {
@@ -77,4 +78,7 @@ public class SecretData {
         return loginInfo.get(key);
     }
 
+    public static String getDBHost() {
+        return (String) loginInfo.get("DB_HOST");
+    }
 }
