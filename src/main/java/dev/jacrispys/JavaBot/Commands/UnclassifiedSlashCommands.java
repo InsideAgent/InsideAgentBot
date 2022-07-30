@@ -61,7 +61,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
             case "embedbuilder" -> {
                 event.deferReply(true).queue();
                 Channel channel = event.getOption("channel") != null ? event.getOption("channel").getAsMessageChannel() : null;
-                if(!(event.getMember().getPermissions(event.getOption("channel").getAsMessageChannel()).contains(Permission.MESSAGE_SEND)) && channel != null) {
+                if(channel != null && (!(event.getMember().getPermissions(event.getOption("channel").getAsMessageChannel()).contains(Permission.MESSAGE_SEND)))) {
                     event.getHook().editOriginal("You do not have permission to send embeds in this channel!").queue();
                     return;
                 }
