@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -40,6 +41,7 @@ public class TrackScheduler extends AudioEventAdapter {
      *  startTrack will return true if no song is playing, as the boolean is noInterrupt
      * if false, offers the track to the queue
      */
+    @SuppressWarnings("all")
     public void queue(AudioTrack track) {
         if(!audioPlayer.startTrack(track, true)) {
             this.queue.offer(track);
@@ -52,10 +54,11 @@ public class TrackScheduler extends AudioEventAdapter {
     public void nextTrack() {
         AudioTrack nextTrack = queue.poll();
         audioPlayer.startTrack(nextTrack, false);
-        if(nextTrack == null) InactivityTimer.startInactivity(audioPlayer, guild);
+        if(nextTrack == null) InactivityTimer.startInactivity(audioPlayer, guild.getIdLong(), guild.getJDA());
     }
 
 
+    @SuppressWarnings("all")
     public void onTrackEnd(AudioPlayer audioPlayer, AudioTrack track, AudioTrackEndReason endReason) {
         if(GuildAudioManager.getGuildAudioManager(guild).queueLoop) {
             this.queue.offer(track.makeClone());
@@ -63,11 +66,14 @@ public class TrackScheduler extends AudioEventAdapter {
 
         if(endReason.mayStartNext) {
             if(GuildAudioManager.getGuildAudioManager(guild).songLoop) {
-                audioPlayer.startTrack(track.makeClone(), false);
+                AudioTrack loopedTrack = track.makeClone();
+                User requester = Objects.requireNonNull(GuildAudioManager.getGuildAudioManager(guild).getRequester()).get(track);
+                audioPlayer.startTrack(loopedTrack, false);
+                Objects.requireNonNull(GuildAudioManager.getGuildAudioManager(guild).getRequester()).remove(track);
+                GuildAudioManager.getGuildAudioManager(guild).setRequester(loopedTrack, requester);
                 return;
             }
             nextTrack();
-            Objects.requireNonNull(GuildAudioManager.getGuildAudioManager(guild).getRequester()).remove(track);
         }
     }
 

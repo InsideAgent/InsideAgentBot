@@ -36,8 +36,10 @@ public class GameSpy {
                     m.delete().queueAfter(3, TimeUnit.SECONDS);
                     event.getMessage().delete().queueAfter(3, TimeUnit.SECONDS);
                 });
+                rs.close();
                 return true;
             }
+            rs.close();
             connection.executeCommand("UPDATE guilds SET GameSpy=" + false + " WHERE ID=" + event.getGuild().getId());
             event.getMessage().reply("GameSpy successfully disabled!").queue(m ->  {
                 m.delete().queueAfter(3, TimeUnit.SECONDS);

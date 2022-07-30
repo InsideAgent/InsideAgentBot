@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="inside_agent_bot@localhost" uuid="f8987211-af5b-4af1-ba11-346a251fe2fb">
+    <data-source source="LOCAL" name="Jacrispys@10.0.0.122" uuid="f8987211-af5b-4af1-ba11-346a251fe2fb">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://10.0.0.122:3306/inside_agent_bot</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="Jacrispys@localhost [2]" uuid="7bb155f5-a1a1-4496-91af-0240856ce1c6">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>

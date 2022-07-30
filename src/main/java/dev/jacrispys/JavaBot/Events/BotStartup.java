@@ -1,21 +1,29 @@
 package dev.jacrispys.JavaBot.Events;
 
 import dev.jacrispys.JavaBot.Commands.Audio.SlashMusicCommands;
+import dev.jacrispys.JavaBot.Commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BotStartup extends ListenerAdapter {
 
     public void onReady(@NotNull ReadyEvent event) {
+        List<CommandData> commands = new ArrayList<>();
 
-        new SlashMusicCommands().initCommands(event.getJDA(), event.getJDA().getGuilds());
+        commands.addAll(new SlashMusicCommands().updateJdaCommands());
+        commands.addAll(new UnclassifiedSlashCommands().updateJdaCommands());
+
+        event.getJDA().updateCommands().addCommands(commands).queue();
 
         // Start GameSpy on enabled servers.
         for (Guild guild : event.getJDA().getGuilds()) {
@@ -40,6 +48,7 @@ public class BotStartup extends ListenerAdapter {
                     GameSpy gameSpy = new GameSpy(guild);
                     gameSpy.addSpy();
                 }
+                rs.close();
             } catch (Exception ignored) {
                 return;
             }

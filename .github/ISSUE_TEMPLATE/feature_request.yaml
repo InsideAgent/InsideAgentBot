@@ -1,0 +1,30 @@
+name: Feature Request
+description: File a request for a new feature
+title: "[Feature 🔮]: "
+labels: [ "enhancement🔮", "question" ]
+body:
+  - type: checkboxes
+    id: feature-reqs
+    attributes:
+      label: "Feature Request requirements."
+      description: Please read all options thoroughly.
+      options:
+        - label: "I have searched the [issues](https://github.com/InsideAgent/InsideAgentBot/issues) page for duplicates."
+          required: true
+        - label: "I have checked the [Pull Request](https://github.com/InsideAgent/InsideAgentBot/pulls) page for this feature."
+          required: true
+        - label: "I am willing to PR this feature myself."
+        - label: "I have external information to clarify the request (photo/video/files/links)."
+  - type: input
+    id: desc
+    attributes:
+      label: Description
+      description: "What is your feature and how would it work?"
+      placeholder: "Begin typing here."
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Please attach any other files/screenshots/videos/information below!"
+    validations:
+      required: true

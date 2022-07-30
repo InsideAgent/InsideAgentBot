@@ -2,18 +2,24 @@ package dev.jacrispys.JavaBot.Commands.Audio;
 
 import dev.jacrispys.JavaBot.Audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.Audio.LoadAudioHandler;
-import net.dv8tion.jda.api.JDA;
+import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,13 +29,14 @@ public class SlashMusicCommands extends ListenerAdapter {
 
     }
 
-    public void initCommands(JDA jda, List<Guild> guilds) {
-        updateJdaCommands(jda);
+    public void initCommands(List<Guild> guilds) {
+        updateJdaCommands();
         guilds.forEach(this::updateGuildCommands);
     }
 
-    protected void updateJdaCommands(JDA jda) {
-        jda.updateCommands().addCommands(
+    public List<CommandData> updateJdaCommands() {
+        List<CommandData> commands = new ArrayList<>();
+        Collections.addAll(commands,
                 Commands.slash("play", "Add a link to most streaming platforms, or use its name to search!")
                         .addOption(OptionType.STRING, "query", "Track to search for.", true)
                         .addOptions(new OptionData(OptionType.STRING, "search", "Method to search for track with.", false)
@@ -70,16 +77,25 @@ public class SlashMusicCommands extends ListenerAdapter {
                 Commands.slash("playtop", "adds a song to the top of queue")
                         .addOption(OptionType.STRING, "query", "track to add to queue", true)
                         .addOptions(new OptionData(OptionType.STRING, "search", "Method to search for track with.", false)
-                                        .addChoice("spotify", "spsearch:")
-                                        .addChoice("apple", "amsearch:")),
+                                .addChoice("spotify", "spsearch:")
+                                .addChoice("apple", "amsearch:")),
                 Commands.slash("skipto", "Skips the queue to a given index.")
                         .addOption(OptionType.INTEGER, "index", "Index to skip to.", true),
                 Commands.slash("fileplay", "adds a song to the queue")
                         .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true)
-                ).queue();
+        );
+        return commands;
     }
 
     protected void updateGuildCommands(Guild guild) {
+    }
+    protected void updateMusicChannel(Guild guild, TextChannel channel) {
+        try {
+            MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -88,71 +104,77 @@ public class SlashMusicCommands extends ListenerAdapter {
         GuildAudioManager audioManager = GuildAudioManager.getGuildAudioManager(event.getGuild());
         LoadAudioHandler audioHandler = new LoadAudioHandler(audioManager);
         switch (commandName) {
-            case "play","playtop","fileplay" -> {
-                event.deferReply().setEphemeral(true).queue();
-                VoiceChannel channel;
-                assert event.getMember() != null;
-                assert event.getMember().getVoiceState() != null;
-                assert event.getMember().getVoiceState().getChannel() != null;
-                channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+            case "play", "playtop", "fileplay" -> {
+                    event.deferReply().setEphemeral(true).queue();
+                    VoiceChannel channel;
+                    assert event.getMember() != null;
+                    assert event.getMember().getVoiceState() != null;
+                    assert event.getMember().getVoiceState().getChannel() != null;
+                    channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+                    updateMusicChannel(event.getGuild(), event.getTextChannel());
 
-                String track = null;
-                if(!(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp"))) {
-                    track = Objects.requireNonNull(event.getOption("query")).getAsString();
-                    if (channel == null) {
-                        event.reply("Could not load song, as you are not in a voice channel!").setEphemeral(true).queue();
-                        return;
-                    }
-                    try {
-                        new URL(track);
-                    } catch (MalformedURLException ignored) {
-                        String searchMethod = "ytsearch";
-                        if (event.getOption("search") != null) {
-                            searchMethod = Objects.requireNonNull(event.getOption("search")).getAsString();
+                    String track = null;
+                    if (!(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp"))) {
+                        track = Objects.requireNonNull(event.getOption("query")).getAsString();
+                        if (channel == null) {
+                            event.getHook().editOriginal("Could not load song, as you are not in a voice channel!").queue();
+                            return;
                         }
-                        switch (searchMethod.toLowerCase()) {
-                            case ("spsearch:") -> searchMethod = "spsearch:";
-                            case ("amsearch:") -> searchMethod = "amsearch:";
-                            default -> searchMethod = "ytsearch:";
+                        try {
+                            new URL(track);
+                        } catch (MalformedURLException ignored) {
+                            String searchMethod = "ytsearch";
+                            if (event.getOption("search") != null) {
+                                searchMethod = Objects.requireNonNull(event.getOption("search")).getAsString();
+                            }
+                            switch (searchMethod.toLowerCase()) {
+                                case ("spsearch:") -> searchMethod = "spsearch:";
+                                case ("amsearch:") -> searchMethod = "amsearch:";
+                                default -> searchMethod = "ytsearch:";
+                            }
+                            track = searchMethod + track;
                         }
-                        track = searchMethod + track;
                     }
-                }
-                if(event.getName().equalsIgnoreCase("fileplay")) {
-                    track = Objects.requireNonNull(event.getOption("file")).getAsAttachment().getUrl();
-                }
-                boolean playTop = (commandName.equalsIgnoreCase("playtop"));
-                event.getHook().editOriginal(Objects.requireNonNull(audioHandler.loadAndPlay(track, channel, event.getUser(), playTop))).queue();
+                    if (event.getName().equalsIgnoreCase("fileplay")) {
+                        track = Objects.requireNonNull(event.getOption("file")).getAsAttachment().getUrl();
+                    }
+                    boolean playTop = (commandName.equalsIgnoreCase("playtop"));
+                    event.getHook().editOriginal(Objects.requireNonNull(audioHandler.loadAndPlay(track, channel, event.getUser(), playTop))).queue();
             }
             case "skip" -> event.reply(audioHandler.skipTrack(audioManager)).queue();
             case "volume" -> event.reply(audioManager.setVolume(Objects.requireNonNull(event.getOption("volume")).getAsInt())).queue();
             case "clear" -> event.reply(audioManager.clearQueue()).queue();
-            case "stop","pause" -> event.reply(audioManager.pausePlayer()).queue();
+            case "stop", "pause" -> event.reply(audioManager.pausePlayer()).queue();
             case "resume" -> event.reply(audioManager.resumePlayer()).queue();
-            case "dc","leave","disconnect" -> event.reply(audioManager.disconnectBot()).queue();
+            case "dc", "leave", "disconnect" -> event.reply(audioManager.disconnectBot()).queue();
             case "follow" -> event.reply(audioManager.followUser(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
-            case "queue" -> event.reply(audioManager.displayQueue()).setEphemeral(true).queue();
+            case "queue" -> event.reply(audioManager.displayQueue()).queue();
             case "shuffle" -> event.reply(audioManager.shufflePlayer()).queue();
-            case "song","song-info","info" -> event.reply(audioManager.sendTrackInfo()).setEphemeral(true).queue();
+            case "song", "song-info", "info" -> event.reply(audioManager.sendTrackInfo()).setEphemeral(true).queue();
             case "remove" -> event.reply(audioManager.removeTrack(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
             case "seek" -> {
                 StringBuilder stringBuilder = new StringBuilder();
                 if (event.getOption("hours") != null) {
-                    if(Objects.requireNonNull(event.getOption("hours")).getAsInt() < 10) stringBuilder.append("0");
+                    if (Objects.requireNonNull(event.getOption("hours")).getAsInt() < 10) stringBuilder.append("0");
                     stringBuilder.append(Objects.requireNonNull(event.getOption("hours")).getAsInt()).append(":");
                 }
-                if(Objects.requireNonNull(event.getOption("minutes")).getAsInt() < 10) stringBuilder.append("0");
+                if (Objects.requireNonNull(event.getOption("minutes")).getAsInt() < 10) stringBuilder.append("0");
                 stringBuilder.append(Objects.requireNonNull(event.getOption("minutes")).getAsInt()).append(":");
-                if(Objects.requireNonNull(event.getOption("seconds")).getAsInt() < 10) stringBuilder.append("0");
+                if (Objects.requireNonNull(event.getOption("seconds")).getAsInt() < 10) stringBuilder.append("0");
                 stringBuilder.append(Objects.requireNonNull(event.getOption("seconds")).getAsInt());
                 event.reply(audioManager.seekTrack(stringBuilder.toString())).queue();
             }
             case "fix" -> event.reply(audioManager.fixAudio(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
-            case "loop" -> event.reply(Objects.requireNonNull(event.getOption("type")).getAsString().equalsIgnoreCase("queue") ? audioManager.loopQueue() : audioManager.loopSong()).queue();
+            case "loop" -> {
+                Message message;
+                if (event.getOption("type") != null) {
+                    message = Objects.requireNonNull(event.getOption("type")).getAsString().equalsIgnoreCase("queue") ? audioManager.loopQueue() : audioManager.loopSong();
+                } else message = audioManager.loopQueue();
+                event.reply(message).queue();
+            }
             case "move" -> event.reply(audioManager.moveSong(Objects.requireNonNull(event.getOption("pos1")).getAsInt(), Objects.requireNonNull(event.getOption("pos2")).getAsInt())).queue();
             case "hijack" -> event.reply(audioManager.enableDJ(event.getUser(), event.getGuild())).queue();
             case "skipto" -> event.reply(audioManager.skipTo(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
-            default -> event.reply("Could not find a commands registered as: `" + commandName + "`, please report this!").setEphemeral(true).queue();
         }
     }
 }

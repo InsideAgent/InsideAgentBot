@@ -33,8 +33,10 @@ public class GenericMusicCommands extends ListenerAdapter {
                 rs.beforeFirst();
                 if (!rs.next()) {
                     event.getTextChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+                    rs.close();
                     return;
                 }
+                rs.close();
             } catch (Exception ignored) {
                 event.getTextChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
                 return;

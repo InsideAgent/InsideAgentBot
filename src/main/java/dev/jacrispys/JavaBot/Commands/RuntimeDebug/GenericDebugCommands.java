@@ -3,6 +3,7 @@ package dev.jacrispys.JavaBot.Commands.RuntimeDebug;
 import dev.jacrispys.JavaBot.Audio.GuildAudioManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -13,13 +14,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DebugCommands extends ListenerAdapter {
+public class GenericDebugCommands extends ListenerAdapter {
     @SuppressWarnings("all")
     private final long DEBUG_SERVER = 786741501014441995L;
 
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if(event.isFromType(ChannelType.PRIVATE)) return;
         if (event.getGuild() == event.getJDA().getGuildById(DEBUG_SERVER)) {
             if (event.getAuthor().isBot()) return;
             String message;
@@ -50,7 +52,7 @@ public class DebugCommands extends ListenerAdapter {
                     case("latency"):
                     case("ping"):
                         EmbedBuilder latencyEb = new EmbedBuilder();
-                        latencyEb.setAuthor("Active Audio Players - [DEBUG]", null, event.getAuthor().getEffectiveAvatarUrl());
+                        latencyEb.setAuthor("Inside Agent Latency - [DEBUG]", null, event.getAuthor().getEffectiveAvatarUrl());
                         long latency = Instant.now().toEpochMilli() - (event.getMessage().getTimeCreated().toInstant().toEpochMilli());
                         latencyEb.addField("Latency: ", "Gateway Latency: `" + event.getJDA().getGatewayPing() + "`Ms \n" + "Server latency: `" + latency + "`Ms", false);
                         latencyEb.setFooter("Negative ping what a joke :(");

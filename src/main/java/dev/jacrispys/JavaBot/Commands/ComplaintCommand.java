@@ -44,8 +44,10 @@ public class ComplaintCommand extends ListenerAdapter {
             rs.beforeFirst();
             if (!rs.next()) {
                 event.getTextChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+                rs.close();
                 return;
             }
+            rs.close();
         } catch (Exception ignored) {
             event.getTextChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
             return;
@@ -57,7 +59,7 @@ public class ComplaintCommand extends ListenerAdapter {
             defendAllRobots(event);
             return;
         }
-        UUID uuid = UUID.randomUUID();
+        UUID  uuid = UUID.randomUUID();
         if (complaintId.get(sender) != null || complaintMention.get(sender) != null) {
             event.getMessage().reply("Cannot create a complaint when you already have an pending request! (Use !clearcomplaint to clear the request!)").queue(m -> m.delete().queueAfter(3, TimeUnit.SECONDS));
             event.getMessage().delete().queue();
@@ -102,6 +104,7 @@ public class ComplaintCommand extends ListenerAdapter {
                                 rs.beforeFirst();
                                 rs.next();
                                 long channelId = rs.getLong("TicketChannel");
+                                rs.close();
                                 TextChannel tickets = event.getGuild().getTextChannelById(channelId);
                                 if (tickets != null) {
                                     if (event.getGuild().getBoostTier().ordinal() <= 1) {
@@ -139,8 +142,6 @@ public class ComplaintCommand extends ListenerAdapter {
                         complaintMention.remove(event.getUser());
                     }
                 }
-            } else {
-                event.reply("Only the user who issued the complaint can use this feature!").setEphemeral(true).queue();
             }
         } catch (Exception ignored) {
         }

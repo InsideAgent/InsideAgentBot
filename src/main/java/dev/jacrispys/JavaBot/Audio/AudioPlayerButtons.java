@@ -10,6 +10,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static dev.jacrispys.JavaBot.Audio.GuildAudioManager.nowPlayingId;
 import static dev.jacrispys.JavaBot.Audio.GuildAudioManager.queuePage;
@@ -52,7 +53,11 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     }
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage - 1).build()).queue();
                 }
-                case ("remove") -> event.getMessage().delete().queue();
+                case ("remove") -> {
+                    if(event.getMessage().isEphemeral()) {
+                        event.editMessageEmbeds(new EmbedBuilder().setAuthor(".", null, Objects.requireNonNull(event.getGuild()).getSelfMember().getEffectiveAvatarUrl()).build()).queue();
+                    } else event.getMessage().delete().queue();
+                }
                 case ("nextPage") -> {
                     if (queuePage >= pages) {
                         if (!event.isAcknowledged()) {
@@ -73,25 +78,23 @@ public class AudioPlayerButtons extends ListenerAdapter {
                 }
                 case ("togglePlayer") -> {
                     audioManager.togglePlayer();
-                    if (!event.isAcknowledged()) {
-                        event.editMessage(event.getMessage()).queue();
-                    }
+                    event.editMessage(event.getMessage()).queue();
                 }
                 case ("skipTrack") -> {
+                    event.deferReply().queue();
                     nowPlayingId.put(fromButtonGuild, event.getMessage().getIdLong());
                     if(audioManager.audioPlayer.getPlayingTrack() == null) {
-                        event.editMessage(event.getMessage()).queue();
+                        event.getHook().editOriginal(event.getMessage()).queue();
                     } else {
-                        event.reply(audioManager.skipTrack()).setEphemeral(true).queue();
+                        event.getHook().editOriginal(audioManager.skipTrack()).queue();
                     }
                 }
                 case ("showQueue") -> {
-                    event.getTextChannel().sendMessage(audioManager.displayQueue()).queue();
+                    event.reply(audioManager.displayQueue()).setEphemeral(true).queue();
                     if (!event.isAcknowledged()) {
                         event.editMessage(event.getMessage()).queue();
                     }
                 }
-                default -> System.out.println("wat");
             }
         } catch (Exception ex) {
             ex.printStackTrace();

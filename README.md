@@ -100,9 +100,9 @@ This project started as a personal challenge/venture, but when I realized how mu
 <!-- GETTING STARTED -->
 ## Getting Started
 
-To add this bot to your own discord server, simply click this [link](https://discord.com/api/oauth2/authorize?client_id=786721755560804373&permissions=8&scope=bot) and it choose the server you would like the bot in! 
+To add this bot to your own discord server, simply click this [link](https://discord.com/api/oauth2/authorize?client_id=786721755560804373&permissions=8&scope=bot%20applications.commands) and it choose the server you would like the bot in! 
 
-And just like that the bot is ready to go! (If the bot does not show online, it is because I am waiting for new hardware to run it on, i thank you for your patience.)
+And just like that the bot is ready to go!
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -114,7 +114,7 @@ And just like that the bot is ready to go! (If the bot does not show online, it 
 On startup of the bot, you will want to use `!registerguild` to make sure your guild is indexed in our databases! If your server supports private threads also be sure to use `!setticketchannel` in the channel of your choice for tickets to be created.
 
 #### Current Command List for AudioPlayer:
-
+_(Note Current commands with '-' are deprecated and should use slash commands instead)_
 - `-play` - Add a link to most streaming platforms, or use its name to search!
 - `-skip` - Skips the current song!
 - `-volume` - a number 1-100 to adjust volume!
@@ -144,11 +144,11 @@ On startup of the bot, you will want to use `!registerguild` to make sure your g
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] ~~Complete Core AudioPlayer Features~~
-- [ ] Add supplemental features to AudioPlayer
+- [x] ~~Complete Core AudioPlayer Features~~
+- [x] ~~Add supplemental features to AudioPlayer~~
 - [ ] Complete GameSpy
     - [ ] Log specific games, and give weekly reports
-- [ ] Currently obtaining server to achieve near 100% uptime.
+- [x] ~~Currently obtaining server to achieve near 100% uptime.~~
 - [ ] New Features, feature requests.
 
 See the [open issues](https://github.com/InsideAgent/DiscordBot/issues) for a full list of proposed features (and known issues).

@@ -24,7 +24,7 @@ public class MySQLConnection {
             String userName = "Jacrispys";
             String db_password = SecretData.getDataBasePass();
 
-            String url = "jdbc:mysql://localhost:3306/" + dataBase;
+            String url = "jdbc:mysql://" + SecretData.getDBHost() + ":3306/" + dataBase;
             Class.forName("com.mysql.cj.jdbc.Driver");
             if (this.connection == null) {
                 Connection connection = DriverManager.getConnection(url, userName, db_password);
@@ -48,6 +48,7 @@ public class MySQLConnection {
             rs.beforeFirst();
             rs.next();
             channelId = rs.getLong("GameSpyChannel");
+            rs.close();
             return channelId;
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,6 +60,7 @@ public class MySQLConnection {
         try (Statement statement = getConnection("inside_agent_bot").createStatement()) {
             String command = "INSERT INTO guilds (ID,GameSpy,TicketChannel,GameSpyChannel) VALUES (" + guild.getId() + ", 0, null, " + defaultChannel.getId() + ");";
             statement.execute(command);
+            statement.close();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,13 +106,17 @@ public class MySQLConnection {
     }
 
     public void setMusicChannel(Guild guild, long channelId) throws SQLException {
-        connection.createStatement().executeUpdate("UPDATE guilds SET musicChannel=" + channelId + " WHERE ID=" + guild.getId());
+        Statement statement = connection.createStatement();
+        statement.executeUpdate("UPDATE guilds SET musicChannel=" + channelId + " WHERE ID=" + guild.getId());
+        statement.close();
     }
 
     public Long getMusicChannel(Guild guild) throws SQLException{
         ResultSet rs = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT musicChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
         rs.beforeFirst();
         rs.next();
-        return rs.getLong("musicChannel");
+        long channel = rs.getLong("musicChannel");
+        rs.close();
+        return channel;
     }
 }
