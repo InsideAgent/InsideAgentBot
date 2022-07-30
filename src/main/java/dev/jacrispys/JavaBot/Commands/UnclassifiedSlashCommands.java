@@ -1,6 +1,7 @@
 package dev.jacrispys.JavaBot.Commands;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -59,7 +60,8 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
             }
             case "embedbuilder" -> {
                 event.deferReply(true).queue();
-                if(!(event.getMember().getPermissions(event.getOption("channel").getAsTextChannel()).contains(Permission.MESSAGE_SEND))) {
+                Channel channel = event.getOption("channel") != null ? event.getOption("channel").getAsMessageChannel() : null;
+                if(!(event.getMember().getPermissions(event.getOption("channel").getAsMessageChannel()).contains(Permission.MESSAGE_SEND)) && channel != null) {
                     event.getHook().editOriginal("You do not have permission to send embeds in this channel!").queue();
                     return;
                 }
