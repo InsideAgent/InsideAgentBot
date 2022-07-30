@@ -141,7 +141,7 @@ public class GuildAudioManager {
     /**
      * @param trackUrl of loaded song
      * @param track    instance of loaded track
-     * @return a {@link MessageEmbed} to be sent and managed by {@link GuildAudioManager#trackLoaded(String, AudioTrack, VoiceChannel, boolean)} }
+     * @return a {@link MessageEmbed} to be sent and managed by {@link GuildAudioManager#trackLoaded(String, AudioTrack, VoiceChannel, boolean)}}
      */
     private MessageEmbed songLoadedMessage(String trackUrl, AudioTrack track) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -506,7 +506,7 @@ public class GuildAudioManager {
         int duration = Math.round(div);
         String emoji = ("\uD83D\uDD18");
         if(duration > 19) duration = 19;
-            durationSlider = durationSlider.substring(0, duration) + emoji + durationSlider.substring(duration + 1);
+        durationSlider = durationSlider.substring(0, duration) + emoji + durationSlider.substring(duration + 1);
 
         String time = "[" + DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + "/" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]";
         assert getRequester() != null;
@@ -724,6 +724,8 @@ public class GuildAudioManager {
 
     public Message disconnectBot() {
         try {
+            clearQueue();
+            audioPlayer.destroy();
             if(!Objects.requireNonNull(jdaInstance.getGuildById(currentGuild)).getAudioManager().isConnected()) {
                 logger.error("Could not remove disconnected bot from VC!");
                 Objects.requireNonNull(jdaInstance.getGuildById(currentGuild)).getAudioManager().closeAudioConnection();
@@ -735,8 +737,6 @@ public class GuildAudioManager {
             eb.setColor(Color.CYAN);
             eb.setAuthor("|  Destroyed audio player and cleared queue! (Disconnecting ☮️)", null, jdaInstance.getSelfUser().getEffectiveAvatarUrl());
             message.setEmbeds(eb.build());
-            clearQueue();
-            audioPlayer.destroy();
             return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         } catch (Exception ex) {
             ex.printStackTrace();

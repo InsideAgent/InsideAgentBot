@@ -67,7 +67,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 }
                 UUID id = UUID.randomUUID();
                 String buttonId = "builder:" + id;
-                EmbedCLI.addEmbedCLI((event.getOption("channel") != null ? event.getOption("channel").getAsMessageChannel() : event.getTextChannel()), id.toString());
+                EmbedCLI.getInstance().addEmbedCLI((event.getOption("channel") != null ? event.getOption("channel").getAsMessageChannel() : event.getTextChannel()), id.toString());
                 event.getHook().editOriginal("Click Below!").setActionRow(Button.primary(buttonId, "Edit Embed?")).queue();
             }
             default -> {

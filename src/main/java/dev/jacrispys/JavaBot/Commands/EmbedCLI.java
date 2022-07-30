@@ -32,7 +32,7 @@ public class EmbedCLI extends ListenerAdapter {
     private static final Map<String, Channel> buttonIds = new HashMap<>();
     private final Map<String, Message> messageId = new HashMap<>();
 
-    public static void addEmbedCLI(Channel channel, String buttonId) {
+    public void addEmbedCLI(Channel channel, String buttonId) {
         buttonIds.put(buttonId, channel);
     }
 
