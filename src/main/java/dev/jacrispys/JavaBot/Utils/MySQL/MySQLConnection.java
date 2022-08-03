@@ -24,7 +24,7 @@ public class MySQLConnection {
             String userName = "Jacrispys";
             String db_password = SecretData.getDataBasePass();
 
-            String url = "jdbc:mysql://" + SecretData.getDBHost() + ":3306/" + dataBase;
+            String url = "jdbc:mysql://" + SecretData.getDBHost() + ":3306/" + dataBase + "?autoReconnect=true";
             Class.forName("com.mysql.cj.jdbc.Driver");
             if (this.connection == null) {
                 Connection connection = DriverManager.getConnection(url, userName, db_password);
@@ -57,7 +57,8 @@ public class MySQLConnection {
     }
 
     public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
-        try (Statement statement = getConnection("inside_agent_bot").createStatement()) {
+        try {
+            Statement statement = getConnection("inside_agent_bot").createStatement();
             String command = "INSERT INTO guilds (ID,GameSpy,TicketChannel,GameSpyChannel) VALUES (" + guild.getId() + ", 0, null, " + defaultChannel.getId() + ");";
             statement.execute(command);
             statement.close();

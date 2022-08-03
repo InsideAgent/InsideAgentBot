@@ -23,6 +23,9 @@ public class GameSpy {
     }
 
     public boolean toggleGameSpy(MessageReceivedEvent event) {
+        if(!event.getMessage().getContentRaw().equalsIgnoreCase("!gamespy")) {
+            return false;
+        }
         try {
             MySQLConnection connection = MySQLConnection.getInstance();
 
