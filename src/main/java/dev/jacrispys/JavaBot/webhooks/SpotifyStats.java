@@ -56,7 +56,7 @@ public class SpotifyStats implements StatHooks<SpotifyStats> {
             Icon icon = Icon.from(inputStream, Icon.IconType.UNKNOWN);
             webhookManager.setAvatar(icon).queue();
         }catch (IOException ignored) {
-            webhookManager.getChannel().sendMessage("Cannot find file for webhook!").queue();
+            webhookManager.getChannel().asGuildMessageChannel().sendMessage("Cannot find file for webhook!").queue();
             throw new NullPointerException("Could not find correct files for webhook!");
         }
         return this;
@@ -69,7 +69,7 @@ public class SpotifyStats implements StatHooks<SpotifyStats> {
             Icon icon = Icon.from(inputStream, Icon.IconType.UNKNOWN);
             webhookManager.setAvatar(icon).queue();
         }catch (IOException ignored) {
-            webhookManager.getChannel().sendMessage("Cannot find file for webhook!").queue();
+            webhookManager.getChannel().asGuildMessageChannel().sendMessage("Cannot find file for webhook!").queue();
             throw new NullPointerException("Could not find correct files for webhook!");
         }
         return this;

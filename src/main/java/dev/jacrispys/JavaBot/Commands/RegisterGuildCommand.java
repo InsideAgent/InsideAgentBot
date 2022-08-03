@@ -19,18 +19,18 @@ public class RegisterGuildCommand extends ListenerAdapter {
         MySQLConnection connection = MySQLConnection.getInstance();
         try {
             if (event.getMessage().getContentRaw().toLowerCase(Locale.ROOT).contains("!registerguild")) {
-                if (connection.registerGuild(event.getGuild(), event.getTextChannel())) {
+                if (connection.registerGuild(event.getGuild(), event.getGuildChannel().asTextChannel())) {
                     event.getMessage().reply("Guild successfully indexed!").queue(m -> m.delete().queueAfter(3, TimeUnit.SECONDS));
                 } else {
                     event.getMessage().reply("Could not index guild as it was already found in our database!").queue(m -> m.delete().queueAfter(3, TimeUnit.SECONDS));
                 }
                 event.getMessage().delete().queueAfter(2, TimeUnit.SECONDS);
             } else if (event.getMessage().getContentRaw().toLowerCase(Locale.ROOT).contains("!setticketchannel")) {
-                connection.executeCommand("UPDATE guilds SET TicketChannel=" + event.getTextChannel().getId() + " WHERE ID=" + event.getGuild().getId());
+                connection.executeCommand("UPDATE guilds SET TicketChannel=" + event.getGuildChannel().getId() + " WHERE ID=" + event.getGuild().getId());
                 event.getMessage().reply("Ticket channel successfully set!").queue(m -> m.delete().queueAfter(3, TimeUnit.SECONDS));
                 event.getMessage().delete().queueAfter(3, TimeUnit.SECONDS);
             } else if(event.getMessage().getContentRaw().equalsIgnoreCase("!testwebhook")) {
-                SpotifyStats spotifyStats = new SpotifyStats(event.getTextChannel());
+                SpotifyStats spotifyStats = new SpotifyStats(event.getGuildChannel().asTextChannel());
                 Webhook webhook = spotifyStats.setIcon(new URL("https://assets.entrepreneur.com/content/3x2/2000/20150616163611-spotify.jpeg")).setName("Spotify Analyzer").build();
                 spotifyStats.sendMessage(webhook, "web hook testing wooo");
             }

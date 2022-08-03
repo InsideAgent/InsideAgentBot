@@ -60,14 +60,14 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
             }
             case "embedbuilder" -> {
                 event.deferReply(true).queue();
-                Channel channel = event.getOption("channel") != null ? event.getOption("channel").getAsMessageChannel() : null;
-                if(channel != null && (!(event.getMember().getPermissions(event.getOption("channel").getAsMessageChannel()).contains(Permission.MESSAGE_SEND)))) {
+                Channel channel = event.getOption("channel") != null ? event.getOption("channel").getAsChannel() : null;
+                if(channel != null && (!(event.getMember().getPermissions(event.getOption("channel").getAsChannel()).contains(Permission.MESSAGE_SEND)))) {
                     event.getHook().editOriginal("You do not have permission to send embeds in this channel!").queue();
                     return;
                 }
                 UUID id = UUID.randomUUID();
                 String buttonId = "builder:" + id;
-                EmbedCLI.getInstance().addEmbedCLI((event.getOption("channel") != null ? event.getOption("channel").getAsMessageChannel() : event.getTextChannel()), id.toString());
+                EmbedCLI.getInstance().addEmbedCLI((event.getOption("channel") != null ? event.getOption("channel").getAsChannel() : event.getGuildChannel()), id.toString());
                 event.getHook().editOriginal("Click Below!").setActionRow(Button.primary(buttonId, "Edit Embed?")).queue();
             }
             default -> {

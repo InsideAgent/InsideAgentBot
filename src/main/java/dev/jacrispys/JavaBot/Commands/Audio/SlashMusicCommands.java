@@ -111,7 +111,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                     assert event.getMember().getVoiceState() != null;
                     assert event.getMember().getVoiceState().getChannel() != null;
                     channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
-                    updateMusicChannel(event.getGuild(), event.getTextChannel());
+                    updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
 
                     String track = null;
                     if (!(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp"))) {
