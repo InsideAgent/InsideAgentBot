@@ -5,6 +5,8 @@ import dev.jacrispys.JavaBot.Audio.LoadAudioHandler;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -15,9 +17,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class GenericMusicCommands extends ListenerAdapter {
+
+    protected void updateMusicChannel(Guild guild, TextChannel channel) {
+        try {
+            MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
     @SuppressWarnings("all")
@@ -46,6 +58,7 @@ public class GenericMusicCommands extends ListenerAdapter {
 
         if (((message.contains("-play ") && message.split("-play ").length > 1) || (message.contains("-p ") && message.split("-p ").length > 1) || ((message.contains("-p ") || message.contains("-play ")) && event.getMessage().getAttachments().size() > 0))) {
             String trackUrl;
+            updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
             if (event.getMessage().getAttachments().size() > 0) {
                 VoiceChannel channel;
                 channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
@@ -158,6 +171,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 event.getGuildChannel().sendMessage("Cannot parse integer positions! Please use the format: `-move [pos1] [pos2]` where pos1,pos2 are numbers!").queue();
             }
         } else if (((message.contains("-playtop") && message.split("-playtop ").length > 1) || (message.contains("-ptop") && message.split("-ptop ").length > 1))) {
+            updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
             String trackUrl;
             if (message.contains("-playtop")) {
                 trackUrl = event.getMessage().getContentRaw().split("-playtop ")[1];

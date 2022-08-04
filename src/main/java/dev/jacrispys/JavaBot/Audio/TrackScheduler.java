@@ -61,7 +61,10 @@ public class TrackScheduler extends AudioEventAdapter {
     @SuppressWarnings("all")
     public void onTrackEnd(AudioPlayer audioPlayer, AudioTrack track, AudioTrackEndReason endReason) {
         if(GuildAudioManager.getGuildAudioManager(guild).queueLoop) {
-            this.queue.offer(track.makeClone());
+            User requester = Objects.requireNonNull(GuildAudioManager.getGuildAudioManager(guild).getRequester()).get(track);
+            AudioTrack loopedTrack = track.makeClone();
+            this.queue.offer(loopedTrack);
+            GuildAudioManager.getGuildAudioManager(guild).setRequester(loopedTrack, requester);
         }
 
         if(endReason.mayStartNext) {

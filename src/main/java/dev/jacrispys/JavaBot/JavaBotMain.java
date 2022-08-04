@@ -55,7 +55,7 @@ public class JavaBotMain {
         JDA jda = JDABuilder.createDefault(botToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
                 .enableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE)
                 .build();
         logger.info("{} - Login Successful!", className);
