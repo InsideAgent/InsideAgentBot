@@ -511,7 +511,7 @@ public class GuildAudioManager {
         String time = "[" + DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + "/" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]";
         assert getRequester() != null;
         eb.addField("Video Source:", track.getInfo().uri + "\n" + durationSlider + "\n" + time, false);
-        eb.setAuthor("-Requested By: ", getRequester().get(track).getAsMention(), getRequester().get(track).getAvatarUrl());
+        eb.setAuthor("-Requested By: ", getRequester().get(track).getAsMention(), getRequester().get(track).getEffectiveAvatarUrl());
 
         return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageBuilder().setEmbeds(eb.build()).build();
     }
