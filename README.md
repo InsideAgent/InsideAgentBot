@@ -116,32 +116,66 @@ And just like that the bot is ready to go!
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+#### Basic Us
 On startup of the bot, you will want to use `!registerguild` to make sure your guild is indexed in our databases! If your server supports private threads also be sure to use `!setticketchannel` in the channel of your choice for tickets to be created.
 
 #### Current Command List for AudioPlayer:
 _(Note Current commands with '-' are deprecated and should use slash commands instead)_
-- `-play` - Add a link to most streaming platforms, or use its name to search!
-- `-skip` - Skips the current song!
-- `-volume` - a number 1-100 to adjust volume!
-- `-clear` - clears the current queue!
-- `-stop` or `-pause` - pauses the current playing audio!
-- `-resume` - resumes the current queue!
-- `-disconnect` or `-dc` or `-leave` - disconnects the bot from its channel!
-- `-follow` or `-move` moves the bot to your current channel!
-- `-queue` or `-q`  - Shows a Embed of songs (10 per page) with page selectors, and a button to remove the message!
-- `-shuffle` - Shuffles the queue!
-- `-song` or `-info` - Shows info about the song, including a progress bar, the song requester, and Title/Author!
-- `-remove` - Removes a song from the queue at a given index number!
-- `-seek` - Takes in arg in the form of `HH:mm:ss` that seeks to that time in the current song!
-- `-fix` - Resets the VoiceChannel's region to help reduce latency and audio lag.
-- `-loop` - Args are either `song` or `queue` to loop a song or to loop the entire queue! (_Skipping resets any loops!_)
-- `-move` - Intakes to numbers and swaps their positions in the queue!
-- `-hijack` - Secret Command 🤫**Only Accessible by certified DJ's!**
-- `-playtop` or `-ptop` - Adds a song to the top of the queue.
-- `-skipto` or `-st` - Skips to the given index in the queue.
+- `/play` - Add a link to most streaming platforms, or use its name to search!
+- `/skip` - Skips the current song!
+- `/volume` - a number 1-100 to adjust volume!
+- `/clear` - clears the current queue!
+- `/stop` or - `/pause` - pauses the current playing audio!
+- `/resume` - resumes the current queue!
+- `/disconnect` or - `/dc` or - `/leave` - disconnects the bot from its channel!
+- `/follow` -  moves the bot to your current channel!
+- `/queue` or - `/q`  - Shows a Embed of songs (10 per page) with page selectors, and a button to remove the message!
+- `/shuffle` - Shuffles the queue!
+- `/song` or - `/info` - Shows info about the song, including a progress bar, the song requester, and Title/Author!
+- `/remove` - Removes a song from the queue at a given index number!
+- `/seek` - Takes in arg in the form of `HH:mm:ss` that seeks to that time in the current song!
+- `/fix` - Resets the VoiceChannel's region to help reduce latency and audio lag.
+- `/loop` - Args are either `song` or `queue` to loop a song or to loop the entire queue! (_Skipping resets any loops!_)
+- `/move` - Intakes to numbers and swaps their positions in the queue!
+- `/hijack` - Secret Command 🤫**Only Accessible by certified DJ's!**
+- `/playtop` or - `/ptop` - Adds a song to the top of the queue.
+- `/skipto` or - `/st` - Skips to the given index in the queue.
+- `/fileplay` - Plays a given file (inserted upon command entered).
+- `/move` - Moves a given track to a given index in the queue
 
 *For more examples, please refer to the Docs: COMING SOON*
 
+
+#### Embed Builder
+
+While sitting one day, I wished there was an easy way to create embed's from the discord client. I learned of `Carl Bot` and it's web-editor, but I wanted something BUILT-IN to discord, so I created the Embed editor.
+
+To Start, use the `slash` command `/embedbuilder (channel)` (the channel arg being optional):
+
+![image](https://user-images.githubusercontent.com/69219325/181678880-7f316743-0b28-4edd-bf8e-9c2da3c86305.png)
+
+Next it will give a request button looking like this:
+
+![image](https://user-images.githubusercontent.com/69219325/181678946-b0d3202f-36c5-4867-b93b-3576d8d1a62a.png)
+
+After clicking the button you will be greeted with the default embed, and a drop down list of options to edit the embed along with the `Send!` button, to send the embed to the specified channel:
+![image](https://user-images.githubusercontent.com/69219325/181679023-629fed43-14b2-4b6e-be14-f2d5e6d9daa5.png)
+
+*Note: When using the `color` function, be sure to format the color with hex integer format (`0xdbbd25`, `0x + 6_Hex_Digits`)*
+
+![image](https://user-images.githubusercontent.com/69219325/181679182-881d1589-910e-45ed-9a48-4ce6f0a2481e.png)
+
+*Note: The author field supports linking in the text*
+
+![image](https://user-images.githubusercontent.com/69219325/181680075-880352ea-54c4-4dcd-a250-c4bc95fb99a2.png)
+
+*Note: Most text inputs support Markdown synatax!*
+![image](https://user-images.githubusercontent.com/69219325/181680128-d4c011c8-37aa-4f90-b3e6-b1a0da469315.png)
+
+And Finally upon sending your embed, you get a result like this:
+![image](https://user-images.githubusercontent.com/69219325/181680403-0abeee6c-d195-4678-b743-58aae664e134.png)
+
+There are many other nuances and cool things to learn about the embed editor, but I'm not going to list them here, so go find them yourself!
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
