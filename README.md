@@ -116,10 +116,10 @@ And just like that the bot is ready to go!
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-#### Basic Us
+#### Basic Use
 On startup of the bot, you will want to use `!registerguild` to make sure your guild is indexed in our databases! If your server supports private threads also be sure to use `!setticketchannel` in the channel of your choice for tickets to be created.
 
-#### Current Command List for AudioPlayer:
+## Current Command List for AudioPlayer:
 _(Note Current commands with '-' are deprecated and should use slash commands instead)_
 - `/play` - Add a link to most streaming platforms, or use its name to search!
 - `/skip` - Skips the current song!
@@ -146,7 +146,7 @@ _(Note Current commands with '-' are deprecated and should use slash commands in
 *For more examples, please refer to the Docs: COMING SOON*
 
 
-#### Embed Builder
+## Embed Builder
 
 While sitting one day, I wished there was an easy way to create embed's from the discord client. I learned of `Carl Bot` and it's web-editor, but I wanted something BUILT-IN to discord, so I created the Embed editor.
 
@@ -159,6 +159,7 @@ Next it will give a request button looking like this:
 ![image](https://user-images.githubusercontent.com/69219325/181678946-b0d3202f-36c5-4867-b93b-3576d8d1a62a.png)
 
 After clicking the button you will be greeted with the default embed, and a drop down list of options to edit the embed along with the `Send!` button, to send the embed to the specified channel:
+
 ![image](https://user-images.githubusercontent.com/69219325/181679023-629fed43-14b2-4b6e-be14-f2d5e6d9daa5.png)
 
 *Note: When using the `color` function, be sure to format the color with hex integer format (`0xdbbd25`, `0x + 6_Hex_Digits`)*
@@ -170,9 +171,11 @@ After clicking the button you will be greeted with the default embed, and a drop
 ![image](https://user-images.githubusercontent.com/69219325/181680075-880352ea-54c4-4dcd-a250-c4bc95fb99a2.png)
 
 *Note: Most text inputs support Markdown synatax!*
+
 ![image](https://user-images.githubusercontent.com/69219325/181680128-d4c011c8-37aa-4f90-b3e6-b1a0da469315.png)
 
 And Finally upon sending your embed, you get a result like this:
+
 ![image](https://user-images.githubusercontent.com/69219325/181680403-0abeee6c-d195-4678-b743-58aae664e134.png)
 
 There are many other nuances and cool things to learn about the embed editor, but I'm not going to list them here, so go find them yourself!
