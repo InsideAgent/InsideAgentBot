@@ -100,7 +100,12 @@ This project started as a personal challenge/venture, but when I realized how mu
 <!-- GETTING STARTED -->
 ## Getting Started
 
-To add this bot to your own discord server, simply click this [link](https://discord.com/api/oauth2/authorize?client_id=786721755560804373&permissions=8&scope=bot%20applications.commands) and it choose the server you would like the bot in! 
+To add this bot to your own discord server, simply click this:
+
+[![Add To Server][install]][install-link]
+
+
+and follow the steps to add it to the server you want.
 
 And just like that the bot is ready to go!
 
@@ -224,4 +229,6 @@ Project Link: [https://github.com/InsideAgent/DiscordBot](https://github.com/Ins
 [commits-shield]: https://img.shields.io/github/commit-activity/m/InsideAgent/DiscordBot?style=for-the-badge
 [commits-url]: https://github.com/InsideAgent/DiscordBot/commits/master
 [product-screenshot]: images/screenshot.png
+[install]: https://img.shields.io/badge/-%3E%20Add%20To%20Server%20%3C-%234287f5?style=for-the-badge
+[install-link]: https://discord.com/api/oauth2/authorize?client_id=786721755560804373&permissions=8&scope=bot%20applications.commands
 
