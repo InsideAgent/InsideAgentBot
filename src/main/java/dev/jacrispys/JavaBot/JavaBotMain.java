@@ -2,6 +2,7 @@ package dev.jacrispys.JavaBot;
 
 import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifyConfig;
 import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySourceManager;
+import com.neovisionaries.i18n.CountryCode;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -16,6 +17,7 @@ import dev.jacrispys.JavaBot.Events.BotStartup;
 import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.Utils.SecretData;
+import dev.jacrispys.JavaBot.Utils.SpotifyManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -26,8 +28,17 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.fusesource.jansi.AnsiConsole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.SpotifyHttpManager;
+import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
+import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
+import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
+import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
+import se.michaelthelin.spotify.requests.data.browse.GetRecommendationsRequest;
 
 import javax.naming.ConfigurationException;
+import java.net.URI;
+import java.util.Arrays;
 
 
 public class JavaBotMain {
@@ -38,6 +49,7 @@ public class JavaBotMain {
     public static AudioPlayerManager audioManager;
 
     public static void main(String[] args) throws Exception {
+
 
         AnsiConsole.systemInstall();
         logger.info("{} - Jansi Installed.", className);
@@ -52,7 +64,7 @@ public class JavaBotMain {
         }
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(botToken)
+        JDA jda = JDABuilder.createDefault(devToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
@@ -65,6 +77,7 @@ public class JavaBotMain {
         mySQLConnection.getConnection("inside_agent_bot");
         logger.info("{} - DB-Connection Successful!", className);
 
+        logger.info("{} - Connecting to spotify source manager...", className);
         audioManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerLocalSource(audioManager);
         SpotifyConfig spotifyConfig = new SpotifyConfig();
@@ -73,6 +86,11 @@ public class JavaBotMain {
         spotifyConfig.setCountryCode("US");
         audioManager.registerSourceManager(new SpotifySourceManager(null, spotifyConfig, audioManager));
         AudioSourceManagers.registerRemoteSources(audioManager);
+        logger.info("{} - Successfully connected to spotify!", className);
+
+        logger.info("{} - Connecting to personal spotify API...", className);
+        SpotifyManager.getInstance();
+        logger.info("{} - Connected to personal API!", className);
 
         jda.getPresence().setActivity(Activity.streaming("Version-0.1.8 Woo!", "https://www.twitch.tv/jacrispyslive"));
         logger.info("{} - Starting event listeners...", className);

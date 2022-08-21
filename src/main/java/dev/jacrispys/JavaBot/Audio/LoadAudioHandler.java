@@ -60,7 +60,9 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
             }
         });
         try {
-            return queue.take();
+            Message message = queue.take();
+            System.out.println(message.getContentRaw());
+            return message;
         } catch (InterruptedException e) {
             e.printStackTrace();
             return null;

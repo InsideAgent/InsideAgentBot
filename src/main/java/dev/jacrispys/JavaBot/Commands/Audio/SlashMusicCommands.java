@@ -1,5 +1,7 @@
 package dev.jacrispys.JavaBot.Commands.Audio;
 
+import dev.jacrispys.JavaBot.Audio.GenerateGenrePlaylist;
+import dev.jacrispys.JavaBot.Audio.Genres;
 import dev.jacrispys.JavaBot.Audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.Audio.LoadAudioHandler;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
@@ -13,15 +15,16 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.apache.hc.core5.http.ParseException;
 import org.jetbrains.annotations.NotNull;
+import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.specification.Recommendations;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SlashMusicCommands extends ListenerAdapter {
 
@@ -82,7 +85,10 @@ public class SlashMusicCommands extends ListenerAdapter {
                 Commands.slash("skipto", "Skips the queue to a given index.")
                         .addOption(OptionType.INTEGER, "index", "Index to skip to.", true),
                 Commands.slash("fileplay", "adds a song to the queue")
-                        .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true)
+                        .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true),
+                Commands.slash("radio", "Starts a radio based off picked genre!")
+                        .addOption(OptionType.STRING, "genre", "Choose which genres will be added to the radio!")
+                        .addOption(OptionType.INTEGER, "limit", "The amount of songs that will be generated (max: 500).")
         );
         return commands;
     }
@@ -175,6 +181,30 @@ public class SlashMusicCommands extends ListenerAdapter {
             case "move" -> event.reply(audioManager.moveSong(Objects.requireNonNull(event.getOption("pos1")).getAsInt(), Objects.requireNonNull(event.getOption("pos2")).getAsInt())).queue();
             case "hijack" -> event.reply(audioManager.enableDJ(event.getUser(), event.getGuild())).queue();
             case "skipto" -> event.reply(audioManager.skipTo(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
+            case "radio" -> {
+                GenerateGenrePlaylist genrePlaylist = new GenerateGenrePlaylist();
+                try {
+                    event.deferReply().setEphemeral(true).queue();
+                    VoiceChannel channel;
+                    assert event.getMember() != null;
+                    assert event.getMember().getVoiceState() != null;
+                    assert event.getMember().getVoiceState().getChannel() != null;
+                    channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+                    updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
+                    if(event.getOption("limit").getAsInt() > 500) {
+                        event.getHook().editOriginal("Cannot add more than 500 songs to radio!").queue();
+                        return;
+                    }
+                    if(!(Genres.getValues().contains(event.getOption("genre").getAsString()))) {
+                        event.getHook().editOriginal("Unknown genre: " + event.getOption("genre").getAsString() + " please use a supported genre!").queue();
+                        return;
+                    }
+                    Recommendations requestData = genrePlaylist.generatePlaylistFromGenre(event.getOption("genre").getAsString(), event.getOption("limit").getAsInt());
+                    event.getHook().editOriginal(audioManager.generateRadio(requestData, channel, event.getUser())).queue();
+                } catch (IOException | ParseException | SpotifyWebApiException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

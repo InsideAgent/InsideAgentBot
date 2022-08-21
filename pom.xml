@@ -148,6 +148,12 @@
             <artifactId>jline</artifactId>
             <version>3.21.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>se.michaelthelin.spotify</groupId>
+            <artifactId>spotify-web-api-java</artifactId>
+            <version>7.2.0</version>
+        </dependency>
     </dependencies>
 
 

@@ -23,6 +23,9 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.michaelthelin.spotify.enums.ModelObjectType;
+import se.michaelthelin.spotify.model_objects.specification.Recommendations;
+import se.michaelthelin.spotify.model_objects.specification.TrackSimplified;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -43,6 +46,7 @@ public class GuildAudioManager {
     private final Map<AudioTrack, User> requester = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(GuildAudioManager.class);
     private static final String className = GuildAudioManager.class.getSimpleName();
+    private final LoadAudioHandler audioHandler;
 
     private boolean djEnabled = false;
 
@@ -77,6 +81,7 @@ public class GuildAudioManager {
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
         YoutubeHttpContextFilter.setPSID(SecretData.getPSID());
         YoutubeHttpContextFilter.setPAPISID(SecretData.getPAPISID());
+        this.audioHandler = new LoadAudioHandler(this);
         logger.info("{} - Successfully added GuildAudioManager for [" + instance.getName() + "]", className);
     }
 
@@ -741,6 +746,42 @@ public class GuildAudioManager {
             ex.printStackTrace();
             return new MessageBuilder().setContent("Error").build();
         }
+    }
+
+    public Message generateRadio(Recommendations requestData, VoiceChannel channel, User user) {
+        Arrays.stream(requestData.getTracks()).toList().forEach(track -> {
+            audioHandler.loadAndPlay("https://open.spotify.com/track/" +  track.getId(), channel, user, false);
+        });
+        List<String> genres = new ArrayList<>();
+        Arrays.stream(requestData.getSeeds()).toList().forEach(seed -> {
+            if(seed.getType() == ModelObjectType.GENRE) {
+                genres.add(seed.getId());
+            }
+        });
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle("Adding radio to queue...");
+        embedBuilder.addField("Genres: ", "`" + genres + "`", false);
+        embedBuilder.addField("Playlist Limit: ", "`" + requestData.getTracks().length + " tracks`", false);
+        embedBuilder.addField("Position in queue: ", "`" + (scheduler.getTrackQueue().size() - (requestData.getTracks().length - 1)) + "`", false);
+        long rawTimeUntilPlay = 0;
+
+        for(TrackSimplified track : requestData.getTracks()) {
+            rawTimeUntilPlay -= track.getDurationMs();
+        }
+        for (AudioTrack queue : scheduler.getTrackQueue().stream().toList()) {
+            rawTimeUntilPlay += queue.getDuration();
+        }
+        if (audioPlayer.getPlayingTrack() != null) {
+            rawTimeUntilPlay += (audioPlayer.getPlayingTrack().getDuration() - audioPlayer.getPlayingTrack().getPosition());
+        }
+        if (rawTimeUntilPlay < 0) {
+            rawTimeUntilPlay = 0;
+        }
+        String timeUntilPlay = DurationFormatUtils.formatDuration(rawTimeUntilPlay, "HH:mm:ss");
+        embedBuilder.addField("Estimated time until track plays: ", "`" + timeUntilPlay + "`", false);
+        embedBuilder.setFooter("From Playlist: ❌");
+        embedBuilder.setColor(Color.decode("#34d2eb"));
+        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageBuilder().setEmbeds(embedBuilder.build()).build();
     }
 
 }
