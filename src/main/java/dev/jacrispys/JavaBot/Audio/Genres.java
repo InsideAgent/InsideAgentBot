@@ -132,7 +132,7 @@ public enum Genres {
     WORK_OUT("work-out"),
     WORLD_MUSIC("world-music");
 
-    public final String value;
+    private final String value;
 
     public static List<String> getValues() {
         List<String> list = new ArrayList<>();
@@ -141,6 +141,7 @@ public enum Genres {
     }
 
     private Genres(String value) {
+
         this.value = value;
     }
 

@@ -784,4 +784,37 @@ public class GuildAudioManager {
         return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageBuilder().setEmbeds(embedBuilder.build()).build();
     }
 
+    public Message genreList() {
+        queuePage = 1;
+
+        StringBuilder genres = new StringBuilder();
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Choose your genres!");
+        eb.setColor(Color.decode("#42f5c8"));
+
+        for (int i = 0; i < 10; i++) {
+            try {
+                String genre = Genres.getValues().get(i);
+                genres.append("`").append(i + 1).append(". ").append(genre).append("` \n");
+            } catch (IndexOutOfBoundsException ex) {
+                break;
+            }
+        }
+
+        String pageNumber = "Page " + queuePage + "/" + (int) Math.ceil((float) Genres.getValues().size() / 10);
+        eb.setFooter(pageNumber);
+
+        eb.addField("React to genres you want added!", genres.toString(), false);
+
+        List<Button> buttons = new ArrayList<>();
+        buttons.add(Button.primary("firstGenre:" + currentGuild, "⏪"));
+        buttons.add(Button.primary("backGenre:" + currentGuild, "◀️"));
+        buttons.add(Button.success("submitGenres:" + currentGuild, "✅").asDisabled());
+        buttons.add(Button.primary("nextGenre:" + currentGuild, "▶️"));
+        buttons.add(Button.primary("lastGenre:" + currentGuild, "⏩"));
+
+        return new MessageBuilder().setEmbeds(eb.build()).setActionRows(ActionRow.of(buttons)).build();
+    }
+
 }

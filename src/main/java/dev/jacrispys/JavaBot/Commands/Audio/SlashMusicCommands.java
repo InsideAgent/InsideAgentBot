@@ -9,12 +9,14 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.utils.data.DataObject;
 import org.apache.hc.core5.http.ParseException;
 import org.jetbrains.annotations.NotNull;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
@@ -87,8 +89,8 @@ public class SlashMusicCommands extends ListenerAdapter {
                 Commands.slash("fileplay", "adds a song to the queue")
                         .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true),
                 Commands.slash("radio", "Starts a radio based off picked genre!")
-                        .addOption(OptionType.STRING, "genre", "Choose which genres will be added to the radio!")
-                        .addOption(OptionType.INTEGER, "limit", "The amount of songs that will be generated (max: 500).")
+                        .addOption(OptionType.STRING, "genre", "Choose which genres will be added to the radio!", true)
+                        .addOption(OptionType.INTEGER, "limit", "The amount of songs that will be generated (max: 500).", true)
         );
         return commands;
     }
@@ -184,7 +186,7 @@ public class SlashMusicCommands extends ListenerAdapter {
             case "radio" -> {
                 GenerateGenrePlaylist genrePlaylist = new GenerateGenrePlaylist();
                 try {
-                    event.deferReply().setEphemeral(true).queue();
+                    event.deferReply().setEphemeral(false).queue();
                     VoiceChannel channel;
                     assert event.getMember() != null;
                     assert event.getMember().getVoiceState() != null;
@@ -196,7 +198,13 @@ public class SlashMusicCommands extends ListenerAdapter {
                         return;
                     }
                     if(!(Genres.getValues().contains(event.getOption("genre").getAsString()))) {
-                        event.getHook().editOriginal("Unknown genre: " + event.getOption("genre").getAsString() + " please use a supported genre!").queue();
+                        event.getHook().editOriginal(audioManager.genreList()).queue();
+                        event.getHook().retrieveOriginal().queue(message -> {
+                            String[] ones = { "zero", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "\uD83D\uDD1F" };
+                            for(int i = 0; i < 10; i++) {
+                                message.addReaction(Emoji.fromUnicode(ones[i + 1])).queue();
+                            }
+                        });
                         return;
                     }
                     Recommendations requestData = genrePlaylist.generatePlaylistFromGenre(event.getOption("genre").getAsString(), event.getOption("limit").getAsInt());
