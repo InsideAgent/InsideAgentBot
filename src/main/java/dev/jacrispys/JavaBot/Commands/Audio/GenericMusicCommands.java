@@ -31,7 +31,6 @@ public class GenericMusicCommands extends ListenerAdapter {
 
     }
 
-
     @SuppressWarnings("all")
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
@@ -67,7 +66,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String track = event.getMessage().getAttachments().get(0).getUrl();
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(track, channel, event.getAuthor(), false));
+                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(track, channel, event.getAuthor(), false)).queue();
                 return;
 
             } else if (message.contains("-play")) {
@@ -85,7 +84,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getAuthor(), false));
+                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getAuthor(), false)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -98,7 +97,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getAuthor(), false));
+                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getAuthor(), false)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -167,7 +166,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 int pos1 = Integer.parseInt(message.split("-move ")[1].split(" ")[0]);
                 int pos2 = Integer.parseInt(message.split("-move " + pos1 + " ")[1]);
                 event.getGuildChannel().sendMessage(audioManager.moveSong(pos1, pos2)).queue();
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
                 event.getGuildChannel().sendMessage("Cannot parse integer positions! Please use the format: `-move [pos1] [pos2]` where pos1,pos2 are numbers!").queue();
             }
         } else if (((message.contains("-playtop") && message.split("-playtop ").length > 1) || (message.contains("-ptop") && message.split("-ptop ").length > 1))) {
@@ -187,7 +186,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getAuthor(), true));
+                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getAuthor(), true)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -200,7 +199,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getAuthor(), true));
+                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getAuthor(), true)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {

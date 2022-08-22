@@ -1,12 +1,11 @@
 package dev.jacrispys.JavaBot.Commands.Audio;
 
+import dev.jacrispys.JavaBot.Audio.GenerateGenrePlaylist;
 import dev.jacrispys.JavaBot.Audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.Audio.LoadAudioHandler;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -18,10 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SlashMusicCommands extends ListenerAdapter {
 
@@ -82,7 +78,9 @@ public class SlashMusicCommands extends ListenerAdapter {
                 Commands.slash("skipto", "Skips the queue to a given index.")
                         .addOption(OptionType.INTEGER, "index", "Index to skip to.", true),
                 Commands.slash("fileplay", "adds a song to the queue")
-                        .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true)
+                        .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true),
+                Commands.slash("radio", "Starts a radio based off picked genre!")
+                        .addOption(OptionType.INTEGER, "limit", "The amount of songs that will be generated (max: 500).", true)
         );
         return commands;
     }
@@ -105,41 +103,41 @@ public class SlashMusicCommands extends ListenerAdapter {
         LoadAudioHandler audioHandler = new LoadAudioHandler(audioManager);
         switch (commandName) {
             case "play", "playtop", "fileplay" -> {
-                    event.deferReply().setEphemeral(true).queue();
-                    VoiceChannel channel;
-                    assert event.getMember() != null;
-                    assert event.getMember().getVoiceState() != null;
-                    assert event.getMember().getVoiceState().getChannel() != null;
-                    channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
-                    updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
+                event.deferReply().setEphemeral(true).queue();
+                VoiceChannel channel;
+                assert event.getMember() != null;
+                assert event.getMember().getVoiceState() != null;
+                assert event.getMember().getVoiceState().getChannel() != null;
+                channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+                updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
 
-                    String track = null;
-                    if (!(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp"))) {
-                        track = Objects.requireNonNull(event.getOption("query")).getAsString();
-                        if (channel == null) {
-                            event.getHook().editOriginal("Could not load song, as you are not in a voice channel!").queue();
-                            return;
-                        }
-                        try {
-                            new URL(track);
-                        } catch (MalformedURLException ignored) {
-                            String searchMethod = "ytsearch";
-                            if (event.getOption("search") != null) {
-                                searchMethod = Objects.requireNonNull(event.getOption("search")).getAsString();
-                            }
-                            switch (searchMethod.toLowerCase()) {
-                                case ("spsearch:") -> searchMethod = "spsearch:";
-                                case ("amsearch:") -> searchMethod = "amsearch:";
-                                default -> searchMethod = "ytsearch:";
-                            }
-                            track = searchMethod + track;
-                        }
+                String track = null;
+                if (!(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp"))) {
+                    track = Objects.requireNonNull(event.getOption("query")).getAsString();
+                    if (channel == null) {
+                        event.getHook().editOriginal("Could not load song, as you are not in a voice channel!").queue();
+                        return;
                     }
-                    if (event.getName().equalsIgnoreCase("fileplay")) {
-                        track = Objects.requireNonNull(event.getOption("file")).getAsAttachment().getUrl();
+                    try {
+                        new URL(track);
+                    } catch (MalformedURLException ignored) {
+                        String searchMethod = "ytsearch";
+                        if (event.getOption("search") != null) {
+                            searchMethod = Objects.requireNonNull(event.getOption("search")).getAsString();
+                        }
+                        switch (searchMethod.toLowerCase()) {
+                            case ("spsearch:") -> searchMethod = "spsearch:";
+                            case ("amsearch:") -> searchMethod = "amsearch:";
+                            default -> searchMethod = "ytsearch:";
+                        }
+                        track = searchMethod + track;
                     }
-                    boolean playTop = (commandName.equalsIgnoreCase("playtop"));
-                    event.getHook().editOriginal(Objects.requireNonNull(audioHandler.loadAndPlay(track, channel, event.getUser(), playTop))).queue();
+                }
+                if (event.getName().equalsIgnoreCase("fileplay")) {
+                    track = Objects.requireNonNull(event.getOption("file")).getAsAttachment().getUrl();
+                }
+                boolean playTop = (commandName.equalsIgnoreCase("playtop"));
+                event.getHook().editOriginal(Objects.requireNonNull(audioHandler.loadAndPlay(track, channel, event.getUser(), playTop))).queue();
             }
             case "skip" -> event.reply(audioHandler.skipTrack(audioManager)).queue();
             case "volume" -> event.reply(audioManager.setVolume(Objects.requireNonNull(event.getOption("volume")).getAsInt())).queue();
@@ -175,6 +173,27 @@ public class SlashMusicCommands extends ListenerAdapter {
             case "move" -> event.reply(audioManager.moveSong(Objects.requireNonNull(event.getOption("pos1")).getAsInt(), Objects.requireNonNull(event.getOption("pos2")).getAsInt())).queue();
             case "hijack" -> event.reply(audioManager.enableDJ(event.getUser(), event.getGuild())).queue();
             case "skipto" -> event.reply(audioManager.skipTo(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
+            case "radio" -> {
+                event.deferReply().setEphemeral(false).queue();
+                if(GenerateGenrePlaylist.reactMessage.containsKey(event.getUser())) {
+                    event.getHook().editOriginal("Cannot use this command until current request has been fulfilled!").queue();
+                    return;
+                }
+                if (event.getOption("limit").getAsInt() > 100) {
+                    event.getHook().editOriginal("Cannot add more than 100 songs to radio!").queue();
+                    return;
+                }
+                limit.put(event.getUser(), event.getOption("limit").getAsInt());
+                event.getHook().editOriginal(audioManager.genreList(event.getUser().getIdLong())).queue();
+                event.getHook().retrieveOriginal().queue(message -> {
+                    String[] ones = {"zero", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "\uD83D\uDD1F"};
+                    for (int i = 0; i < 10; i++) {
+                        message.addReaction(Emoji.fromUnicode(ones[i + 1])).queue();
+                    }
+                    GenerateGenrePlaylist.reactMessage.put(event.getUser(), message.getIdLong());
+                });
+            }
         }
     }
+    public static Map<User, Integer> limit = new HashMap<>();
 }
