@@ -803,7 +803,7 @@ public class GuildAudioManager {
         }
 
         String pageNumber = "Page " + queuePage + "/" + (int) Math.ceil((float) Genres.getValues().size() / 10);
-        eb.setFooter(pageNumber);
+        eb.setFooter(pageNumber + " | Max 5 genres! | 0/5 Currently Selected!");
 
         eb.addField("React to genres you want added!", genres.toString(), false);
 

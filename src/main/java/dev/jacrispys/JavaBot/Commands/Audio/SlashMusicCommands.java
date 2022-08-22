@@ -179,8 +179,8 @@ public class SlashMusicCommands extends ListenerAdapter {
                     event.getHook().editOriginal("Cannot use this command until current request has been fulfilled!").queue();
                     return;
                 }
-                if (event.getOption("limit").getAsInt() > 500) {
-                    event.getHook().editOriginal("Cannot add more than 500 songs to radio!").queue();
+                if (event.getOption("limit").getAsInt() > 100) {
+                    event.getHook().editOriginal("Cannot add more than 100 songs to radio!").queue();
                     return;
                 }
                 limit.put(event.getUser(), event.getOption("limit").getAsInt());

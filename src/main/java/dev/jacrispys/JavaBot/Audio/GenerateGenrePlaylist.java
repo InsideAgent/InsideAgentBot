@@ -94,6 +94,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     event.getHook().editOriginal(GuildAudioManager.getGuildAudioManager(event.getGuild()).generateRadio(requestData, channel, event.getUser())).queue();
                     chosenGenres.remove(event.getUser());
                     reactMessage.remove(event.getUser());
+                    positionList.clear();
 
                 }
                 case ("nextGenre") -> {
@@ -159,7 +160,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         }
 
         String pageNumber = "Page " + queuePage + "/" + (int) Math.ceil((float) Genres.getValues().size() / 10);
-        eb.setFooter(pageNumber);
+        eb.setFooter(pageNumber + " | Max 5 genres! | "+ chosenGenres.get(user).size() + "/5 Currently Selected!");
 
         eb.addField("React to genres you want added!", genres.toString(), false);
         return eb;
@@ -175,7 +176,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                 msg.getReactions().forEach(reaction -> unicodes.add(reaction.getEmoji().asUnicode()));
                 msg.editMessageEmbeds(addGenre(msg.getEmbeds().get(0), unicodes.indexOf(event.getReaction().getEmoji().asUnicode()), event.getUser())).queue();
                 Button button =  msg.getButtonById("submitGenres:" + event.getUserIdLong());
-                if(positionList.size() > 0) {
+                if(positionList.size() > 0 && !(positionList.size() > 5)) {
                     button = button.asEnabled();
                 } else {
                     button = button.asDisabled();
@@ -215,6 +216,8 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         eb.clearFields();
         assert title != null;
         eb.addField(title, builder.toString(), false);
+
+        eb.setFooter("Page " + page + "/13" + " | Max 5 genres! | "+ chosenGenres.get(user).size() + "/5 Currently Selected!");
 
         return eb.build();
     }
