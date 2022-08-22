@@ -199,16 +199,18 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         List<String> embedLines = new ArrayList<>(List.of(embed.getFields().get(0).getValue().split("\n")));
         String line = embedLines.get(position);
         int page = genrePage;
-        if(!line.startsWith("`✅")) {
-            line = line.replace((position + 1) + ".", "✅");
-            embedLines.set(position, line);
-            positionList.add((page -1) * 10 + (position));
-        } else {
-            line = line.replace("✅", (position + 1) + ".");
-            embedLines.set(position, line);
-            positionList.removeIf(val -> val.equals((page - 1) * 10 + (position)));
+        if((page -1) * 10 + (position) < 125) {
+            if (!line.startsWith("`✅")) {
+                line = line.replace((position + 1) + ".", "✅");
+                embedLines.set(position, line);
+                positionList.add((page - 1) * 10 + (position));
+            } else {
+                line = line.replace("✅", (position + 1) + ".");
+                embedLines.set(position, line);
+                positionList.removeIf(val -> val.equals((page - 1) * 10 + (position)));
+            }
+            chosenGenres.put(user, positionList);
         }
-        chosenGenres.put(user, positionList);
         embedLines = embedLines.stream()
                 .map(s -> s+"\n")
                 .collect(Collectors.toList());
