@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static dev.jacrispys.JavaBot.Audio.GuildAudioManager.nowPlayingId;
-import static dev.jacrispys.JavaBot.Audio.GuildAudioManager.queuePage;
 
 public class GenerateGenrePlaylist extends ListenerAdapter {
 
@@ -55,7 +54,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
             switch (buttonName) {
                 case ("firstGenre") -> {
-                    if (queuePage != 1) {
+                    if (genrePage != 1) {
                         event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), 1, event.getUser()).build()).queue();
                     } else {
                         if (!event.isAcknowledged()) {
@@ -64,8 +63,8 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     }
                 }
                 case ("backGenre") -> {
-                    if (queuePage <= 1) {
-                        if (queuePage == 0) {
+                    if (genrePage <= 1) {
+                        if (genrePage == 0) {
                             if (!event.isAcknowledged()) {
                                 event.reply("What? Did you expect page 0 or... HEY WAIT A MINUTE \uD83D\uDE21").setEphemeral(true).queue();
                             }
@@ -76,7 +75,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                         }
                         return;
                     }
-                    event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage - 1, event.getUser()).build()).queue();
+                    event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), genrePage - 1, event.getUser()).build()).queue();
                 }
                 case ("submitGenres") -> {
                     event.getMessage().delete().queue();
@@ -98,16 +97,16 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
                 }
                 case ("nextGenre") -> {
-                    if (queuePage >= pages) {
+                    if (genrePage >= pages) {
                         if (!event.isAcknowledged()) {
                             event.reply("Cannot go further than the final page!").setEphemeral(true).queue();
                         }
                         return;
                     }
-                    event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage + 1, event.getUser()).build()).queue();
+                    event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), genrePage + 1, event.getUser()).build()).queue();
                 }
                 case ("lastGenre") -> {
-                    if (queuePage != pages) {
+                    if (genrePage != pages) {
                         event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), pages, event.getUser()).build()).queue();
                     } else {
                         if (!event.isAcknowledged()) {
@@ -140,8 +139,10 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         }
     }
 
+    public static int genrePage;
+
     private EmbedBuilder updateEmbed(MessageEmbed embed, int page, User user) {
-        queuePage = page;
+        genrePage = page;
         EmbedBuilder eb = new EmbedBuilder(embed);
         eb.clearFields();
         StringBuilder genres = new StringBuilder();
@@ -159,7 +160,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
             }
         }
 
-        String pageNumber = "Page " + queuePage + "/" + (int) Math.ceil((float) Genres.getValues().size() / 10);
+        String pageNumber = "Page " + genrePage + "/" + (int) Math.ceil((float) Genres.getValues().size() / 10);
         int size = chosenGenres.containsKey(user) ? chosenGenres.get(user).size() : 0;
         eb.setFooter(pageNumber + " | Max 5 genres! | "+ size + "/5 Currently Selected!");
 
@@ -197,7 +198,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         EmbedBuilder eb = new EmbedBuilder(embed);
         List<String> embedLines = new ArrayList<>(List.of(embed.getFields().get(0).getValue().split("\n")));
         String line = embedLines.get(position);
-        int page = Integer.parseInt(Character.toString(embed.getFooter().getText().charAt(5)));
+        int page = genrePage;
         if(!line.startsWith("`✅")) {
             line = line.replace((position + 1) + ".", "✅");
             embedLines.set(position, line);

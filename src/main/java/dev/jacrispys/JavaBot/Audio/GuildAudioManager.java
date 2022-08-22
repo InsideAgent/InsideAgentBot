@@ -785,7 +785,7 @@ public class GuildAudioManager {
     }
 
     public Message genreList(long idLong) {
-        queuePage = 1;
+        GenerateGenrePlaylist.genrePage = 1;
 
         StringBuilder genres = new StringBuilder();
 
@@ -802,7 +802,7 @@ public class GuildAudioManager {
             }
         }
 
-        String pageNumber = "Page " + queuePage + "/" + (int) Math.ceil((float) Genres.getValues().size() / 10);
+        String pageNumber = "Page " + GenerateGenrePlaylist.genrePage + "/" + (int) Math.ceil((float) Genres.getValues().size() / 10);
         eb.setFooter(pageNumber + " | Max 5 genres! | 0/5 Currently Selected!");
 
         eb.addField("React to genres you want added!", genres.toString(), false);
