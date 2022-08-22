@@ -149,7 +149,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         for (int i = 0; i < 10; i++) {
             try {
                 String genre = Genres.getValues().get((page -1) * 10 + i);
-                if(chosenGenres.get(user).contains((page -1) * 10 + (i))) {
+                if(chosenGenres.containsKey(user) && chosenGenres.get(user).contains((page -1) * 10 + (i))) {
                     genres.append("`").append("✅ ").append(genre).append("` \n");
                     continue;
                 }
@@ -160,7 +160,8 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         }
 
         String pageNumber = "Page " + queuePage + "/" + (int) Math.ceil((float) Genres.getValues().size() / 10);
-        eb.setFooter(pageNumber + " | Max 5 genres! | "+ chosenGenres.get(user).size() + "/5 Currently Selected!");
+        int size = chosenGenres.containsKey(user) ? chosenGenres.get(user).size() : 0;
+        eb.setFooter(pageNumber + " | Max 5 genres! | "+ size + "/5 Currently Selected!");
 
         eb.addField("React to genres you want added!", genres.toString(), false);
         return eb;
