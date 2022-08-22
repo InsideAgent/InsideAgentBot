@@ -784,7 +784,7 @@ public class GuildAudioManager {
         return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageBuilder().setEmbeds(embedBuilder.build()).build();
     }
 
-    public Message genreList() {
+    public Message genreList(long idLong) {
         queuePage = 1;
 
         StringBuilder genres = new StringBuilder();
@@ -808,11 +808,11 @@ public class GuildAudioManager {
         eb.addField("React to genres you want added!", genres.toString(), false);
 
         List<Button> buttons = new ArrayList<>();
-        buttons.add(Button.primary("firstGenre:" + currentGuild, "⏪"));
-        buttons.add(Button.primary("backGenre:" + currentGuild, "◀️"));
-        buttons.add(Button.success("submitGenres:" + currentGuild, "✅").asDisabled());
-        buttons.add(Button.primary("nextGenre:" + currentGuild, "▶️"));
-        buttons.add(Button.primary("lastGenre:" + currentGuild, "⏩"));
+        buttons.add(Button.primary("firstGenre:" + idLong, "⏪"));
+        buttons.add(Button.primary("backGenre:" + idLong, "◀️"));
+        buttons.add(Button.success("submitGenres:" + idLong, "✅").asDisabled());
+        buttons.add(Button.primary("nextGenre:" + idLong, "▶️"));
+        buttons.add(Button.primary("lastGenre:" + idLong, "⏩"));
 
 
         return new MessageBuilder().setEmbeds(eb.build()).setActionRows(ActionRow.of(buttons)).build();

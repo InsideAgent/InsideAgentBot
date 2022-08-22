@@ -7,6 +7,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import dev.jacrispys.JavaBot.Audio.AudioPlayerButtons;
+import dev.jacrispys.JavaBot.Audio.GenerateGenrePlaylist;
 import dev.jacrispys.JavaBot.Audio.InactivityTimer;
 import dev.jacrispys.JavaBot.Commands.*;
 import dev.jacrispys.JavaBot.Commands.Audio.GenericMusicCommands;
@@ -106,6 +107,7 @@ public class JavaBotMain {
         jda.addEventListener(new GenericDebugCommands());
         jda.addEventListener(new UnclassifiedSlashCommands());
         jda.addEventListener(EmbedCLI.getInstance());
+        jda.addEventListener(new GenerateGenrePlaylist());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
         logger.info("{} - Starting GameSpyThread...", className);
         gameSpyThread = new GameSpyThread(jda);
