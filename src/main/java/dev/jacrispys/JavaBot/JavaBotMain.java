@@ -2,16 +2,15 @@ package dev.jacrispys.JavaBot;
 
 import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifyConfig;
 import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySourceManager;
-import com.neovisionaries.i18n.CountryCode;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import dev.jacrispys.JavaBot.Audio.AudioPlayerButtons;
 import dev.jacrispys.JavaBot.Audio.GenerateGenrePlaylist;
 import dev.jacrispys.JavaBot.Audio.InactivityTimer;
-import dev.jacrispys.JavaBot.Commands.*;
 import dev.jacrispys.JavaBot.Commands.Audio.GenericMusicCommands;
 import dev.jacrispys.JavaBot.Commands.Audio.SlashMusicCommands;
+import dev.jacrispys.JavaBot.Commands.*;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
 import dev.jacrispys.JavaBot.Commands.RuntimeDebug.GenericDebugCommands;
 import dev.jacrispys.JavaBot.Events.BotStartup;
@@ -29,17 +28,8 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.fusesource.jansi.AnsiConsole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.michaelthelin.spotify.SpotifyApi;
-import se.michaelthelin.spotify.SpotifyHttpManager;
-import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
-import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
-import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
-import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
-import se.michaelthelin.spotify.requests.data.browse.GetRecommendationsRequest;
 
 import javax.naming.ConfigurationException;
-import java.net.URI;
-import java.util.Arrays;
 
 
 public class JavaBotMain {
@@ -65,7 +55,7 @@ public class JavaBotMain {
         }
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(botToken)
+        JDA jda = JDABuilder.createDefault(devToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)

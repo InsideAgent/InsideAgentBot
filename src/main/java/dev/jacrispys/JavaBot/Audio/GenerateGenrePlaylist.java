@@ -6,7 +6,6 @@ import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.Utils.SpotifyManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
@@ -34,6 +33,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     }
 
     public static Map<User, Long> reactMessage = new HashMap<>();
+    public static Map<User, Integer> limit = new HashMap<>();
 
     public Recommendations generatePlaylistFromGenre(String genres, int limit) throws IOException, ParseException, SpotifyWebApiException {
         final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).build();
@@ -96,8 +96,8 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
                     GenerateGenrePlaylist genrePlaylist = new GenerateGenrePlaylist();
                     StringBuilder genre = new StringBuilder();
-                    chosenGenres.get(event.getUser()).forEach(pos -> genre.append(Genres.getValues().get(pos) + ","));
-                    Recommendations requestData = genrePlaylist.generatePlaylistFromGenre(genre.toString(), SlashMusicCommands.limit.get(event.getUser()));
+                    chosenGenres.get(event.getUser()).forEach(pos -> genre.append(Genres.getValues().get(pos)).append(","));
+                    Recommendations requestData = genrePlaylist.generatePlaylistFromGenre(genre.toString(), limit.get(event.getUser()));
                     event.getHook().editOriginal(GuildAudioManager.getGuildAudioManager(event.getGuild()).generateRadio(requestData, channel, event.getUser())).queue();
 
                 }

@@ -1,5 +1,6 @@
 package dev.jacrispys.JavaBot.Commands.Audio;
 
+import dev.jacrispys.JavaBot.Audio.GenerateGenrePlaylist;
 import dev.jacrispys.JavaBot.Audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.Audio.LoadAudioHandler;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
@@ -218,6 +219,30 @@ public class GenericMusicCommands extends ListenerAdapter {
             } catch (NumberFormatException ignored) {
                 event.getGuildChannel().sendMessage("Error: Cannot skip to a non-number value!").queue();
             }
+        } else if ((message.contains("-radio")) && message.split("-radio ").length == 2) {
+            if(GenerateGenrePlaylist.reactMessage.containsKey(event.getAuthor())) {
+                event.getMessage().reply("Cannot use this command until current request has been fulfilled!").queue(m -> m.delete().queueAfter(5, TimeUnit.SECONDS));
+                return;
+            }
+            int limit;
+            try {
+                limit = Integer.parseInt(message.split("-radio ")[1]);
+            } catch (NumberFormatException ex) {
+                event.getMessage().reply("Must have a number as first argument for: `-radio [limit]`!").queue(m -> m.delete().queueAfter(5, TimeUnit.SECONDS));
+                return;
+            }
+            if (limit > 100) {
+                event.getMessage().reply("Cannot add more than 100 songs to radio!").queue(m -> m.delete().queueAfter(5, TimeUnit.SECONDS));
+                return;
+            }
+            GenerateGenrePlaylist.limit.put(event.getAuthor(), limit);
+            event.getMessage().reply(audioManager.genreList(event.getAuthor().getIdLong())).queue(m -> {
+                String[] ones = {"zero", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "\uD83D\uDD1F"};
+                for (int i = 0; i < 10; i++) {
+                    m.addReaction(Emoji.fromUnicode(ones[i + 1])).queue();
+                }
+                GenerateGenrePlaylist.reactMessage.put(event.getAuthor(), m.getIdLong());
+            });
         }
     }
 }

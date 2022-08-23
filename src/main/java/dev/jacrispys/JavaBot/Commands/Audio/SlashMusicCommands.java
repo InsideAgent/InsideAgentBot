@@ -183,7 +183,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                     event.getHook().editOriginal("Cannot add more than 100 songs to radio!").queue();
                     return;
                 }
-                limit.put(event.getUser(), event.getOption("limit").getAsInt());
+                GenerateGenrePlaylist.limit.put(event.getUser(), event.getOption("limit").getAsInt());
                 event.getHook().editOriginal(audioManager.genreList(event.getUser().getIdLong())).queue();
                 event.getHook().retrieveOriginal().queue(message -> {
                     String[] ones = {"zero", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "\uD83D\uDD1F"};
@@ -195,5 +195,4 @@ public class SlashMusicCommands extends ListenerAdapter {
             }
         }
     }
-    public static Map<User, Integer> limit = new HashMap<>();
 }
