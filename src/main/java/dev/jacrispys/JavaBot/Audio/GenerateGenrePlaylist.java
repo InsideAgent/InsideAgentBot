@@ -47,6 +47,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
             GuildAudioManager audioManager =  GuildAudioManager.getGuildAudioManager(fromButtonGuild);
             String buttonName = event.getComponentId().split(":")[0];
             int pages = (int) Math.ceil((float) Genres.getValues().size() / 10);
+            if(event.isAcknowledged()) return;
             if (event.getUser().getIdLong() != Long.parseLong(event.getComponentId().split(":")[1])) {
                 event.reply("Only the owner of this embed can edit it!").setEphemeral(true).queue();
                 return;
@@ -85,6 +86,10 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     assert event.getMember().getVoiceState() != null;
                     assert event.getMember().getVoiceState().getChannel() != null;
                     channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+                    if(channel == null) {
+                        event.getHook().editOriginal("Cannot add tracks, as you are not in a voice channel!").queue();
+                        return;
+                    }
                     updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
                     GenerateGenrePlaylist genrePlaylist = new GenerateGenrePlaylist();
                     StringBuilder genre = new StringBuilder();
