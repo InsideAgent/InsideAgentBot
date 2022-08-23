@@ -142,6 +142,7 @@ _(Note Current commands with '-' are deprecated and should use slash commands in
 - `/skipto` or - `/st` - Skips to the given index in the queue.
 - `/fileplay` - Plays a given file (inserted upon command entered).
 - `/move` - Moves a given track to a given index in the queue
+- `/radio` - Adds a playlist of songs from chosen genres.
 
 *For more examples, please refer to the Docs: COMING SOON*
 
