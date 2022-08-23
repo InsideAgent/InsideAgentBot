@@ -36,7 +36,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     public static Map<User, Long> reactMessage = new HashMap<>();
 
     public Recommendations generatePlaylistFromGenre(String genres, int limit) throws IOException, ParseException, SpotifyWebApiException {
-        final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.ES).seed_genres(genres).limit(limit).build();
+        final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).build();
         return request.execute();
     }
 
@@ -88,6 +88,9 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
                     if(channel == null) {
                         event.getHook().editOriginal("Cannot add tracks, as you are not in a voice channel!").queue();
+                        chosenGenres.remove(event.getUser());
+                        reactMessage.remove(event.getUser());
+                        positionList.clear();
                         return;
                     }
                     updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
@@ -96,9 +99,6 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     chosenGenres.get(event.getUser()).forEach(pos -> genre.append(Genres.getValues().get(pos) + ","));
                     Recommendations requestData = genrePlaylist.generatePlaylistFromGenre(genre.toString(), SlashMusicCommands.limit.get(event.getUser()));
                     event.getHook().editOriginal(GuildAudioManager.getGuildAudioManager(event.getGuild()).generateRadio(requestData, channel, event.getUser())).queue();
-                    chosenGenres.remove(event.getUser());
-                    reactMessage.remove(event.getUser());
-                    positionList.clear();
 
                 }
                 case ("nextGenre") -> {
@@ -202,9 +202,9 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     protected MessageEmbed addGenre(MessageEmbed embed, int position, User user) {
         EmbedBuilder eb = new EmbedBuilder(embed);
         List<String> embedLines = new ArrayList<>(List.of(embed.getFields().get(0).getValue().split("\n")));
-        String line = embedLines.get(position);
         int page = genrePage;
         if((page -1) * 10 + (position) < 125) {
+            String line = embedLines.get(position);
             if (!line.startsWith("`✅")) {
                 line = line.replace((position + 1) + ".", "✅");
                 embedLines.set(position, line);

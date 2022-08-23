@@ -414,8 +414,7 @@ public class GuildAudioManager {
                 channel.deleteMessageById(nowPlayingId.get(guild)).queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE).handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {}));
             }
             channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue(message -> nowPlayingId.put(guild, message.getIdLong()));
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        } catch (SQLException ignored) {
         }
     }
 

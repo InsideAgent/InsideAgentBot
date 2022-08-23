@@ -112,7 +112,7 @@ public class MySQLConnection {
         statement.close();
     }
 
-    public Long getMusicChannel(Guild guild) throws SQLException{
+    public Long getMusicChannel(Guild guild) throws SQLException {
         ResultSet rs = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT musicChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
         rs.beforeFirst();
         rs.next();
