@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,16 +43,14 @@ public class InactivityTimer extends ListenerAdapter {
                         inactivityMessage(channel);
                     }catch (SQLException ignored) {
                     } finally {
-                        if(!jda.getGuildById(guildId).getAudioManager().isConnected()) {
-                            jda.getGuildById(guildId).getAudioManager().closeAudioConnection();
-                        } else  {
-                            logger.error("Could not remove disconnected bot from VC!");
-                            // Spaghetti ass code only works after the if statement that tells me it doesnt work 💀
-                            jda.getGuildById(guildId).getAudioManager().closeAudioConnection();
+                        if(jda.getGuildById(guildId).getSelfMember().getVoiceState().inAudioChannel()) {
+                            AudioManager manager = jda.getGuildById(guildId).getAudioManager();
+                            GuildAudioManager.getGuildAudioManager(jda.getGuildById(guildId)).clearQueue();
+                            GuildAudioManager.getGuildAudioManager(jda.getGuildById(guildId)).audioPlayer.destroy();
+                            manager.setAutoReconnect(false);
+                            manager.closeAudioConnection();
+                            manager.closeAudioConnection();
                         }
-                        player.destroy();
-                        GuildAudioManager.getGuildAudioManager(jda.getGuildById(guildId)).clearQueue();
-                        GuildAudioManager.getGuildAudioManager(jda.getGuildById(guildId)).resumePlayer();
                         executorService.shutdown();
                     }
                 }

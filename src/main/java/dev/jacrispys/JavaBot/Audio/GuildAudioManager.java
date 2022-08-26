@@ -727,20 +727,18 @@ public class GuildAudioManager {
 
     public Message disconnectBot() {
         try {
-            clearQueue();
-            audioPlayer.destroy();
-            if(!Objects.requireNonNull(jdaInstance.getGuildById(currentGuild)).getAudioManager().isConnected()) {
-                logger.error("Could not remove disconnected bot from VC!");
-                Objects.requireNonNull(jdaInstance.getGuildById(currentGuild)).getAudioManager().closeAudioConnection();
-            } else {
-                Objects.requireNonNull(jdaInstance.getGuildById(currentGuild)).getAudioManager().closeAudioConnection();
-            }
-            MessageBuilder message = new MessageBuilder();
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setColor(Color.CYAN);
-            eb.setAuthor("|  Destroyed audio player and cleared queue! (Disconnecting ☮️)", null, jdaInstance.getSelfUser().getEffectiveAvatarUrl());
-            message.setEmbeds(eb.build());
-            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+            if(jdaInstance.getGuildById(currentGuild).getSelfMember().getVoiceState().inAudioChannel()) {
+                clearQueue();
+                audioPlayer.destroy();
+                jdaInstance.getGuildById(currentGuild).getAudioManager().setAutoReconnect(false);
+                jdaInstance.getGuildById(currentGuild).getAudioManager().closeAudioConnection();
+                MessageBuilder message = new MessageBuilder();
+                EmbedBuilder eb = new EmbedBuilder();
+                eb.setColor(Color.CYAN);
+                eb.setAuthor("|  Destroyed audio player and cleared queue! (Disconnecting ☮️)", null, jdaInstance.getSelfUser().getEffectiveAvatarUrl());
+                message.setEmbeds(eb.build());
+                return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+            } else return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageBuilder().setContent("I am not currently connected to a voice channel!").build();
         } catch (Exception ex) {
             ex.printStackTrace();
             return new MessageBuilder().setContent("Error").build();
