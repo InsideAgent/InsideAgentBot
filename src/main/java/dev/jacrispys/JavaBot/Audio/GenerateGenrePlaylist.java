@@ -1,7 +1,6 @@
 package dev.jacrispys.JavaBot.Audio;
 
 import com.neovisionaries.i18n.CountryCode;
-import dev.jacrispys.JavaBot.Commands.Audio.SlashMusicCommands;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.Utils.SpotifyManager;
 import net.dv8tion.jda.api.EmbedBuilder;

@@ -32,6 +32,7 @@ public class GenericMusicCommands extends ListenerAdapter {
 
     }
 
+
     @SuppressWarnings("all")
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;

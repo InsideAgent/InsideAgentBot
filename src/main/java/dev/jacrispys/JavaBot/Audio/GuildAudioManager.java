@@ -748,9 +748,7 @@ public class GuildAudioManager {
     }
 
     public Message generateRadio(Recommendations requestData, VoiceChannel channel, User user) {
-        Arrays.stream(requestData.getTracks()).toList().forEach(track -> {
-            audioHandler.loadAndPlay("https://open.spotify.com/track/" +  track.getId(), channel, user, false);
-        });
+        Arrays.stream(requestData.getTracks()).toList().forEach(track -> audioHandler.loadAndPlay("https://open.spotify.com/track/" +  track.getId(), channel, user, false));
         List<String> genres = new ArrayList<>();
         Arrays.stream(requestData.getSeeds()).toList().forEach(seed -> {
             if(seed.getType() == ModelObjectType.GENRE) {
