@@ -176,6 +176,10 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
+        if(reactMessage.containsValue(event.getMessageIdLong()) && reactMessage.getOrDefault(event.getUser(), 0L) != event.getMessageIdLong()) {
+            event.getReaction().removeReaction(event.getUser()).queue();
+            return;
+        }
         if(reactMessage.getOrDefault(event.getUser(), 0L) == event.getMessageIdLong()) {
             event.retrieveMessage().queue(msg -> {
                 List<UnicodeEmoji> unicodes = new ArrayList<>();
@@ -239,9 +243,19 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
     }
 
+
     @Override
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
         if(reactMessage.containsValue(event.getMessageIdLong())) {
+            reactMessage.keySet().forEach(key -> {
+                reactMessage.values().forEach(value -> {
+                    if(value.equals(event.getMessageIdLong())) {
+                        if(reactMessage.get(key).equals(value)) {
+                            chosenGenres.remove(key);
+                        }
+                    }
+                });
+            });
             reactMessage.values().removeIf(val -> val.equals(event.getMessageIdLong()));
         }
     }
