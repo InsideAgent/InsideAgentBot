@@ -1,6 +1,7 @@
 package dev.jacrispys.JavaBot.Audio;
 
 import com.neovisionaries.i18n.CountryCode;
+import dev.jacrispys.JavaBot.Audio.objects.Genres;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.Utils.SpotifyManager;
 import net.dv8tion.jda.api.EmbedBuilder;
