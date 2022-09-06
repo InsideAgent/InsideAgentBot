@@ -178,6 +178,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
         if(reactMessage.containsValue(event.getMessageIdLong()) && reactMessage.getOrDefault(event.getUser(), 0L) != event.getMessageIdLong()) {
+            if(event.getUser().equals(event.getGuild().getSelfMember().getUser())) return;
             event.getReaction().removeReaction(event.getUser()).queue();
             return;
         }
