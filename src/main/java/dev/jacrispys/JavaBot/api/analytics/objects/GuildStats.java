@@ -4,16 +4,28 @@ import dev.jacrispys.JavaBot.Audio.objects.GuildBookmark;
 import dev.jacrispys.JavaBot.Audio.objects.GuildPlaylist;
 import dev.jacrispys.JavaBot.api.analytics.AudioGuildAnalytics;
 import dev.jacrispys.JavaBot.api.analytics.GeneralGuildAnalytics;
+import dev.jacrispys.JavaBot.api.libs.AgentApi;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class GuildStats implements Stats, GeneralGuildAnalytics, AudioGuildAnalytics {
 
+    public final long guildId;
+    public final AgentApi api;
+    public final JDA jda;
+    protected GuildStats(long guildId, AgentApi api, JDA jda) {
+        this.guildId = guildId;
+        this.api = api;
+        this.jda = jda;
+    }
+
     /**
-     * @return
+     * @return the total number of songs played in a guild.
      */
     @Override
     public long getPlays() {
@@ -91,8 +103,8 @@ public class GuildStats implements Stats, GeneralGuildAnalytics, AudioGuildAnaly
      * @return
      */
     @Override
-    public GuildStats getJoinDate() {
-        return null;
+    public OffsetDateTime getJoinDate() {
+        return jda.getGuildById(guildId).getSelfMember().getTimeJoined();
     }
 
     /**
@@ -129,7 +141,7 @@ public class GuildStats implements Stats, GeneralGuildAnalytics, AudioGuildAnaly
     }
 
     /**
-     * @return
+     * @return total times any command has been used
      */
     @Override
     public long getTotalUses() {

@@ -6,11 +6,12 @@ import dev.jacrispys.JavaBot.api.analytics.objects.GuildUser;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface GeneralGuildAnalytics {
 
-    GuildStats getJoinDate();
+    OffsetDateTime getJoinDate();
 
     List<Member> getMembers();
     List<GuildUser> getBotUsers();

@@ -5,10 +5,11 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MySQLConnection {
 
-    private Connection connection;
     private static MySQLConnection INSTANCE;
 
     public MySQLConnection() {
@@ -19,19 +20,25 @@ public class MySQLConnection {
         return INSTANCE;
     }
 
-    public Connection getConnection(String dataBase) throws Exception {
+    private final Map<String, Connection> connections = new HashMap<>();
+
+    public Connection getConnection(String dataBase) throws SQLException {
+        if (connections.containsKey(dataBase)) {
+            return connections.get(dataBase);
+        }
         try {
             String userName = "Jacrispys";
             String db_password = SecretData.getDataBasePass();
 
             String url = "jdbc:mysql://" + SecretData.getDBHost() + ":3306/" + dataBase + "?autoReconnect=true";
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            if (this.connection == null) {
-                Connection connection = DriverManager.getConnection(url, userName, db_password);
-                this.connection = connection;
-                return connection;
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
-            return this.connection;
+            Connection connection = DriverManager.getConnection(url, userName, db_password);
+            connections.put(dataBase, connection);
+            return connection;
 
 
         } catch (SQLException e) {
@@ -59,7 +66,8 @@ public class MySQLConnection {
     public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
         try {
             Statement statement = getConnection("inside_agent_bot").createStatement();
-            String command = "INSERT INTO guilds (ID,GameSpy,TicketChannel,GameSpyChannel) VALUES (" + guild.getId() + ", 0, null, " + defaultChannel.getId() + ");";
+            String command = "INSERT IGNORE INTO guilds (ID,GameSpy,TicketChannel,GameSpyChannel) VALUES (" + guild.getId() + ", 0, null, " + defaultChannel.getId() + ");";
+            statement.execute("INSERT IGNORE INTO guild_general_stats (ID) VALUES (" + guild.getIdLong() + ")");
             statement.execute(command);
             statement.close();
             return true;
@@ -107,13 +115,13 @@ public class MySQLConnection {
     }
 
     public void setMusicChannel(Guild guild, long channelId) throws SQLException {
-        Statement statement = connection.createStatement();
+        Statement statement = getConnection("inside_agent_bot").createStatement();
         statement.executeUpdate("UPDATE guilds SET musicChannel=" + channelId + " WHERE ID=" + guild.getId());
         statement.close();
     }
 
     public Long getMusicChannel(Guild guild) throws SQLException {
-        ResultSet rs = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT musicChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
+        ResultSet rs = getConnection("inside_agent_bot").createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT musicChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
         rs.beforeFirst();
         rs.next();
         long channel = rs.getLong("musicChannel");

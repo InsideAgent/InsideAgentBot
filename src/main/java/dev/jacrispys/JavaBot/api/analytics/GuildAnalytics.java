@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class GuildAnalytics extends GuildStats implements UserAnalytics, AudioAnalytics, GeneralGuildAnalytics {
@@ -14,12 +15,10 @@ public class GuildAnalytics extends GuildStats implements UserAnalytics, AudioAn
     private final long guildId;
     private final AgentApi api;
 
-    private final JDA jda;
-
 
     public GuildAnalytics(AgentApi api, long guildId) throws NullPointerException {
+        super(guildId, api, api.getConnection().getJda());
         this.api = api;
-        jda = api.getConnection().getJda();
         if(validateGuild(guildId)) {
             this.guildId = guildId;
         } else throw new NullPointerException("Could not locate a guild with the given ID!");
@@ -29,13 +28,6 @@ public class GuildAnalytics extends GuildStats implements UserAnalytics, AudioAn
         return jda.getGuilds().contains(jda.getGuildById(guildId));
     }
 
-    /**
-     * @return
-     */
-    @Override
-    public GuildStats getJoinDate() {
-        return null;
-    }
 
     /**
      * @return
