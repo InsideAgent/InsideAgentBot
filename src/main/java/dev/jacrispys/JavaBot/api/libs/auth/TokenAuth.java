@@ -4,6 +4,7 @@ import dev.jacrispys.JavaBot.api.exceptions.AuthorizationException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.login.LoginException;
 
 public class TokenAuth {
 
@@ -11,14 +12,14 @@ public class TokenAuth {
     protected TokenAuth() {
     }
 
-    public static ClientConnection authorize(String authToken, String clientSecret, @Nullable String developerToken) throws AuthorizationException {
+    public static <T extends ClientConnection> T authorize(String authToken, String clientSecret, @Nullable String developerToken) throws AuthorizationException, LoginException {
         return new TokenAuth().createConnection(authToken, clientSecret, developerToken);
     }
 
-    protected ClientConnection createConnection(String authToken, String clientSecret, String developerToken) throws AuthorizationException {
+    protected <T extends ClientConnection> T createConnection(String authToken, String clientSecret, String developerToken) throws AuthorizationException, LoginException {
         if (validateAuth(authToken, clientSecret, developerToken)) {
-            return new DeveloperConnection();
-        } else return new UserConnection();
+            return (T) new DeveloperConnection();
+        } else return (T) new UserConnection();
     }
 
     protected boolean validateAuth(String authToken, String clientSecret, @Nullable String developerToken) throws AuthorizationException {

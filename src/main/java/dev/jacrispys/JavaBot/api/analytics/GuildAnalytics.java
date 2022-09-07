@@ -1,13 +1,39 @@
 package dev.jacrispys.JavaBot.api.analytics;
 
+import dev.jacrispys.JavaBot.api.analytics.objects.GuildStats;
 import dev.jacrispys.JavaBot.api.analytics.objects.GuildUser;
+import dev.jacrispys.JavaBot.api.libs.AgentApi;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 
-public class GuildAnalytics implements UserAnalytics, AudioAnalytics, GeneralGuildAnalytics{
+import java.util.List;
+
+public class GuildAnalytics extends GuildStats implements UserAnalytics, AudioAnalytics, GeneralGuildAnalytics {
+
+    private final long guildId;
+    private final AgentApi api;
+
+    private final JDA jda;
+
+
+    public GuildAnalytics(AgentApi api, long guildId) throws NullPointerException {
+        this.api = api;
+        jda = api.getConnection().getJda();
+        if(validateGuild(guildId)) {
+            this.guildId = guildId;
+        } else throw new NullPointerException("Could not locate a guild with the given ID!");
+    }
+
+    private boolean validateGuild(long guildId) {
+        return jda.getGuilds().contains(jda.getGuildById(guildId));
+    }
+
     /**
      * @return
      */
     @Override
-    public dev.jacrispys.JavaBot.api.analytics.objects.GuildAnalytics getJoinDate() {
+    public GuildStats getJoinDate() {
         return null;
     }
 
@@ -15,7 +41,7 @@ public class GuildAnalytics implements UserAnalytics, AudioAnalytics, GeneralGui
      * @return
      */
     @Override
-    public dev.jacrispys.JavaBot.api.analytics.objects.GuildAnalytics getMembers() {
+    public List<Member> getMembers() {
         return null;
     }
 
@@ -23,7 +49,7 @@ public class GuildAnalytics implements UserAnalytics, AudioAnalytics, GeneralGui
      * @return
      */
     @Override
-    public dev.jacrispys.JavaBot.api.analytics.objects.GuildAnalytics getBotUsers() {
+    public List<GuildUser> getBotUsers() {
         return null;
     }
 
@@ -32,7 +58,7 @@ public class GuildAnalytics implements UserAnalytics, AudioAnalytics, GeneralGui
      * @return
      */
     @Override
-    public dev.jacrispys.JavaBot.api.analytics.objects.GuildAnalytics getRegularUsers(int frequency) {
+    public List<GuildUser> getRegularUsers(int frequency) {
         return null;
     }
 
@@ -40,7 +66,7 @@ public class GuildAnalytics implements UserAnalytics, AudioAnalytics, GeneralGui
      * @return
      */
     @Override
-    public dev.jacrispys.JavaBot.api.analytics.objects.GuildAnalytics getOverallStats() {
+    public GuildStats getOverallStats() {
         return null;
     }
 
@@ -48,8 +74,8 @@ public class GuildAnalytics implements UserAnalytics, AudioAnalytics, GeneralGui
      * @return
      */
     @Override
-    public dev.jacrispys.JavaBot.api.analytics.objects.GuildAnalytics getTotalUses() {
-        return null;
+    public long getTotalUses() {
+        return -1;
     }
 
     /**
@@ -57,7 +83,8 @@ public class GuildAnalytics implements UserAnalytics, AudioAnalytics, GeneralGui
      * @return
      */
     @Override
-    public dev.jacrispys.JavaBot.api.analytics.objects.GuildAnalytics getUser(GuildUser user) {
+    public GuildUser getGuildUser(User user) {
         return null;
     }
+
 }

@@ -1,22 +1,27 @@
 package dev.jacrispys.JavaBot.api.analytics;
 
-import dev.jacrispys.JavaBot.api.analytics.objects.GuildAnalytics;
+import dev.jacrispys.JavaBot.api.analytics.objects.AudioUser;
+import dev.jacrispys.JavaBot.api.analytics.objects.GuildStats;
 import dev.jacrispys.JavaBot.api.analytics.objects.GuildUser;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+
+import java.util.List;
 
 public interface GeneralGuildAnalytics {
 
-    GuildAnalytics getJoinDate();
+    GuildStats getJoinDate();
 
-    GuildAnalytics getMembers();
-    GuildAnalytics getBotUsers();
+    List<Member> getMembers();
+    List<GuildUser> getBotUsers();
 
-    GuildAnalytics getRegularUsers(int frequency);
+    List<GuildUser> getRegularUsers(int frequency);
 
-    GuildAnalytics getOverallStats();
+    GuildStats getOverallStats();
 
-    GuildAnalytics getTotalUses();
+    long getTotalUses();
 
-    GuildAnalytics getUser(GuildUser user);
+    GuildUser getGuildUser(User user);
+
 
 }

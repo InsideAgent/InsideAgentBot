@@ -1,4 +1,4 @@
 package dev.jacrispys.JavaBot.api.analytics.objects;
 
-public class TrackAnalytics {
+public class TrackStats {
 }

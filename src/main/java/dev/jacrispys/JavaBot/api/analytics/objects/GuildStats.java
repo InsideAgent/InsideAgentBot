@@ -4,11 +4,13 @@ import dev.jacrispys.JavaBot.Audio.objects.GuildBookmark;
 import dev.jacrispys.JavaBot.Audio.objects.GuildPlaylist;
 import dev.jacrispys.JavaBot.api.analytics.AudioGuildAnalytics;
 import dev.jacrispys.JavaBot.api.analytics.GeneralGuildAnalytics;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 
 import java.util.List;
 
-public class GuildAnalytics implements Analytics, GeneralGuildAnalytics, AudioGuildAnalytics {
+public class GuildStats implements Stats, GeneralGuildAnalytics, AudioGuildAnalytics {
 
     /**
      * @return
@@ -46,7 +48,7 @@ public class GuildAnalytics implements Analytics, GeneralGuildAnalytics, AudioGu
      * @return
      */
     @Override
-    public List<TrackAnalytics> getTopSongs() {
+    public List<TrackStats> getTopSongs() {
         return null;
     }
 
@@ -89,7 +91,7 @@ public class GuildAnalytics implements Analytics, GeneralGuildAnalytics, AudioGu
      * @return
      */
     @Override
-    public GuildAnalytics getJoinDate() {
+    public GuildStats getJoinDate() {
         return null;
     }
 
@@ -97,7 +99,7 @@ public class GuildAnalytics implements Analytics, GeneralGuildAnalytics, AudioGu
      * @return
      */
     @Override
-    public GuildAnalytics getMembers() {
+    public List<Member> getMembers() {
         return null;
     }
 
@@ -105,7 +107,7 @@ public class GuildAnalytics implements Analytics, GeneralGuildAnalytics, AudioGu
      * @return
      */
     @Override
-    public GuildAnalytics getBotUsers() {
+    public List<GuildUser> getBotUsers() {
         return null;
     }
 
@@ -114,7 +116,7 @@ public class GuildAnalytics implements Analytics, GeneralGuildAnalytics, AudioGu
      * @return
      */
     @Override
-    public GuildAnalytics getRegularUsers(int frequency) {
+    public List<GuildUser> getRegularUsers(int frequency) {
         return null;
     }
 
@@ -122,7 +124,7 @@ public class GuildAnalytics implements Analytics, GeneralGuildAnalytics, AudioGu
      * @return
      */
     @Override
-    public GuildAnalytics getOverallStats() {
+    public GuildStats getOverallStats() {
         return null;
     }
 
@@ -130,8 +132,8 @@ public class GuildAnalytics implements Analytics, GeneralGuildAnalytics, AudioGu
      * @return
      */
     @Override
-    public GuildAnalytics getTotalUses() {
-        return null;
+    public long getTotalUses() {
+        return -1;
     }
 
     /**
@@ -139,7 +141,8 @@ public class GuildAnalytics implements Analytics, GeneralGuildAnalytics, AudioGu
      * @return
      */
     @Override
-    public GuildAnalytics getUser(GuildUser user) {
+    public GuildUser getGuildUser(User user) {
         return null;
     }
+
 }

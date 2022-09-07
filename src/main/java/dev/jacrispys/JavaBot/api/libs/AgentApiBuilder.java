@@ -2,12 +2,15 @@ package dev.jacrispys.JavaBot.api.libs;
 
 import dev.jacrispys.JavaBot.api.exceptions.AuthorizationException;
 import dev.jacrispys.JavaBot.api.libs.auth.ClientConnection;
+import dev.jacrispys.JavaBot.api.libs.auth.DeveloperConnection;
 import dev.jacrispys.JavaBot.api.libs.auth.TokenAuth;
+import dev.jacrispys.JavaBot.api.libs.auth.UserConnection;
 import dev.jacrispys.JavaBot.api.libs.utils.AgentOptions;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.login.LoginException;
 
 public class AgentApiBuilder {
 
@@ -42,9 +45,11 @@ public class AgentApiBuilder {
         return this;
     }
 
-    public AgentApi build() throws AuthorizationException {
+    public AgentApi build() throws AuthorizationException, LoginException {
         ClientConnection auth = TokenAuth.authorize(authToken, clientSecret, developerKey);
-        return new AgentApiImpl(auth, clientOptions);
+        if(auth instanceof DeveloperConnection) {
+            return new AgentApiImpl((DeveloperConnection) auth, clientOptions);
+        } else return new AgentApiImpl((UserConnection) auth, clientOptions);
 
     }
 
