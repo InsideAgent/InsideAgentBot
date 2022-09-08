@@ -3,15 +3,22 @@ package dev.jacrispys.JavaBot.api.libs.utils.mysql;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class MySqlStats {
 
     private final Connection connection;
+    private static MySqlStats instance = null;
+
+    public static MySqlStats getInstance() throws SQLException {
+        return instance != null ? instance : new MySqlStats();
+    }
 
     protected MySqlStats() throws SQLException {
         this.connection = MySQLConnection.getInstance().getConnection("inside_agent_bot");
+        instance = this;
     }
 
     public void incrementStat(long guildId, StatType statType) {
@@ -38,6 +45,14 @@ public class MySqlStats {
         }
     }
 
+    public Object getGuildStat(long guildId, StatType statType) throws SQLException {
+        Statement stmt = connection.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId);
+        rs.beforeFirst();
+        rs.next();
+        return rs.getObject(statType.name().toLowerCase(), statType.clazz);
+    }
+
     public void overrideGuildStat(long guildId, long play_counter, long pause_counter, long playtime_millis, long hijack_counter, long command_counter) {
         try {
             Statement statement = connection.createStatement();
@@ -51,10 +66,17 @@ public class MySqlStats {
 
 }
 
-enum StatType {
-    PLAY_COUNTER,
-    PAUSE_COUNTER,
-    PLAYTIME_MILLIS,
-    HIJACK_COUNTER,
-    COMMAND_COUNTER
+public enum StatType {
+    PLAY_COUNTER(Long.class),
+    PAUSE_COUNTER(Long.class),
+    PLAYTIME_MILLIS(Long.class),
+    HIJACK_COUNTER(Short.class),
+    COMMAND_COUNTER(Long.class);
+
+    public final Class<?> clazz;
+
+     StatType(Class<?> clazz) {
+        this.clazz = clazz;
+    }
+
 }

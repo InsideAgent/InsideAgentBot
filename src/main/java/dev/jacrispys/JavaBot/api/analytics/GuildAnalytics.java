@@ -3,11 +3,8 @@ package dev.jacrispys.JavaBot.api.analytics;
 import dev.jacrispys.JavaBot.api.analytics.objects.GuildStats;
 import dev.jacrispys.JavaBot.api.analytics.objects.GuildUser;
 import dev.jacrispys.JavaBot.api.libs.AgentApi;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 public class GuildAnalytics extends GuildStats implements UserAnalytics, AudioAnalytics, GeneralGuildAnalytics {
@@ -29,54 +26,5 @@ public class GuildAnalytics extends GuildStats implements UserAnalytics, AudioAn
     }
 
 
-    /**
-     * @return
-     */
-    @Override
-    public List<Member> getMembers() {
-        return null;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public List<GuildUser> getBotUsers() {
-        return null;
-    }
-
-    /**
-     * @param frequency
-     * @return
-     */
-    @Override
-    public List<GuildUser> getRegularUsers(int frequency) {
-        return null;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public GuildStats getOverallStats() {
-        return null;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public long getTotalUses() {
-        return -1;
-    }
-
-    /**
-     * @param user
-     * @return
-     */
-    @Override
-    public GuildUser getGuildUser(User user) {
-        return null;
-    }
 
 }

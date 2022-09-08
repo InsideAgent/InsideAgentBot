@@ -7,12 +7,13 @@ import dev.jacrispys.JavaBot.api.analytics.objects.PlayTime;
 import dev.jacrispys.JavaBot.api.analytics.objects.TrackStats;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface AudioGuildAnalytics extends GeneralGuildAnalytics {
 
-    long getPlays();
-    long getPauses();
+    long getPlays() throws SQLException;
+    long getPauses() throws SQLException;
     PlayTime getTotalPlaytime();
     List<AudioUser> getTopListeners();
     List<TrackStats> getTopSongs();

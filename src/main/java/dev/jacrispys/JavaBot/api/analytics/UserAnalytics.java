@@ -1,4 +1,7 @@
 package dev.jacrispys.JavaBot.api.analytics;
 
-public interface UserAnalytics {
+import dev.jacrispys.JavaBot.api.analytics.objects.AudioUser;
+import dev.jacrispys.JavaBot.api.analytics.objects.GuildUser;
+
+public interface UserAnalytics extends AudioUser, GuildUser {
 }
