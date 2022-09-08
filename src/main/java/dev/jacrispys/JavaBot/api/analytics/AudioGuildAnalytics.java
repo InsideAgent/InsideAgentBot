@@ -12,19 +12,9 @@ import java.util.List;
 
 public interface AudioGuildAnalytics extends AudioAnalytics, GeneralGuildAnalytics {
 
-    // TODO: 9/7/2022 Pull general methods to superclass to allow JDA analytics to access methods. 
-
-    long getPlays() throws SQLException;
-    long getPauses() throws SQLException;
-    PlayTime getTotalPlaytime();
-    List<AudioUser> getTopListeners();
-    List<TrackStats> getTopSongs();
-    <T extends UserSnowflake> AudioUser getAudioUser(T user);
+    // TODO: 9/7/2022 Pull general methods to superclass to allow JDA analytics to access methods.
     GuildPlaylist getGuildPlaylists();
     long getPlaylistPlays(GuildPlaylist playlist);
-    private long getHijackCount() {
-        return 0;
-    }
     List<GuildBookmark> getBookmarks();
 
 }

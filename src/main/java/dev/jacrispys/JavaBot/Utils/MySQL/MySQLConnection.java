@@ -2,6 +2,7 @@ package dev.jacrispys.JavaBot.Utils.MySQL;
 
 import dev.jacrispys.JavaBot.Utils.SecretData;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.sql.*;
@@ -68,6 +69,9 @@ public class MySQLConnection {
             Statement statement = getConnection("inside_agent_bot").createStatement();
             String command = "INSERT IGNORE INTO guilds (ID,GameSpy,TicketChannel,GameSpyChannel) VALUES (" + guild.getId() + ", 0, null, " + defaultChannel.getId() + ");";
             statement.execute("INSERT IGNORE INTO guild_general_stats (ID) VALUES (" + guild.getIdLong() + ")");
+            for(Member member : guild.getMembers()) {
+                statement.execute("INSERT IGNORE INTO audio_activity (user_ID, guild_ID) VALUES (" + member.getIdLong() + "," + guild.getIdLong() + ")");
+            }
             statement.execute(command);
             statement.close();
             return true;
@@ -77,29 +81,25 @@ public class MySQLConnection {
         }
     }
 
-    public boolean executeCommand(String command) {
+    public void executeCommand(String command) {
         try {
             Statement statement = getConnection("inside_agent_bot").createStatement();
-            boolean success = statement.execute(command);
+            statement.execute(command);
             statement.close();
-            return success;
 
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
     }
 
-    public int executeUpdate(String command) {
+    public void executeUpdate(String command) {
         try {
             Statement statement = getConnection("inside_agent_bot").createStatement();
-            int success = statement.executeUpdate(command);
+            statement.executeUpdate(command);
             statement.close();
-            return success;
 
         } catch (Exception e) {
             e.printStackTrace();
-            return -1;
         }
     }
 

@@ -87,6 +87,14 @@ public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioG
     }
 
     /**
+     * @return the amount of times this guild has been hijacked
+     */
+    @Override
+    public long getHijackCount() throws SQLException {
+        return (long) sqlStats.getGuildStat(guildId, StatType.HIJACK_COUNTER);
+    }
+
+    /**
      * @return custom {@link GuildPlaylist} object
      */
     @Override

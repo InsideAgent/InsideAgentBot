@@ -39,6 +39,11 @@ public class BotStartup extends ListenerAdapter {
             }
             try {
                 MySQLConnection connection = MySQLConnection.getInstance();
+
+                // Check Registration
+                if (!(connection.queryCommand("SELECT isRegistered FROM guilds WHERE ID=" + guild.getIdLong()).getBoolean("isRegistered"))) {
+                    connection.registerGuild(guild, guild.getTextChannels().get(0));
+                }
                 ResultSet rs = connection.queryCommand("SELECT GameSpy FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
                 rs.beforeFirst();
                 rs.next();
