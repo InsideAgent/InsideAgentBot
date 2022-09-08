@@ -11,7 +11,7 @@ import java.util.List;
 public interface AudioAnalytics {
     long getPlays() throws SQLException;
     long getPauses() throws SQLException;
-    PlayTime getTotalPlaytime();
+    long getTotalPlaytime() throws SQLException;
     List<AudioUser> getTopListeners();
     List<TrackStats> getTopSongs();
     <T extends UserSnowflake> AudioUser getAudioUser(T user);

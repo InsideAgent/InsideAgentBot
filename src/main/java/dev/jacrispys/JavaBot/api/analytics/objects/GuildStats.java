@@ -54,8 +54,8 @@ public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioG
      * @return the amount of time the bot has played songs in a guild.
      */
     @Override
-    public PlayTime getTotalPlaytime() {
-        return null;
+    public long getTotalPlaytime() throws SQLException {
+        return (long) sqlStats.getGuildStat(guildId, StatType.PLAYTIME_MILLIS);
     }
 
     /**
@@ -70,7 +70,7 @@ public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioG
     /**
      * @return a list of tracks that have been played the most in a guild
      */
-    // TODO: 9/7/2022 create data base table for tracks played in guild & overall JDA, pull method to JDA stats.
+    // TODO: 9/7/2022 create database table for tracks played in guild & overall JDA, pull method to JDA stats.
     @Override
     public List<TrackStats> getTopSongs() {
         return null;
