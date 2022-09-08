@@ -1,6 +1,6 @@
 package dev.jacrispys.JavaBot.api.libs.auth;
 
-import dev.jacrispys.JavaBot.Utils.SecretData;
+import dev.jacrispys.JavaBot.utils.SecretData;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;

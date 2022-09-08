@@ -1,6 +1,6 @@
 package dev.jacrispys.JavaBot.api.analytics.objects;
 
-import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
+import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
