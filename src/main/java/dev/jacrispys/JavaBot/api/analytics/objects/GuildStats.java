@@ -4,18 +4,17 @@ import dev.jacrispys.JavaBot.Audio.objects.GuildBookmark;
 import dev.jacrispys.JavaBot.Audio.objects.GuildPlaylist;
 import dev.jacrispys.JavaBot.api.analytics.AudioGuildAnalytics;
 import dev.jacrispys.JavaBot.api.analytics.GeneralGuildAnalytics;
-import dev.jacrispys.JavaBot.api.analytics.UserAnalytics;
 import dev.jacrispys.JavaBot.api.libs.AgentApi;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioGuildAnalytics {
 
@@ -60,16 +59,18 @@ public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioG
     }
 
     /**
-     * @return
+     * @return a list of the most active music listeners
      */
+    // TODO: 9/7/2022 Decide whether activity is based off songs queued or  duration in VC with music playing
     @Override
     public List<AudioUser> getTopListeners() {
         return null;
     }
 
     /**
-     * @return
+     * @return a list of tracks that have been played the most in a guild
      */
+    // TODO: 9/7/2022 create data base table for tracks played in guild & overall JDA, pull method to JDA stats.
     @Override
     public List<TrackStats> getTopSongs() {
         return null;
@@ -115,7 +116,7 @@ public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioG
      */
     @Override
     public OffsetDateTime getJoinDate() {
-        return jda.getGuildById(guildId).getSelfMember().getTimeJoined();
+        return Objects.requireNonNull(jda.getGuildById(guildId)).getSelfMember().getTimeJoined();
     }
 
     /**

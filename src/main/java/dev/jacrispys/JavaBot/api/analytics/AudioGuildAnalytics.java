@@ -10,7 +10,9 @@ import net.dv8tion.jda.api.entities.UserSnowflake;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface AudioGuildAnalytics extends GeneralGuildAnalytics {
+public interface AudioGuildAnalytics extends AudioAnalytics, GeneralGuildAnalytics {
+
+    // TODO: 9/7/2022 Pull general methods to superclass to allow JDA analytics to access methods. 
 
     long getPlays() throws SQLException;
     long getPauses() throws SQLException;
