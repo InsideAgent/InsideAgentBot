@@ -4,6 +4,7 @@ import dev.jacrispys.JavaBot.Audio.objects.GuildBookmark;
 import dev.jacrispys.JavaBot.Audio.objects.GuildPlaylist;
 import dev.jacrispys.JavaBot.api.analytics.AudioGuildAnalytics;
 import dev.jacrispys.JavaBot.api.analytics.GeneralGuildAnalytics;
+import dev.jacrispys.JavaBot.api.analytics.UserAnalytics;
 import dev.jacrispys.JavaBot.api.libs.AgentApi;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
@@ -16,7 +17,7 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public class GuildStats implements Stats, GeneralGuildAnalytics, AudioGuildAnalytics {
+public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioGuildAnalytics {
 
     public final long guildId;
     public final AgentApi api;
