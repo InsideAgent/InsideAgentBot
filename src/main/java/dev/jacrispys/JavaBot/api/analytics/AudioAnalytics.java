@@ -1,7 +1,6 @@
 package dev.jacrispys.JavaBot.api.analytics;
 
 import dev.jacrispys.JavaBot.api.analytics.objects.AudioUser;
-import dev.jacrispys.JavaBot.api.analytics.objects.PlayTime;
 import dev.jacrispys.JavaBot.api.analytics.objects.TrackStats;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 
