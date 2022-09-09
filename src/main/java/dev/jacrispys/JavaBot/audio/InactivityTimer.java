@@ -16,8 +16,11 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class InactivityTimer extends ListenerAdapter {
@@ -28,20 +31,23 @@ public class InactivityTimer extends ListenerAdapter {
         return Duration.ofMillis(System.currentTimeMillis() - inactiveStart).toMillis() >= Duration.ofMinutes(15).toMillis();
     }
 
+    private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+
+    private static final Map<Long, ScheduledFuture<?>> runnables = new HashMap<>();
+
     @SuppressWarnings("all")
     public static void startInactivity(AudioPlayer player, Long guildId, JDA jda) {
         long startMillis = System.currentTimeMillis();
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         Runnable service = () -> {
             if(player.getPlayingTrack() != null && !player.isPaused() && jda.getGuildById(guildId).getSelfMember().getVoiceState().getChannel().getMembers().size() > 1) {
-                executorService.shutdown();
+                runnables.get(guildId).cancel(true);
             } else {
                 if(inactivityExpired(startMillis)) {
                     try {
                         TextChannel channel = jda.getGuildById(guildId).getTextChannelById(MySQLConnection.getInstance().getMusicChannel(jda.getGuildById(guildId)));
-                        assert channel != null;
                         inactivityMessage(channel);
-                    }catch (SQLException ignored) {
+                    }catch (SQLException ex) {
+                        ex.printStackTrace();
                     } finally {
                         if(jda.getGuildById(guildId).getSelfMember().getVoiceState().inAudioChannel()) {
                             AudioManager manager = jda.getGuildById(guildId).getAudioManager();
@@ -51,12 +57,12 @@ public class InactivityTimer extends ListenerAdapter {
                             manager.closeAudioConnection();
                             manager.closeAudioConnection();
                         }
-                        executorService.shutdown();
+                        runnables.get(guildId).cancel(true);
                     }
                 }
             }
         };
-        executorService.scheduleAtFixedRate(service, 0, 5, TimeUnit.SECONDS);
+        runnables.put(guildId, executorService.scheduleAtFixedRate(service, 0, 5, TimeUnit.SECONDS));
     }
 
     @Override
