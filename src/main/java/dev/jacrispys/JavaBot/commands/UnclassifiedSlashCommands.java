@@ -1,5 +1,7 @@
 package dev.jacrispys.JavaBot.commands;
 
+import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
+import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.Guild;
@@ -12,6 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,8 +22,12 @@ import java.util.UUID;
 
 public class UnclassifiedSlashCommands extends ListenerAdapter {
 
-    public UnclassifiedSlashCommands() {
+    private MySqlStats sqlStats;
 
+    public UnclassifiedSlashCommands() {
+        try {
+            this.sqlStats = MySqlStats.getInstance();
+        } catch (SQLException ignored) {}
     }
 
     public void initCommands(List<Guild> guilds) {
@@ -44,6 +51,8 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
 
     @Override @SuppressWarnings("all")
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        // Increment SQL Stat
+        sqlStats.incrementGuildStat(event.getGuild().getIdLong(), StatType.COMMAND_COUNTER);
         String commandName = event.getName();
         switch (commandName) {
             case "setnick" -> {

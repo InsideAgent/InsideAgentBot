@@ -7,6 +7,8 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeHttpContextFilter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
+import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
 import dev.jacrispys.JavaBot.audio.objects.Genres;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.SecretData;
@@ -56,6 +58,8 @@ public class GuildAudioManager {
     private static long currentGuild = 0L;
     private static JDA jdaInstance = null;
 
+    private MySqlStats sqlStats;
+
     /**
      * @param guild is the instance to retrieve
      * @return instance of {@link GuildAudioManager}
@@ -84,6 +88,11 @@ public class GuildAudioManager {
         YoutubeHttpContextFilter.setPAPISID(SecretData.getPAPISID());
         this.audioHandler = new LoadAudioHandler(this);
         logger.info("{} - Successfully added GuildAudioManager for [" + instance.getName() + "]", className);
+        try {
+            sqlStats = MySqlStats.getInstance();
+            logger.info("{} - Initialized SqlStat Manager for current guild.", className);
+        } catch (SQLException ignored) {
+        }
     }
 
     /**
@@ -105,6 +114,7 @@ public class GuildAudioManager {
      */
     public MessageEmbed trackLoaded(String trackUrl, AudioTrack track, VoiceChannel voiceChannel, boolean playTop) {
         play(voiceChannel.getGuild(), getGuildAudioManager(voiceChannel.getGuild()), track, voiceChannel, playTop);
+        sqlStats.incrementGuildStat(currentGuild, StatType.PLAY_COUNTER);
         return djEnabled ? djEnabledEmbed(voiceChannel.getJDA()) : songLoadedMessage(trackUrl, track);
     }
 
@@ -116,6 +126,8 @@ public class GuildAudioManager {
      */
     public MessageEmbed playListLoaded(String trackUrl, AudioPlaylist playlist, VoiceChannel voiceChannel, boolean playTop) {
         AudioTrack firstTrack = playlist.getSelectedTrack();
+
+        sqlStats.incrementGuildStat(currentGuild, playlist.getTracks().size(), StatType.PLAY_COUNTER);
 
         if (firstTrack == null) {
             firstTrack = playlist.getTracks().get(0);
@@ -396,6 +408,7 @@ public class GuildAudioManager {
                 return;
             }
         }
+
         try {
             TextChannel channel = guild.getTextChannelById(MySQLConnection.getInstance().getMusicChannel(guild));
 
@@ -415,6 +428,7 @@ public class GuildAudioManager {
                 channel.deleteMessageById(nowPlayingId.get(guild)).queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE).handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {}));
             }
             channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue(message -> nowPlayingId.put(guild, message.getIdLong()));
+            sqlStats.incrementGuildStat(currentGuild, newSong.getDuration(), StatType.PLAYTIME_MILLIS);
         } catch (SQLException ignored) {
         }
     }
@@ -425,7 +439,10 @@ public class GuildAudioManager {
     public void togglePlayer() {
         try {
             this.audioPlayer.setPaused(!audioPlayer.isPaused());
-            if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild, jdaInstance);
+            if(audioPlayer.isPaused()) {
+                InactivityTimer.startInactivity(audioPlayer, currentGuild, jdaInstance);
+                sqlStats.incrementGuildStat(currentGuild, StatType.PAUSE_COUNTER);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -465,6 +482,7 @@ public class GuildAudioManager {
             message.append("Paused ⏸️");
             audioPlayer.setPaused(true);
             if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild, jdaInstance);
+            sqlStats.incrementGuildStat(currentGuild, StatType.PAUSE_COUNTER);
         }
         return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
@@ -591,6 +609,7 @@ public class GuildAudioManager {
             clearQueue();
             skipTrack();
             djEnabled = true;
+            sqlStats.incrementGuildStat(currentGuild, StatType.HIJACK_COUNTER);
         } else {
             djEnabled = false;
             clearQueue();

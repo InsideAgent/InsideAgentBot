@@ -34,7 +34,7 @@ public class MySqlStats {
         }
     }
 
-    public void incrementGuildStat(long guildId, int increment, StatType statType) {
+    public void incrementGuildStat(long guildId, long increment, StatType statType) {
         try {
             Statement statement = connection.createStatement();
             long statValue = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId).getLong(statType.name().toLowerCase());
@@ -81,7 +81,7 @@ public class MySqlStats {
         }
     }
 
-    private void incrementJdaStat(int increment, StatType statType) {
+    private void incrementJdaStat(long increment, StatType statType) {
         try {
             Statement statement = connection.createStatement();
             long statValue = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM jda_stats").getLong(statType.name().toLowerCase());
