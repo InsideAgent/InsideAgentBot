@@ -41,12 +41,12 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: mysql:mysql-connector-java:8.0.29" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.google.protobuf:protobuf-java:3.19.4" level="project" />
     <orderEntry type="library" name="Maven: com.github.Topis-Lavalink-Plugins:Topis-Source-Managers:2.0.6" level="project" />
-    <orderEntry type="library" name="Maven: club.minnced:discord-webhooks:0.8.0" level="project" />
+    <orderEntry type="library" name="Maven: club.minnced:discord-webhooks:0.8.2" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20210307" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.2.11" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.2.11" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jetbrains:annotations:23.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.30" level="project" />
+    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.31" level="project" />
     <orderEntry type="library" name="Maven: org.fusesource.jansi:jansi:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.jline:jline:3.21.0" level="project" />
     <orderEntry type="library" name="Maven: se.michaelthelin.spotify:spotify-web-api-java:7.2.0" level="project" />
