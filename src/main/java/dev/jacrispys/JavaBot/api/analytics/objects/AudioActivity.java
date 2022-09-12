@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AudioActivity {
 
@@ -14,15 +16,15 @@ public class AudioActivity {
 
     private final Connection connection;
     private final long guildId;
-    private static AudioActivity instance = null;
+    private static Map<AudioUser, AudioActivity> instances = new HashMap<>();
 
     public static AudioActivity getAudioActivity(AudioUser user) throws SQLException {
-        return instance != null ? instance : new AudioActivity(user);
+        return instances.getOrDefault(user, null) != null ? instances.get(user) : new AudioActivity(user);
     }
 
     private AudioActivity(AudioUser user) throws SQLException {
         this.user = user;
-        instance = this;
+        instances.put(user, this);
         this.guildId = user.getUserGuild().getIdLong();
         this.connection = MySQLConnection.getInstance().getConnection("inside_agent_bot");
     }
