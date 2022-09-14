@@ -8,10 +8,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,37 +22,9 @@ public class BotStartup extends ListenerAdapter {
         commands.addAll(new UnclassifiedSlashCommands().updateJdaCommands());
 
         event.getJDA().updateCommands().addCommands(commands).queue();
-
-        // Start GameSpy on enabled servers.
-        for (Guild guild : event.getJDA().getGuilds()) {
-            guild.getAudioManager().closeAudioConnection();
-            guild.retrieveWebhooks().queue(webhooks -> webhooks.forEach(webhook -> {
-                if (webhook.getOwner() != null && webhook.getOwner().equals(guild.getSelfMember())) {
-                    webhook.delete().queue();
-                }
-            }));
-            if (guild.getSelfMember().getVoiceState() != null) {
-                AudioManager manager = guild.getAudioManager();
-                manager.closeAudioConnection();
-            }
-            try {
-                MySQLConnection connection = MySQLConnection.getInstance();
-                ResultSet rs = connection.queryCommand("SELECT GameSpy FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
-                rs.beforeFirst();
-                rs.next();
-                rs.getBoolean("GameSpy");
-                if (rs.getBoolean("GameSpy")) {
-                    verifyGameSpyData(guild);
-                    GameSpy gameSpy = new GameSpy(guild);
-                    gameSpy.addSpy();
-                }
-                rs.close();
-            } catch (Exception ignored) {
-                return;
-            }
-        }
     }
 
+    @Deprecated(forRemoval = true)
     protected void verifyGameSpyData(Guild guild) {
         MySQLConnection connection = MySQLConnection.getInstance();
         for (Member member : guild.getMembers()) {

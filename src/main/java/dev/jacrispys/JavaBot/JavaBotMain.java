@@ -10,11 +10,13 @@ import dev.jacrispys.JavaBot.Audio.GenerateGenrePlaylist;
 import dev.jacrispys.JavaBot.Audio.InactivityTimer;
 import dev.jacrispys.JavaBot.Commands.Audio.GenericMusicCommands;
 import dev.jacrispys.JavaBot.Commands.Audio.SlashMusicCommands;
-import dev.jacrispys.JavaBot.Commands.*;
+import dev.jacrispys.JavaBot.Commands.ComplaintCommand;
+import dev.jacrispys.JavaBot.Commands.EmbedCLI;
 import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
+import dev.jacrispys.JavaBot.Commands.RegisterGuildCommand;
 import dev.jacrispys.JavaBot.Commands.RuntimeDebug.GenericDebugCommands;
+import dev.jacrispys.JavaBot.Commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.Events.BotStartup;
-import dev.jacrispys.JavaBot.Utils.GameSpyThread;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
 import dev.jacrispys.JavaBot.Utils.SecretData;
 import dev.jacrispys.JavaBot.Utils.SpotifyManager;
@@ -34,7 +36,6 @@ import javax.naming.ConfigurationException;
 
 public class JavaBotMain {
 
-    private static GameSpyThread gameSpyThread;
     private static final Logger logger = LoggerFactory.getLogger(JavaBotMain.class);
     private static final String className = JavaBotMain.class.getSimpleName();
     public static AudioPlayerManager audioManager;
@@ -89,7 +90,6 @@ public class JavaBotMain {
         jda.addEventListener(new DefaultPrivateMessageResponse());
         jda.addEventListener(new ComplaintCommand());
         jda.addEventListener(new RegisterGuildCommand());
-        jda.addEventListener(new GameSpyCommand());
         jda.addEventListener(new BotStartup());
         jda.addEventListener(new GenericMusicCommands());
         jda.addEventListener(new AudioPlayerButtons());
@@ -100,15 +100,10 @@ public class JavaBotMain {
         jda.addEventListener(new GenerateGenrePlaylist());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
         logger.info("{} - Starting GameSpyThread...", className);
-        gameSpyThread = new GameSpyThread(jda);
-        gameSpyThread.start();
 
         logger.info("{} - Enabling command line interface...", className);
 
 
     }
 
-    public static GameSpyThread getGameSpyThread() {
-        return gameSpyThread;
-    }
 }

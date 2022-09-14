@@ -40,6 +40,7 @@ public class MySQLConnection {
         }
     }
 
+    @Deprecated(forRemoval = true)
     public long getGameSpyChannel(Guild guild) throws Exception {
         try (Statement statement = getConnection("inside_agent_bot").createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             long channelId;
@@ -56,6 +57,7 @@ public class MySQLConnection {
         }
     }
 
+    @Deprecated(forRemoval = true)
     public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
         try {
             Statement statement = getConnection("inside_agent_bot").createStatement();
