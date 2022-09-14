@@ -2,7 +2,6 @@ package dev.jacrispys.JavaBot.Audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
-import dev.jacrispys.JavaBot.api.analytics.AudioGuildAnalytics;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
