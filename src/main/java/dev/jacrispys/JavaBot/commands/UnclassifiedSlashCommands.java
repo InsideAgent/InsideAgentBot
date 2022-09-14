@@ -79,10 +79,6 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 EmbedCLI.getInstance().addEmbedCLI((event.getOption("channel") != null ? event.getOption("channel").getAsChannel() : event.getGuildChannel()), id.toString());
                 event.getHook().editOriginal("Click Below!").setActionRow(Button.primary(buttonId, "Edit Embed?")).queue();
             }
-            default -> {
-                if (!event.isAcknowledged())
-                    event.reply("Could not find a command registered as: `" + commandName + "`, please report this!").setEphemeral(true).queue();
-            }
         }
     }
 }

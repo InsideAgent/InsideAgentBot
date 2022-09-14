@@ -11,6 +11,7 @@ import dev.jacrispys.JavaBot.audio.InactivityTimer;
 import dev.jacrispys.JavaBot.commands.audio.GenericMusicCommands;
 import dev.jacrispys.JavaBot.commands.audio.SlashMusicCommands;
 import dev.jacrispys.JavaBot.commands.*;
+import dev.jacrispys.JavaBot.commands.debug.SlashDebugCommands;
 import dev.jacrispys.JavaBot.commands.private_message.DefaultPrivateMessageResponse;
 import dev.jacrispys.JavaBot.commands.debug.GenericDebugCommands;
 import dev.jacrispys.JavaBot.events.BotStartup;
@@ -55,7 +56,7 @@ public class JavaBotMain {
         }
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(botToken)
+        JDA jda = JDABuilder.createDefault(devToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
@@ -98,6 +99,7 @@ public class JavaBotMain {
         jda.addEventListener(new UnclassifiedSlashCommands());
         jda.addEventListener(EmbedCLI.getInstance());
         jda.addEventListener(new GenerateGenrePlaylist());
+        jda.addEventListener(new SlashDebugCommands(jda));
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
         logger.info("{} - Starting GameSpyThread...", className);
         gameSpyThread = new GameSpyThread(jda);
