@@ -99,7 +99,6 @@ public class JavaBotMain {
         jda.addEventListener(EmbedCLI.getInstance());
         jda.addEventListener(new GenerateGenrePlaylist());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
-        logger.info("{} - Starting GameSpyThread...", className);
 
         logger.info("{} - Enabling command line interface...", className);
 

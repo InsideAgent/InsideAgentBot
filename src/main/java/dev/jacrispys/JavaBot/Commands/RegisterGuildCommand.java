@@ -29,16 +29,16 @@ public class RegisterGuildCommand extends ListenerAdapter {
                 connection.executeCommand("UPDATE guilds SET TicketChannel=" + event.getGuildChannel().getId() + " WHERE ID=" + event.getGuild().getId());
                 event.getMessage().reply("Ticket channel successfully set!").queue(m -> m.delete().queueAfter(3, TimeUnit.SECONDS));
                 event.getMessage().delete().queueAfter(3, TimeUnit.SECONDS);
-            } else if(event.getMessage().getContentRaw().equalsIgnoreCase("!testwebhook")) {
+            } else if (event.getMessage().getContentRaw().equalsIgnoreCase("!testwebhook")) {
                 SpotifyStats spotifyStats = new SpotifyStats(event.getGuildChannel().asTextChannel());
                 Webhook webhook = spotifyStats.setIcon(new URL("https://assets.entrepreneur.com/content/3x2/2000/20150616163611-spotify.jpeg")).setName("Spotify Analyzer").build();
                 spotifyStats.sendMessage(webhook, "web hook testing wooo");
             }
-        }catch(Exception ex){
-        ex.printStackTrace();
-        event.getMessage().reply("An internal error occurred while trying to set the channel!").queue(m -> m.delete().queueAfter(3, TimeUnit.SECONDS));
-        event.getMessage().delete().queueAfter(3, TimeUnit.SECONDS);
-    }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            event.getMessage().reply("An internal error occurred while trying to set the channel!").queue(m -> m.delete().queueAfter(3, TimeUnit.SECONDS));
+            event.getMessage().delete().queueAfter(3, TimeUnit.SECONDS);
+        }
     }
 
 }

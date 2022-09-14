@@ -40,28 +40,11 @@ public class MySQLConnection {
         }
     }
 
-    @Deprecated(forRemoval = true)
-    public long getGameSpyChannel(Guild guild) throws Exception {
-        try (Statement statement = getConnection("inside_agent_bot").createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-            long channelId;
-            String command = "SELECT GameSpyChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId();
-            ResultSet rs = statement.executeQuery(command);
-            rs.beforeFirst();
-            rs.next();
-            channelId = rs.getLong("GameSpyChannel");
-            rs.close();
-            return channelId;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception("Could not locate gameSpyChannel for given Guild!");
-        }
-    }
 
-    @Deprecated(forRemoval = true)
-    public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
+    public boolean registerGuild(Guild guild, TextChannel textChannel) {
         try {
             Statement statement = getConnection("inside_agent_bot").createStatement();
-            String command = "INSERT INTO guilds (ID,GameSpy,TicketChannel,GameSpyChannel) VALUES (" + guild.getId() + ", 0, null, " + defaultChannel.getId() + ");";
+            String command = "INSERT INTO guilds (ID,TicketChannel) VALUES (" + guild.getId() + "," + textChannel.getId() + ");";
             statement.execute(command);
             statement.close();
             return true;

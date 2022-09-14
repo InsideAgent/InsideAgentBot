@@ -24,12 +24,4 @@ public class BotStartup extends ListenerAdapter {
         event.getJDA().updateCommands().addCommands(commands).queue();
     }
 
-    @Deprecated(forRemoval = true)
-    protected void verifyGameSpyData(Guild guild) {
-        MySQLConnection connection = MySQLConnection.getInstance();
-        for (Member member : guild.getMembers()) {
-            connection.executeCommand("INSERT IGNORE INTO inside_agent_bot.gamespyusers SET Guild=" +
-                    guild.getId() + ", MemberId=" + member.getIdLong() + ", totalTime=0");
-        }
-    }
 }
