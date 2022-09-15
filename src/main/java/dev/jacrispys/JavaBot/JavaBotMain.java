@@ -19,6 +19,7 @@ import dev.jacrispys.JavaBot.utils.GameSpyThread;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import dev.jacrispys.JavaBot.utils.SpotifyManager;
+import io.javalin.Javalin;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -41,6 +42,9 @@ public class JavaBotMain {
     public static AudioPlayerManager audioManager;
 
     public static void main(String[] args) throws Exception {
+
+        Javalin app = Javalin.create().start(7070);
+        app.get("/", ctx -> ctx.result("Hello World"));
 
 
         AnsiConsole.systemInstall();

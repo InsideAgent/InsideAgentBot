@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SlashDebugCommands extends ListenerAdapter {
 
-    // TODO: 9/14/2022 Expand debug commands to fit new API
+    // TODO: 9/15/2022 Add more debug commands.
 
     private final Map<Long, Pair<UUID, InteractionHook>> trackedGuilds = new HashMap<>();
 

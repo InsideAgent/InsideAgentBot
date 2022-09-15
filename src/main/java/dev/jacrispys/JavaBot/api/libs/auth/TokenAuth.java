@@ -16,6 +16,7 @@ public class TokenAuth {
         return new TokenAuth().createConnection(authToken, clientSecret, developerToken);
     }
 
+    @SuppressWarnings("unchecked")
     protected <T extends ClientConnection> T createConnection(String authToken, String clientSecret, String developerToken) throws AuthorizationException, LoginException {
         if (validateAuth(authToken, clientSecret, developerToken)) {
             return (T) new DeveloperConnection();
@@ -35,6 +36,7 @@ public class TokenAuth {
 
     }
 
+    // TODO: 9/15/2022 Add in-app authorization 
 
     protected boolean authorizeToken(String authToken) {
         return false;
