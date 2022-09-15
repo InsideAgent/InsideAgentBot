@@ -58,6 +58,7 @@ public class SlashDebugCommands extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        if (!event.getName().equals("debug")) return;
         String commandName = event.getSubcommandName();
         switch (commandName) {
             case "latency" -> {
@@ -76,9 +77,7 @@ public class SlashDebugCommands extends ListenerAdapter {
                     event.getUser().openPrivateChannel().queue(dm -> dm.sendMessage("Click below to obtain UUID for latency verification. (Verify in" + guild.getName() + ") \n || " + uuid + " ||").queue(m -> m.delete().queueAfter(10, TimeUnit.MINUTES)));
                 }
             }
-            case "active" -> {
-
-            }
+            case "active" -> event.reply(new MessageBuilder().setEmbeds(activePlayers(event.getUser())).build()).setEphemeral(true).queue();
         }
     }
 
@@ -105,19 +104,31 @@ public class SlashDebugCommands extends ListenerAdapter {
         EmbedBuilder activeEb = new EmbedBuilder();
         activeEb.setAuthor("Players Currently Active...", null, requester.getAvatarUrl());
         activeEb.addField("", activePlayersList(), false);
+        activeEb.setFooter("*" + activePlayerCount() + "/" + requester.getJDA().getGuilds().size() + " AudioPlayers currently active.*");
+        return activeEb.build();
     }
 
     private String activePlayersList() {
-        // TODO: 9/14/2022 Setup for max 10 guilds in field 
-        List<Guild> activePlayers = new ArrayList<>();
         StringBuilder activeList = new StringBuilder();
-        GuildAudioManager.getAudioManagers().forEach((guild, guildAudioManager) -> {
-            AudioPlayer audio = GuildAudioManager.getGuildAudioManager(guild).audioPlayer;
+        GuildAudioManager.getAudioManagers().entrySet().stream().limit(10).forEach(entry -> {
+            Guild guild = entry.getKey();
+            AudioPlayer audio = entry.getValue().audioPlayer;
             if (audio.getPlayingTrack() != null) {
-                activeList.append(guild.getName()).append(" - ").append("[").append(audio.getPlayingTrack().getInfo().author).append(" - ").append(audio.getPlayingTrack().getInfo().title).append("\n");
+                activeList.append(guild.getName()).append(" - ").append("[").append(audio.getPlayingTrack().getInfo().author).append(" - ").append(audio.getPlayingTrack().getInfo().title).append("](").append(audio.getPlayingTrack().getInfo().uri).append(")").append("\n");
             }
         });
         return activeList.toString();
+    }
+
+    private long activePlayerCount() {
+        List<GuildAudioManager> active = new ArrayList<>();
+
+        GuildAudioManager.getAudioManagers().values().forEach(value -> {
+            if(value.audioPlayer.getPlayingTrack() != null) {
+                active.add(value);
+            }
+        });
+        return active.size();
     }
 
 }

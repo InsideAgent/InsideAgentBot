@@ -106,6 +106,10 @@ public class GuildAudioManager {
         return Collections.unmodifiableMap(audioManagers);
     }
 
+    public long getCurrentGuild() {
+        return currentGuild;
+    }
+
     /**
      * @param trackUrl     of the loaded track
      * @param track        instance of loaded track

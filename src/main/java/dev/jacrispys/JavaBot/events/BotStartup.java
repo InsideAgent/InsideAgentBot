@@ -2,6 +2,7 @@ package dev.jacrispys.JavaBot.events;
 
 import dev.jacrispys.JavaBot.commands.audio.SlashMusicCommands;
 import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
+import dev.jacrispys.JavaBot.commands.debug.SlashDebugCommands;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,6 +25,7 @@ public class BotStartup extends ListenerAdapter {
         commands.addAll(new UnclassifiedSlashCommands().updateJdaCommands());
 
         event.getJDA().updateCommands().addCommands(commands).queue();
+        event.getJDA().addEventListener(new SlashDebugCommands(event.getJDA()));
 
         // Start GameSpy on enabled servers.
         for (Guild guild : event.getJDA().getGuilds()) {
