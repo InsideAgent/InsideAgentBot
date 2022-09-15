@@ -1,5 +1,7 @@
 package dev.jacrispys.JavaBot.commands.debug;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -42,7 +44,8 @@ public class SlashDebugCommands extends ListenerAdapter {
         List<SubcommandData> subCommands = new ArrayList<>();
         Collections.addAll(subCommands,
                 new SubcommandData("latency", "View the bot's current latency.")
-                        .addOption(OptionType.STRING, "guildid", "A guild to get the latency of.", false));
+                        .addOption(OptionType.STRING, "guildid", "A guild to get the latency of.", false),
+                new SubcommandData("active", "List of active AudioPlayers"));
         Collections.addAll(commands,
                 Commands.slash("debug", "Developer Only Commands.")
                         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
@@ -73,6 +76,9 @@ public class SlashDebugCommands extends ListenerAdapter {
                     event.getUser().openPrivateChannel().queue(dm -> dm.sendMessage("Click below to obtain UUID for latency verification. (Verify in" + guild.getName() + ") \n || " + uuid + " ||").queue(m -> m.delete().queueAfter(10, TimeUnit.MINUTES)));
                 }
             }
+            case "active" -> {
+
+            }
         }
     }
 
@@ -93,6 +99,25 @@ public class SlashDebugCommands extends ListenerAdapter {
         latencyEb.addField("Latency: ", "Gateway Latency: `" + guild.getJDA().getGatewayPing() + "`Ms \n" + "Server latency: `" + latency + "`Ms", false);
         latencyEb.setFooter("Negative ping what a joke :(");
         return latencyEb.build();
+    }
+
+    private MessageEmbed activePlayers(User requester) {
+        EmbedBuilder activeEb = new EmbedBuilder();
+        activeEb.setAuthor("Players Currently Active...", null, requester.getAvatarUrl());
+        activeEb.addField("", activePlayersList(), false);
+    }
+
+    private String activePlayersList() {
+        // TODO: 9/14/2022 Setup for max 10 guilds in field 
+        List<Guild> activePlayers = new ArrayList<>();
+        StringBuilder activeList = new StringBuilder();
+        GuildAudioManager.getAudioManagers().forEach((guild, guildAudioManager) -> {
+            AudioPlayer audio = GuildAudioManager.getGuildAudioManager(guild).audioPlayer;
+            if (audio.getPlayingTrack() != null) {
+                activeList.append(guild.getName()).append(" - ").append("[").append(audio.getPlayingTrack().getInfo().author).append(" - ").append(audio.getPlayingTrack().getInfo().title).append("\n");
+            }
+        });
+        return activeList.toString();
     }
 
 }
