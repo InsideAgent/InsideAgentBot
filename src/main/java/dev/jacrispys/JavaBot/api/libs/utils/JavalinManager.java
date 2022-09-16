@@ -1,13 +1,13 @@
 package dev.jacrispys.JavaBot.api.libs.utils;
 
-import dev.jacrispys.JavaBot.api.exceptions.AuthorizationException;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import io.javalin.Javalin;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import okhttp3.*;
-import org.eclipse.jetty.util.ajax.JSON;
 
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 public class JavalinManager {
 
@@ -58,6 +58,7 @@ public class JavalinManager {
 
             DataObject jsonResponse =  DataObject.fromJson(response.body().byteStream());
             if (jsonResponse.hasKey("error")) {
+                System.out.println(jsonResponse);
                 return false;
             } else {
                 String token = jsonResponse.get("token_type") + " " + jsonResponse.getString("access_token");
@@ -78,6 +79,17 @@ public class JavalinManager {
 
 
     protected void authorizeUser(DataObject userData) {
+        String email = userData.getString("email");
+        String avatarUrl = userData.getString("avatar"); // TODO: 9/16/2022 change to decode
+        String user_tag = userData.getString("username") + "#" + userData.getString("discriminator");
+        String token = tokenGenerator();
+    }
 
+    protected String tokenGenerator() {
+        SecureRandom secureRandom = new SecureRandom();
+        Base64.Encoder encoder = Base64.getUrlEncoder();
+        byte[] randomBytes = new byte[48];
+        secureRandom.nextBytes(randomBytes);
+        return encoder.encodeToString(randomBytes);
     }
 }
