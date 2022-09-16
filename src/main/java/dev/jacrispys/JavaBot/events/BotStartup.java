@@ -32,7 +32,6 @@ public class BotStartup extends ListenerAdapter {
         event.getJDA().updateCommands().addCommands(commands).queue();
         for (Guild guild : event.getJDA().getGuilds()) {
             try {
-
                 // Check Registration
                 ResultSet set = connection.queryCommand("SELECT isRegistered FROM guilds WHERE ID=" + guild.getIdLong());
                 set.beforeFirst();
