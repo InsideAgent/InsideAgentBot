@@ -15,13 +15,12 @@ public class ClientConnection {
     private final JDA jda;
 
     protected ClientConnection() throws LoginException {
-        JDA jda = JDABuilder.createDefault(SecretData.getToken())
+        this.jda = JDABuilder.createDefault(SecretData.getToken())
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
                 .enableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE)
                 .build();
-        this.jda = jda;
 
     }
 

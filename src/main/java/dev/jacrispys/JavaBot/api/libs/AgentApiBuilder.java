@@ -11,11 +11,12 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
+import java.sql.SQLException;
 
 public class AgentApiBuilder {
 
     protected @Nullable String authToken;
-    protected @Nullable String clientSecret;
+    protected @Nullable long userId;
     protected @Nullable String developerKey;
     protected @Nullable AgentOptions clientOptions;
 
@@ -28,8 +29,8 @@ public class AgentApiBuilder {
     }
 
     @Nonnull
-    public AgentApiBuilder setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
+    public AgentApiBuilder setUserId(long userId) {
+        this.userId = userId;
         return this;
     }
 
@@ -45,8 +46,8 @@ public class AgentApiBuilder {
         return this;
     }
 
-    public AgentApi build() throws AuthorizationException, LoginException {
-        ClientConnection auth = TokenAuth.authorize(authToken, clientSecret, developerKey);
+    public AgentApi build() throws AuthorizationException, LoginException, SQLException {
+        ClientConnection auth = TokenAuth.authorize(userId, authToken);
         if(auth instanceof DeveloperConnection) {
             return new AgentApiImpl((DeveloperConnection) auth, clientOptions);
         } else return new AgentApiImpl((UserConnection) auth, clientOptions);

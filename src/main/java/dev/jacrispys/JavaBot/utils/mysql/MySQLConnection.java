@@ -67,8 +67,8 @@ public class MySQLConnection {
     public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
         try {
             Statement statement = getConnection("inside_agent_bot").createStatement();
-            String command = "INSERT IGNORE INTO guilds (ID,GameSpy,TicketChannel,GameSpyChannel) VALUES (" + guild.getId() + ", 0, null, " + defaultChannel.getId() + ");";
-            statement.execute("INSERT IGNORE INTO guild_general_stats (ID) VALUES (" + guild.getIdLong() + ")");
+            String command = "INSERT IGNORE INTO guilds (ID,TicketChannel) VALUES (" + guild.getId() + ", " + defaultChannel.getId() + ");";
+            statement.execute("INSERT IGNORE INTO guild_general_stats (ID) VALUE (" + guild.getIdLong() + ")");
             for(Member member : guild.getMembers()) {
                 statement.execute("INSERT IGNORE INTO audio_activity (user_ID, guild_ID) VALUES (" + member.getIdLong() + "," + guild.getIdLong() + ")");
             }

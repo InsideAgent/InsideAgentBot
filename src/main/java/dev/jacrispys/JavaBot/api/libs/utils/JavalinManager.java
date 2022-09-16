@@ -62,7 +62,6 @@ public class JavalinManager {
 
             DataObject jsonResponse =  DataObject.fromJson(response.body().byteStream());
             if (jsonResponse.hasKey("error")) {
-                System.out.println(jsonResponse);
                 return false;
             } else {
                 String token = jsonResponse.get("token_type") + " " + jsonResponse.getString("access_token");
