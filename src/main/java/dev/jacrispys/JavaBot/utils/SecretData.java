@@ -77,8 +77,29 @@ public class SecretData {
     public static Object getCustomData(String key) {
         return loginInfo.get(key);
     }
-
     public static String getDBHost() {
         return (String) loginInfo.get("DB_HOST");
+    }
+
+    public static long getDiscordId(boolean dev) {
+        if (dev) {
+            return (long) loginInfo.get("DEV-BOT_CLIENT_ID");
+        }
+        return (long) loginInfo.get("BOT_CLIENT_ID");
+    }
+
+    public static long getDiscordId() {
+        return (long) loginInfo.get("BOT_CLIENT_ID");
+    }
+
+    public static String getDiscordSecret(boolean dev) {
+        if (dev) {
+            return (String) loginInfo.get("DEV-BOT_CLIENT_SECRET");
+        }
+        return (String) loginInfo.get("BOT_CLIENT_SECRET");
+    }
+
+    public static String getDiscordSecret() {
+        return (String) loginInfo.get("BOT_CLIENT_SECRET");
     }
 }
