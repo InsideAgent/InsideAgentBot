@@ -1,12 +1,16 @@
 package dev.jacrispys.JavaBot.api.libs.utils;
 
 import dev.jacrispys.JavaBot.utils.SecretData;
+import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import io.javalin.Javalin;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import okhttp3.*;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Base64;
 
 public class JavalinManager {
@@ -74,15 +78,29 @@ public class JavalinManager {
 
         } catch (IOException e) {
             return false;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return true;
         }
     }
 
 
-    protected void authorizeUser(DataObject userData) {
-        String email = userData.getString("email");
-        String avatarUrl = userData.getString("avatar"); // TODO: 9/16/2022 change to decode
-        String user_tag = userData.getString("username") + "#" + userData.getString("discriminator");
-        String token = tokenGenerator();
+    protected void authorizeUser(DataObject userData) throws SQLException {
+        try {
+            String email = userData.getString("email");
+            String avatarUrl = "https://cdn.discordapp.com/avatars/" + userData.getString("id") + "/" + userData.getString("avatar");
+            String user_tag = userData.getString("username") + "#" + userData.getString("discriminator");
+            String token = tokenGenerator();
+            long id = userData.getLong("id");
+
+            MySQLConnection connection = MySQLConnection.getInstance();
+            Connection sql = connection.getConnection("inside_agent_bot");
+            Statement stmt = sql.createStatement();
+            stmt.execute("REPLACE INTO api_auth (user_id, email, avatar_url, user_tag, token) VALUES ('" + id + "', '" + email + "', '" + avatarUrl + "', '" + user_tag + "', '" + token + "');");
+            stmt.close();
+    } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     protected String tokenGenerator() {
