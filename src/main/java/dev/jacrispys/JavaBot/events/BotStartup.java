@@ -21,7 +21,7 @@ public class BotStartup extends ListenerAdapter {
         List<CommandData> commands = new ArrayList<>();
 
         commands.addAll(new SlashMusicCommands().updateJdaCommands());
-        commands.addAll(new UnclassifiedSlashCommands().updateJdaCommands());
+        commands.addAll(new UnclassifiedSlashCommands(event.getJDA()).updateJdaCommands());
 
         event.getJDA().updateCommands().addCommands(commands).queue();
         for (Guild guild : event.getJDA().getGuilds()) {

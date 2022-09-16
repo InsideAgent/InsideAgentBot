@@ -11,6 +11,8 @@ public class AgentApiImpl implements AgentApi {
     private DeveloperConnection devConnection = null;
     private final AgentOptions clientOptions;
 
+    private boolean devToken = false;
+
     public AgentApiImpl(UserConnection connection, AgentOptions clientOptions) {
         this.connection = connection;
         this.clientOptions = clientOptions;
@@ -19,6 +21,7 @@ public class AgentApiImpl implements AgentApi {
     public AgentApiImpl(DeveloperConnection connection, AgentOptions clientOptions) {
         this.devConnection = connection;
         this.clientOptions = clientOptions;
+        this.devToken = true;
     }
 
 
@@ -46,5 +49,13 @@ public class AgentApiImpl implements AgentApi {
     @Override
     public ClientConnection getConnection() {
         return connection != null ? connection : devConnection;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public boolean isDevAccount() {
+        return devToken;
     }
 }

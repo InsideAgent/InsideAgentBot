@@ -32,30 +32,23 @@ public class TokenAuth {
 
     protected boolean validateAuth(long userId, String authToken) throws AuthorizationException {
 
-        if(
-        authorizeToken(userId, authToken)
-        ) {
-            if(authorizeDevToken(userId, authToken)) return true;
+        if (authorizeToken(userId, authToken)) {
+            if (authorizeDevToken(userId, authToken)) return true;
             return false;
         } else throw new AuthorizationException("Could not verify your auth token!");
 
     }
 
-    protected boolean authorizeToken(long userId, String authToken) throws AuthorizationException {
-        try (Statement statement = connection.createStatement()) {
+    protected boolean authorizeToken(long userId, String authToken) {
+        try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
             ResultSet rs = statement.executeQuery("SELECT token from api_auth WHERE user_id=" + userId);
-            if (rs.wasNull()) {
-                statement.close();
-                throw new AuthorizationException("User not found in database!");
-            } else {
-                rs.beforeFirst();
-                rs.next();
-                String token = rs.getString("token");
-                statement.close();
-                return Objects.equals(authToken, token);
-            }
 
+            rs.beforeFirst();
+            rs.next();
+            String token = rs.getString("token");
+            statement.close();
+            return Objects.equals(authToken, token);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -65,23 +58,18 @@ public class TokenAuth {
 
     protected boolean authorizeDevToken(long userId, @Nonnull String devToken) throws AuthorizationException {
         try {
-            Statement statement = connection.createStatement();
+            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = statement.executeQuery("SELECT token, dev_auth from api_auth WHERE user_id=" + userId);
-            if (rs.wasNull()) {
-                statement.close();
-                throw new AuthorizationException("User not found in database!");
-            } else {
-                rs.beforeFirst();
-                rs.next();
-                String token = rs.getString("token");
-                boolean dev = rs.getBoolean("dev_auth");
-                statement.close();
-                return Objects.equals(devToken, token) && dev;
-            }
+            rs.beforeFirst();
+            rs.next();
+            String token = rs.getString("token");
+            boolean dev = rs.getBoolean("dev_auth");
+            statement.close();
+            return Objects.equals(devToken, token) && dev;
         } catch (SQLException ex) {
             ex.printStackTrace();
+            return false;
         }
-        return false;
     }
 
 }

@@ -2,10 +2,12 @@ package dev.jacrispys.JavaBot.commands;
 
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -23,8 +25,10 @@ import java.util.UUID;
 public class UnclassifiedSlashCommands extends ListenerAdapter {
 
     private MySqlStats sqlStats;
+    private static JDA jda;
 
-    public UnclassifiedSlashCommands() {
+    public UnclassifiedSlashCommands(JDA jda) {
+        this.jda = jda;
         try {
             this.sqlStats = MySqlStats.getInstance();
         } catch (SQLException ignored) {}
@@ -81,8 +85,17 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 event.getHook().editOriginal("Click Below!").setActionRow(Button.primary(buttonId, "Edit Embed?")).queue();
             }
             case "auth-token" -> {
-                event.deferReply(true);
+                Button auth = Button.primary("auth:" + event.getUser().getId(), "Authenticate ").withEmoji(Emoji.fromUnicode("\uD83D\uDCE2")).withUrl("https://discord.com/api/oauth2/authorize?client_id=892555820292796488&redirect_uri=https%3A%2F%2Fbot.insideagent.pro&response_type=code&scope=identify%20email");
+                event.reply("Click the button to authorize!").addActionRow(auth).setEphemeral(true).queue();
             }
         }
     }
+
+    public static void notifyAuthUser(long userId, String token) {
+        jda.getUserById(userId).openPrivateChannel().queue(pm -> {
+           pm.sendMessage("Authorization Successful! Click below to obtain your authorization token.").queue();
+           pm.sendMessage("|| " + token + " ||").queue();
+        });
+    }
+
 }

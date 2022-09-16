@@ -11,5 +11,7 @@ public interface AgentApi {
 
     ClientConnection getConnection();
 
+    boolean isDevAccount();
+
     // TODO: 8/31/2022 Add Methods to check data and perform changes on the bot. 
 }

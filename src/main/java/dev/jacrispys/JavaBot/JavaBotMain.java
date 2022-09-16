@@ -96,7 +96,7 @@ public class JavaBotMain {
         jda.addEventListener(new AudioPlayerButtons());
         jda.addEventListener(new InactivityTimer());
         jda.addEventListener(new GenericDebugCommands());
-        jda.addEventListener(new UnclassifiedSlashCommands());
+        jda.addEventListener(new UnclassifiedSlashCommands(jda));
         jda.addEventListener(EmbedCLI.getInstance());
         jda.addEventListener(new GenerateGenrePlaylist());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);

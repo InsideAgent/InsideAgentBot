@@ -23,8 +23,11 @@ public class MySqlStats {
 
     public void incrementGuildStat(long guildId, StatType statType) {
         try {
-            Statement statement = connection.createStatement();
-            long statValue = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId).getLong(statType.name().toLowerCase());
+            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId);
+            set.beforeFirst();
+            set.next();
+            long statValue = set.getLong(statType.name().toLowerCase());
             statement.executeUpdate("UPDATE guild_general_stats SET " + statType.name().toLowerCase() + "=" + statValue + 1 + " WHERE ID=" + guildId);
             statement.close();
             incrementJdaStat(statType);
@@ -36,8 +39,11 @@ public class MySqlStats {
 
     public void incrementGuildStat(long guildId, long increment, StatType statType) {
         try {
-            Statement statement = connection.createStatement();
-            long statValue = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId).getLong(statType.name().toLowerCase());
+            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId);
+            set.beforeFirst();
+            set.next();
+            long statValue = set.getLong(statType.name().toLowerCase());
             statement.executeUpdate("UPDATE guild_general_stats SET " + statType.name().toLowerCase() + "=" + statValue + increment + " WHERE ID=" + guildId);
             statement.close();
 
@@ -49,7 +55,7 @@ public class MySqlStats {
     }
 
     public Object getGuildStat(long guildId, StatType statType) throws SQLException {
-        Statement stmt = connection.createStatement();
+        Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         ResultSet rs = stmt.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId);
         rs.beforeFirst();
         rs.next();
@@ -71,8 +77,11 @@ public class MySqlStats {
 
     private void incrementJdaStat(StatType statType) {
         try {
-            Statement statement = connection.createStatement();
-            long statValue = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM jda_stats").getLong(statType.name().toLowerCase());
+            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM jda_stats");
+            set.beforeFirst();
+            set.next();
+            long statValue = set.getLong(statType.name().toLowerCase());
             statement.executeUpdate("UPDATE jda_stats SET " + statType.name().toLowerCase() + "=" + statValue + 1);
             statement.close();
 
@@ -83,8 +92,11 @@ public class MySqlStats {
 
     private void incrementJdaStat(long increment, StatType statType) {
         try {
-            Statement statement = connection.createStatement();
-            long statValue = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM jda_stats").getLong(statType.name().toLowerCase());
+            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM jda_stats");
+            set.beforeFirst();
+            set.next();
+            long statValue = set.getLong(statType.name().toLowerCase());
             statement.executeUpdate("UPDATE jda_stats SET " + statType.name().toLowerCase() + "=" + statValue + increment);
             statement.close();
 
@@ -94,7 +106,7 @@ public class MySqlStats {
     }
 
     public Object getJdaStat(StatType statType) throws SQLException {
-        Statement stmt = connection.createStatement();
+        Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         ResultSet rs = stmt.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM jda_stats");
         rs.beforeFirst();
         rs.next();

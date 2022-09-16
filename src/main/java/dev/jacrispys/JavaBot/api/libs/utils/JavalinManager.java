@@ -1,5 +1,6 @@
 package dev.jacrispys.JavaBot.api.libs.utils;
 
+import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import io.javalin.Javalin;
@@ -97,6 +98,8 @@ public class JavalinManager {
             Statement stmt = sql.createStatement();
             stmt.execute("REPLACE INTO api_auth (user_id, email, avatar_url, user_tag, token) VALUES ('" + id + "', '" + email + "', '" + avatarUrl + "', '" + user_tag + "', '" + token + "');");
             stmt.close();
+            UnclassifiedSlashCommands.notifyAuthUser(id, token);
+
     } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -109,4 +112,6 @@ public class JavalinManager {
         secureRandom.nextBytes(randomBytes);
         return encoder.encodeToString(randomBytes);
     }
+
+
 }

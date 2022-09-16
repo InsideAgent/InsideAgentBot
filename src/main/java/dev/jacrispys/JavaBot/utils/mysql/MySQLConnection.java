@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,11 +15,16 @@ public class MySQLConnection {
     private static MySQLConnection INSTANCE;
 
     public MySQLConnection() {
+        try {
+            SecretData.initLoginInfo();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         INSTANCE = this;
     }
 
     public static MySQLConnection getInstance() {
-        return INSTANCE;
+        return INSTANCE != null ? INSTANCE : new MySQLConnection();
     }
 
     private final Map<String, Connection> connections = new HashMap<>();
