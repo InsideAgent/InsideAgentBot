@@ -249,15 +249,13 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     @Override
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
         if(reactMessage.containsValue(event.getMessageIdLong())) {
-            reactMessage.keySet().forEach(key -> {
-                reactMessage.values().forEach(value -> {
-                    if(value.equals(event.getMessageIdLong())) {
-                        if(reactMessage.get(key).equals(value)) {
-                            chosenGenres.remove(key);
-                        }
+            reactMessage.keySet().forEach(key -> reactMessage.values().forEach(value -> {
+                if(value.equals(event.getMessageIdLong())) {
+                    if(reactMessage.get(key).equals(value)) {
+                        chosenGenres.remove(key);
                     }
-                });
-            });
+                }
+            }));
             reactMessage.values().removeIf(val -> val.equals(event.getMessageIdLong()));
         }
     }

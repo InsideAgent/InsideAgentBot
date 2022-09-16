@@ -1,11 +1,4 @@
 <div id="top"></div>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
 
 
 
@@ -189,10 +182,11 @@ There are many other nuances and cool things to learn about the embed editor, bu
 
 - [x] ~~Complete Core AudioPlayer Features~~
 - [x] ~~Add supplemental features to AudioPlayer~~
-- [ ] Complete GameSpy
-    - [ ] Log specific games, and give weekly reports
+- [ ] ~~Complete GameSpy~~ *(Removed Pre-0.1.9)*
+    - [ ] ~~Log specific games, and give weekly reports~~
 - [x] ~~Currently obtaining server to achieve near 100% uptime.~~
-- [ ] New Features, feature requests.
+- [x] New Features, feature requests.
+- [ ] Expand the roadmap.
 
 See the [open issues](https://github.com/InsideAgent/DiscordBot/issues) for a full list of proposed features (and known issues).
 

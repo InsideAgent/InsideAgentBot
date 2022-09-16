@@ -9,18 +9,18 @@ import dev.jacrispys.JavaBot.api.libs.utils.JavalinManager;
 import dev.jacrispys.JavaBot.audio.AudioPlayerButtons;
 import dev.jacrispys.JavaBot.audio.GenerateGenrePlaylist;
 import dev.jacrispys.JavaBot.audio.InactivityTimer;
+import dev.jacrispys.JavaBot.commands.ComplaintCommand;
+import dev.jacrispys.JavaBot.commands.EmbedCLI;
+import dev.jacrispys.JavaBot.commands.RegisterGuildCommand;
+import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.commands.audio.GenericMusicCommands;
 import dev.jacrispys.JavaBot.commands.audio.SlashMusicCommands;
-import dev.jacrispys.JavaBot.commands.*;
-import dev.jacrispys.JavaBot.commands.debug.SlashDebugCommands;
-import dev.jacrispys.JavaBot.commands.private_message.DefaultPrivateMessageResponse;
 import dev.jacrispys.JavaBot.commands.debug.GenericDebugCommands;
+import dev.jacrispys.JavaBot.commands.private_message.DefaultPrivateMessageResponse;
 import dev.jacrispys.JavaBot.events.BotStartup;
-import dev.jacrispys.JavaBot.utils.GameSpyThread;
-import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import dev.jacrispys.JavaBot.utils.SpotifyManager;
-import io.javalin.Javalin;
+import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -37,7 +37,6 @@ import javax.naming.ConfigurationException;
 
 public class JavaBotMain {
 
-    private static GameSpyThread gameSpyThread;
     private static final Logger logger = LoggerFactory.getLogger(JavaBotMain.class);
     private static final String className = JavaBotMain.class.getSimpleName();
     public static AudioPlayerManager audioManager;
@@ -92,7 +91,6 @@ public class JavaBotMain {
         jda.addEventListener(new DefaultPrivateMessageResponse());
         jda.addEventListener(new ComplaintCommand());
         jda.addEventListener(new RegisterGuildCommand());
-        jda.addEventListener(new GameSpyCommand());
         jda.addEventListener(new BotStartup());
         jda.addEventListener(new GenericMusicCommands());
         jda.addEventListener(new AudioPlayerButtons());
@@ -102,9 +100,6 @@ public class JavaBotMain {
         jda.addEventListener(EmbedCLI.getInstance());
         jda.addEventListener(new GenerateGenrePlaylist());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
-        logger.info("{} - Starting GameSpyThread...", className);
-        gameSpyThread = new GameSpyThread(jda);
-        gameSpyThread.start();
 
 
         new JavalinManager(7070);
@@ -112,7 +107,4 @@ public class JavaBotMain {
 
     }
 
-    public static GameSpyThread getGameSpyThread() {
-        return gameSpyThread;
-    }
 }
