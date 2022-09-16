@@ -42,7 +42,8 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 .addOption(OptionType.STRING, "nickname", "The nickname to give the user", true)
                 .addOption(OptionType.USER, "target", "User to set nickname.", false),
                 Commands.slash("embedbuilder", "builds an embed")
-                        .addOption(OptionType.CHANNEL, "channel", "Channel to send the embed to.").addOptions());
+                        .addOption(OptionType.CHANNEL, "channel", "Channel to send the embed to.").addOptions(),
+                Commands.slash("auth-token", "For Developers only, obtain an auth token!"));
         return commands;
     }
 
@@ -78,6 +79,9 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 String buttonId = "builder:" + id;
                 EmbedCLI.getInstance().addEmbedCLI((event.getOption("channel") != null ? event.getOption("channel").getAsChannel() : event.getGuildChannel()), id.toString());
                 event.getHook().editOriginal("Click Below!").setActionRow(Button.primary(buttonId, "Edit Embed?")).queue();
+            }
+            case "auth-token" -> {
+                event.deferReply(true);
             }
         }
     }
