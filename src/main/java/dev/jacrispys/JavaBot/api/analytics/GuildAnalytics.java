@@ -10,7 +10,7 @@ public class GuildAnalytics extends GuildStats implements AudioAnalytics, Genera
 
 
     public GuildAnalytics(AgentApi api, long guildId) throws NullPointerException {
-        super(guildId, api, api.getConnection().getJda());
+        super(guildId, api, api.getConnection().getJDA());
         this.api = api;
         if(validateGuild(guildId)) {
             this.guildId = guildId;

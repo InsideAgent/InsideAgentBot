@@ -28,7 +28,7 @@ public class MySqlStats {
             set.beforeFirst();
             set.next();
             long statValue = set.getLong(statType.name().toLowerCase());
-            statement.executeUpdate("UPDATE guild_general_stats SET " + statType.name().toLowerCase() + "=" + statValue + 1 + " WHERE ID=" + guildId);
+            statement.executeUpdate("UPDATE guild_general_stats SET " + statType.name().toLowerCase() + "=" + (statValue + 1) + " WHERE ID=" + guildId);
             statement.close();
             incrementJdaStat(statType);
 
@@ -44,7 +44,7 @@ public class MySqlStats {
             set.beforeFirst();
             set.next();
             long statValue = set.getLong(statType.name().toLowerCase());
-            statement.executeUpdate("UPDATE guild_general_stats SET " + statType.name().toLowerCase() + "=" + statValue + increment + " WHERE ID=" + guildId);
+            statement.executeUpdate("UPDATE guild_general_stats SET " + statType.name().toLowerCase() + "=" + (statValue + increment) + " WHERE ID=" + guildId);
             statement.close();
 
             incrementJdaStat(increment, statType);
@@ -82,7 +82,7 @@ public class MySqlStats {
             set.beforeFirst();
             set.next();
             long statValue = set.getLong(statType.name().toLowerCase());
-            statement.executeUpdate("UPDATE jda_stats SET " + statType.name().toLowerCase() + "=" + statValue + 1);
+            statement.executeUpdate("UPDATE jda_stats SET " + statType.name().toLowerCase() + "=" + (statValue + 1));
             statement.close();
 
         } catch (SQLException e) {
@@ -97,7 +97,7 @@ public class MySqlStats {
             set.beforeFirst();
             set.next();
             long statValue = set.getLong(statType.name().toLowerCase());
-            statement.executeUpdate("UPDATE jda_stats SET " + statType.name().toLowerCase() + "=" + statValue + increment);
+            statement.executeUpdate("UPDATE jda_stats SET " + statType.name().toLowerCase() + "=" + (statValue + increment));
             statement.close();
 
         } catch (SQLException e) {

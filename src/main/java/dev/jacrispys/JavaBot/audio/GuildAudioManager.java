@@ -131,7 +131,6 @@ public class GuildAudioManager {
     public MessageEmbed playListLoaded(String trackUrl, AudioPlaylist playlist, VoiceChannel voiceChannel, boolean playTop) {
         AudioTrack firstTrack = playlist.getSelectedTrack();
 
-        sqlStats.incrementGuildStat(currentGuild, playlist.getTracks().size(), StatType.PLAY_COUNTER);
 
         if (firstTrack == null) {
             firstTrack = playlist.getTracks().get(0);
@@ -141,11 +140,13 @@ public class GuildAudioManager {
         play(voiceChannel.getGuild(), getGuildAudioManager(voiceChannel.getGuild()), firstTrack, voiceChannel, playTop);
 
         if (!playlist.isSearchResult()) {
+            sqlStats.incrementGuildStat(currentGuild, playlist.getTracks().size(), StatType.PLAY_COUNTER);
             for (int i = 1; i < playlist.getTracks().size(); i++) {
                 play(voiceChannel.getGuild(), getGuildAudioManager(voiceChannel.getGuild()), playlist.getTracks().get(i), voiceChannel, false);
             }
             return djEnabled ? djEnabledEmbed(voiceChannel.getJDA()) : playlistLoadedMessage(trackUrl, playlist, false);
         } else {
+            sqlStats.incrementGuildStat(currentGuild, StatType.PLAY_COUNTER);
             return djEnabled ? djEnabledEmbed(voiceChannel.getJDA()) : playlistLoadedMessage(trackUrl, playlist, true);
         }
     }

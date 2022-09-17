@@ -10,4 +10,8 @@ public class DeveloperConnection extends ClientConnection {
 
     }
 
+    public void testDev() {
+        System.out.println("Dev");
+    }
+
 }

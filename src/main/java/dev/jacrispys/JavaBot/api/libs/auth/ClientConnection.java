@@ -24,7 +24,7 @@ public class ClientConnection {
 
     }
 
-    public JDA getJda() {
+    public JDA getJDA() {
         return jda;
     }
 }
