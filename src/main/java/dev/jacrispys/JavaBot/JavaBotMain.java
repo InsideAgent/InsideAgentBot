@@ -5,21 +5,23 @@ import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySource
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import dev.jacrispys.JavaBot.Audio.AudioPlayerButtons;
-import dev.jacrispys.JavaBot.Audio.GenerateGenrePlaylist;
-import dev.jacrispys.JavaBot.Audio.InactivityTimer;
-import dev.jacrispys.JavaBot.Commands.Audio.GenericMusicCommands;
-import dev.jacrispys.JavaBot.Commands.Audio.SlashMusicCommands;
-import dev.jacrispys.JavaBot.Commands.ComplaintCommand;
-import dev.jacrispys.JavaBot.Commands.EmbedCLI;
-import dev.jacrispys.JavaBot.Commands.PrivateMessageCommands.DefaultPrivateMessageResponse;
-import dev.jacrispys.JavaBot.Commands.RegisterGuildCommand;
-import dev.jacrispys.JavaBot.Commands.RuntimeDebug.GenericDebugCommands;
-import dev.jacrispys.JavaBot.Commands.UnclassifiedSlashCommands;
-import dev.jacrispys.JavaBot.Events.BotStartup;
-import dev.jacrispys.JavaBot.Utils.MySQL.MySQLConnection;
-import dev.jacrispys.JavaBot.Utils.SecretData;
-import dev.jacrispys.JavaBot.Utils.SpotifyManager;
+import dev.jacrispys.JavaBot.api.libs.utils.JavalinManager;
+import dev.jacrispys.JavaBot.audio.AudioPlayerButtons;
+import dev.jacrispys.JavaBot.audio.GenerateGenrePlaylist;
+import dev.jacrispys.JavaBot.audio.InactivityTimer;
+import dev.jacrispys.JavaBot.commands.ComplaintCommand;
+import dev.jacrispys.JavaBot.commands.EmbedCLI;
+import dev.jacrispys.JavaBot.commands.RegisterGuildCommand;
+import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
+import dev.jacrispys.JavaBot.commands.audio.GenericMusicCommands;
+import dev.jacrispys.JavaBot.commands.audio.SlashMusicCommands;
+import dev.jacrispys.JavaBot.commands.debug.GenericDebugCommands;
+import dev.jacrispys.JavaBot.commands.debug.SlashDebugCommands;
+import dev.jacrispys.JavaBot.commands.private_message.DefaultPrivateMessageResponse;
+import dev.jacrispys.JavaBot.events.BotStartup;
+import dev.jacrispys.JavaBot.utils.SecretData;
+import dev.jacrispys.JavaBot.utils.SpotifyManager;
+import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -56,7 +58,7 @@ public class JavaBotMain {
         }
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(botToken)
+        JDA jda = JDABuilder.createDefault(devToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
@@ -84,7 +86,9 @@ public class JavaBotMain {
         SpotifyManager.getInstance();
         logger.info("{} - Connected to personal API!", className);
 
-        jda.getPresence().setActivity(Activity.streaming("Version-0.1.8 Woo!", "https://www.twitch.tv/jacrispyslive"));
+        String version = JavaBotMain.class.getPackage().getImplementationVersion();
+
+        jda.getPresence().setActivity(Activity.streaming(version + " Woo!", "https://www.twitch.tv/jacrispyslive"));
         logger.info("{} - Starting event listeners...", className);
         jda.addEventListener(new SlashMusicCommands());
         jda.addEventListener(new DefaultPrivateMessageResponse());
@@ -95,12 +99,14 @@ public class JavaBotMain {
         jda.addEventListener(new AudioPlayerButtons());
         jda.addEventListener(new InactivityTimer());
         jda.addEventListener(new GenericDebugCommands());
-        jda.addEventListener(new UnclassifiedSlashCommands());
+        jda.addEventListener(new UnclassifiedSlashCommands(jda));
         jda.addEventListener(EmbedCLI.getInstance());
         jda.addEventListener(new GenerateGenrePlaylist());
+        jda.addEventListener(new SlashDebugCommands(jda));
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
 
-        logger.info("{} - Enabling command line interface...", className);
+
+        new JavalinManager(7070);
 
 
     }
