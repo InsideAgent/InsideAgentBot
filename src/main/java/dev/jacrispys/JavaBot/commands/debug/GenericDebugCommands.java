@@ -1,6 +1,6 @@
 package dev.jacrispys.JavaBot.commands.debug;
 
-import dev.jacrispys.JavaBot.audio.GuildAudioManager;
+import dev.jacrispys.JavaBot.music.GuildAudioManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;

@@ -6,9 +6,9 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import dev.jacrispys.JavaBot.api.libs.utils.JavalinManager;
-import dev.jacrispys.JavaBot.audio.AudioPlayerButtons;
-import dev.jacrispys.JavaBot.audio.GenerateGenrePlaylist;
-import dev.jacrispys.JavaBot.audio.InactivityTimer;
+import dev.jacrispys.JavaBot.music.AudioPlayerButtons;
+import dev.jacrispys.JavaBot.music.GenerateGenrePlaylist;
+import dev.jacrispys.JavaBot.music.InactivityTimer;
 import dev.jacrispys.JavaBot.commands.ComplaintCommand;
 import dev.jacrispys.JavaBot.commands.EmbedCLI;
 import dev.jacrispys.JavaBot.commands.RegisterGuildCommand;
@@ -58,7 +58,7 @@ public class JavaBotMain {
         }
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(devToken)
+        JDA jda = JDABuilder.createDefault(botToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)

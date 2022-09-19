@@ -1,4 +1,4 @@
-package dev.jacrispys.JavaBot.audio;
+package dev.jacrispys.JavaBot.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;

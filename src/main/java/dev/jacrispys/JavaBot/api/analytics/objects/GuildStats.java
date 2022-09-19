@@ -1,7 +1,7 @@
 package dev.jacrispys.JavaBot.api.analytics.objects;
 
-import dev.jacrispys.JavaBot.audio.objects.GuildBookmark;
-import dev.jacrispys.JavaBot.audio.objects.GuildPlaylist;
+import dev.jacrispys.JavaBot.music.objects.GuildBookmark;
+import dev.jacrispys.JavaBot.music.objects.GuildPlaylist;
 import dev.jacrispys.JavaBot.api.analytics.AudioGuildAnalytics;
 import dev.jacrispys.JavaBot.api.analytics.GeneralGuildAnalytics;
 import dev.jacrispys.JavaBot.api.libs.AgentApi;

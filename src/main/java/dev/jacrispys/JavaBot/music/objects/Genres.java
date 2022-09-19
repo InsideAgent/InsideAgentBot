@@ -1,4 +1,4 @@
-package dev.jacrispys.JavaBot.audio.objects;
+package dev.jacrispys.JavaBot.music.objects;
 
 import java.util.ArrayList;
 import java.util.Arrays;
