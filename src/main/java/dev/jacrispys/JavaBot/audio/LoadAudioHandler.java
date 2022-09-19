@@ -40,12 +40,10 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
                 try {
-                    Guild guild = requester.getJDA().getGuildById(guildAudioManager().getCurrentGuild());
-                    Member member = guild.getMemberById(requester.getIdLong());
                     if(audioPlaylist.isSearchResult()) {
-                        MySqlStats.getInstance().incrementUserStat(member, UserStats.SONG_QUEUES);
+                        MySqlStats.getInstance().incrementUserStat(requester, UserStats.SONG_QUEUES);
                     } else if (!audioPlaylist.isSearchResult()){
-                        MySqlStats.getInstance().incrementUserStat(member, UserStats.PLAYLIST_QUEUES);
+                        MySqlStats.getInstance().incrementUserStat(requester, UserStats.PLAYLIST_QUEUES);
                     }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
