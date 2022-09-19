@@ -29,6 +29,8 @@ public class SecretData {
                 fileInfo.put("YOUTUBE_PSID", " ");
                 fileInfo.put("YOUTUBE_PAPISID", " ");
                 fileInfo.put("DB_HOST", "localhost");
+                fileInfo.put("BOT_CLIENT_ID", " ");
+                fileInfo.put("BOT_CLIENT_SECRET", " ");
                 FileWriter writer = new FileWriter(file.getPath());
                 fileInfo.keySet().forEach(key -> {
                     try {
