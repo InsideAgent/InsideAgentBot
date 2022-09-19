@@ -2,6 +2,7 @@ package dev.jacrispys.JavaBot.events;
 
 import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.commands.audio.SlashMusicCommands;
+import dev.jacrispys.JavaBot.commands.debug.SlashDebugCommands;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -22,20 +23,11 @@ public class BotStartup extends ListenerAdapter {
 
         commands.addAll(new SlashMusicCommands().updateJdaCommands());
         commands.addAll(new UnclassifiedSlashCommands(event.getJDA()).updateJdaCommands());
+        event.getJDA().addEventListener(new SlashDebugCommands(event.getJDA()));
 
         event.getJDA().updateCommands().addCommands(commands).queue();
         for (Guild guild : event.getJDA().getGuilds()) {
-            try {
-                // Check Registration
-                ResultSet set = connection.queryCommand("SELECT isRegistered FROM guilds WHERE ID=" + guild.getIdLong());
-                set.beforeFirst();
-                set.next();
-                if (!(set.getBoolean("isRegistered"))) {
-                    connection.registerGuild(guild, guild.getTextChannels().get(0));
-                }
-            } catch (Exception ignored) {
-                return;
-            }
+            connection.registerGuild(guild, guild.getTextChannels().get(0));
         }
     }
 

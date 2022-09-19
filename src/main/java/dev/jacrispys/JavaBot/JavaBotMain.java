@@ -102,7 +102,6 @@ public class JavaBotMain {
         jda.addEventListener(new UnclassifiedSlashCommands(jda));
         jda.addEventListener(EmbedCLI.getInstance());
         jda.addEventListener(new GenerateGenrePlaylist());
-        jda.addEventListener(new SlashDebugCommands(jda));
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
 
 

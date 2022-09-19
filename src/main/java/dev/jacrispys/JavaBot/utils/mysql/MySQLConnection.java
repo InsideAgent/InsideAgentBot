@@ -1,9 +1,12 @@
 package dev.jacrispys.JavaBot.utils.mysql;
 
+import dev.jacrispys.JavaBot.JavaBotMain;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.*;
@@ -13,6 +16,7 @@ import java.util.Map;
 public class MySQLConnection {
 
     private static MySQLConnection INSTANCE;
+    private static final Logger logger = LoggerFactory.getLogger(MySQLConnection.class);
 
     public MySQLConnection() {
         try {
@@ -65,9 +69,10 @@ public class MySQLConnection {
             }
             statement.execute(command);
             statement.close();
+            logger.info("{} - Registered DB for Guild - " + guild.getName(), MySQLConnection.class.getSimpleName());
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("{} - Failed to register DB for Guild - " + guild.getName(), MySQLConnection.class.getSimpleName());
             return false;
         }
     }
