@@ -6,11 +6,11 @@ import dev.jacrispys.JavaBot.commands.debug.SlashDebugCommands;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,4 +31,8 @@ public class BotStartup extends ListenerAdapter {
         }
     }
 
+    @Override
+    public void onGuildJoin(@NotNull GuildJoinEvent event) {
+        connection.registerGuild(event.getGuild(), event.getGuild().getTextChannels().get(0));
+    }
 }
