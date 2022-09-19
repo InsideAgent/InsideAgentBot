@@ -1,7 +1,7 @@
-package dev.jacrispys.JavaBot.music;
+package dev.jacrispys.JavaBot.audio;
 
 import com.neovisionaries.i18n.CountryCode;
-import dev.jacrispys.JavaBot.music.objects.Genres;
+import dev.jacrispys.JavaBot.audio.objects.Genres;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.SpotifyManager;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static dev.jacrispys.JavaBot.music.GuildAudioManager.nowPlayingId;
+import static dev.jacrispys.JavaBot.audio.GuildAudioManager.nowPlayingId;
 
 public class GenerateGenrePlaylist extends ListenerAdapter {
 

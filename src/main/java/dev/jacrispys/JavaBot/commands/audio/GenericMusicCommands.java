@@ -1,8 +1,8 @@
 package dev.jacrispys.JavaBot.commands.audio;
 
-import dev.jacrispys.JavaBot.music.GenerateGenrePlaylist;
-import dev.jacrispys.JavaBot.music.GuildAudioManager;
-import dev.jacrispys.JavaBot.music.LoadAudioHandler;
+import dev.jacrispys.JavaBot.audio.GenerateGenrePlaylist;
+import dev.jacrispys.JavaBot.audio.GuildAudioManager;
+import dev.jacrispys.JavaBot.audio.LoadAudioHandler;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.ChannelType;

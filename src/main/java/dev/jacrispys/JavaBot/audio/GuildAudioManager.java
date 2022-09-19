@@ -1,4 +1,4 @@
-package dev.jacrispys.JavaBot.music;
+package dev.jacrispys.JavaBot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -9,7 +9,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
-import dev.jacrispys.JavaBot.music.objects.Genres;
+import dev.jacrispys.JavaBot.audio.objects.Genres;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import net.dv8tion.jda.api.EmbedBuilder;

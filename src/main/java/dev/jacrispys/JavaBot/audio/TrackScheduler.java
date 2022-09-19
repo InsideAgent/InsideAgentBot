@@ -1,4 +1,4 @@
-package dev.jacrispys.JavaBot.music;
+package dev.jacrispys.JavaBot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;

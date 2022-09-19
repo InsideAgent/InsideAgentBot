@@ -1,7 +1,7 @@
 package dev.jacrispys.JavaBot.commands.debug;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import dev.jacrispys.JavaBot.music.GuildAudioManager;
+import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
