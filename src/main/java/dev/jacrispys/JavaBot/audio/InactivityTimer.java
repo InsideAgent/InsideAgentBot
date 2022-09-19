@@ -6,12 +6,10 @@ import dev.jacrispys.JavaBot.api.libs.utils.mysql.UserStats;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +73,7 @@ public class InactivityTimer extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        if (!isInBotChannel(event.getGuild(), event.getMember()) && vcJoinEpoch.containsKey(event.getMember().getIdLong())) {
+        if (!isInBotChannel(event.getGuild(), event.getChannelLeft()) && vcJoinEpoch.containsKey(event.getMember().getIdLong())) {
             try {
                 MySqlStats stats = MySqlStats.getInstance();
                 long millis = System.currentTimeMillis() - vcJoinEpoch.get(event.getMember().getIdLong());
@@ -94,16 +92,34 @@ public class InactivityTimer extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-        if (isInBotChannel(event.getGuild(), event.getMember())) {
+        if (event.getMember().equals(event.getGuild().getSelfMember())) {
+            for (Member member : event.getChannelJoined().getMembers()) {
+                vcJoinEpoch.put(member.getIdLong(), System.currentTimeMillis());
+            }
+        }
+        if (isInBotChannel(event.getGuild(), event.getChannelJoined())) {
             vcJoinEpoch.put(event.getMember().getIdLong(), System.currentTimeMillis());
         }
     }
 
-    protected boolean isInBotChannel(Guild guild, Member member) {
+    @Override
+    public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
+        if (event.getMember().equals(event.getGuild().getSelfMember())) {
+            for (Member member : event.getChannelJoined().getMembers()) {
+                vcJoinEpoch.put(member.getIdLong(), System.currentTimeMillis());
+            }
+        }
+        if (isInBotChannel(event.getGuild(), event.getChannelJoined())) {
+            vcJoinEpoch.put(event.getMember().getIdLong(), System.currentTimeMillis());
+        }
+    }
+
+    protected boolean isInBotChannel(Guild guild, AudioChannel channel) {
         GuildAudioManager manager = GuildAudioManager.getGuildAudioManager(guild);
-        long channel = member.getVoiceState().getChannel().getIdLong();
+        long userChannel = channel.getIdLong();
+        if(!guild.getSelfMember().getVoiceState().inAudioChannel()) return false;
         long selfChannel = guild.getSelfMember().getVoiceState().getChannel().getIdLong();
-        if (manager.audioPlayer.getPlayingTrack() != null && selfChannel == channel) {
+        if (manager.audioPlayer.getPlayingTrack() != null && selfChannel == userChannel) {
             return true;
         }
         return false;
