@@ -6,7 +6,7 @@
 
     <groupId>dev.Jacrispys</groupId>
     <artifactId>InsideAgentDev</artifactId>
-    <version>0.1.8</version>
+    <version>0.1.9-beta.1</version>
     <build>
         <plugins>
             <plugin>
@@ -50,6 +50,8 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>dev.jacrispys.JavaBot.JavaBotMain</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>
                     <outputDirectory>C:\Users\jvanz\Desktop\Bot</outputDirectory>

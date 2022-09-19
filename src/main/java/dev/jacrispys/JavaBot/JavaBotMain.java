@@ -86,7 +86,9 @@ public class JavaBotMain {
         SpotifyManager.getInstance();
         logger.info("{} - Connected to personal API!", className);
 
-        jda.getPresence().setActivity(Activity.streaming("Version-0.1.8 Woo!", "https://www.twitch.tv/jacrispyslive"));
+        String version = JavaBotMain.class.getPackage().getImplementationVersion();
+
+        jda.getPresence().setActivity(Activity.streaming(version + " Woo!", "https://www.twitch.tv/jacrispyslive"));
         logger.info("{} - Starting event listeners...", className);
         jda.addEventListener(new SlashMusicCommands());
         jda.addEventListener(new DefaultPrivateMessageResponse());
