@@ -318,11 +318,10 @@ public class GuildAudioManager {
 
         boolean inVoiceChannel = guild.getSelfMember().getVoiceState().inAudioChannel();
 
-
         if (!inVoiceChannel) {
             AudioManager manager = guild.getAudioManager();
-            manager.openAudioConnection(channel);
             manager.setSendingHandler(sendHandler);
+            manager.openAudioConnection(channel);
             manager.setAutoReconnect(true);
         }
     }
@@ -774,8 +773,8 @@ public class GuildAudioManager {
         }
     }
 
-    public Message generateRadio(Recommendations requestData, VoiceChannel channel, User user) {
-        Arrays.stream(requestData.getTracks()).toList().forEach(track -> audioHandler.loadAndPlay("https://open.spotify.com/track/" +  track.getId(), channel, user, false));
+    public Message generateRadio(Recommendations requestData, VoiceChannel channel, Member member) {
+        Arrays.stream(requestData.getTracks()).toList().forEach(track -> audioHandler.loadAndPlay("https://open.spotify.com/track/" +  track.getId(), channel, member, false));
         List<String> genres = new ArrayList<>();
         Arrays.stream(requestData.getSeeds()).toList().forEach(seed -> {
             if(seed.getType() == ModelObjectType.GENRE) {

@@ -98,7 +98,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     StringBuilder genre = new StringBuilder();
                     chosenGenres.get(event.getUser()).forEach(pos -> genre.append(Genres.getValues().get(pos)).append(","));
                     Recommendations requestData = genrePlaylist.generatePlaylistFromGenre(genre.toString(), limit.get(event.getUser()));
-                    event.getHook().editOriginal(GuildAudioManager.getGuildAudioManager(event.getGuild()).generateRadio(requestData, channel, event.getUser())).queue();
+                    event.getHook().editOriginal(GuildAudioManager.getGuildAudioManager(event.getGuild()).generateRadio(requestData, channel, event.getMember())).queue();
 
                 }
                 case ("nextGenre") -> {

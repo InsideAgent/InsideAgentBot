@@ -1,5 +1,7 @@
 package dev.jacrispys.JavaBot.commands.audio;
 
+import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
+import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
 import dev.jacrispys.JavaBot.audio.GenerateGenrePlaylist;
 import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.audio.LoadAudioHandler;
@@ -42,6 +44,8 @@ public class GenericMusicCommands extends ListenerAdapter {
         String message = event.getMessage().getContentRaw().toLowerCase();
         if (message.startsWith("-")) {
             try {
+                MySqlStats stats = MySqlStats.getInstance();
+                stats.incrementGuildStat(event.getGuild().getIdLong(), StatType.COMMAND_COUNTER);
                 MySQLConnection connection = MySQLConnection.getInstance();
                 ResultSet rs = connection.queryCommand("select * from inside_agent_bot.guilds where ID=" + event.getGuild().getId());
                 rs.beforeFirst();
@@ -68,7 +72,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String track = event.getMessage().getAttachments().get(0).getUrl();
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(track, channel, event.getAuthor(), false)).queue();
+                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(track, channel, event.getMember(), false)).queue();
                 return;
 
             } else if (message.contains("-play")) {
@@ -86,7 +90,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getAuthor(), false)).queue();
+                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getMember(), false)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -99,7 +103,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getAuthor(), false)).queue();
+                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getMember(), false)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -188,7 +192,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getAuthor(), true)).queue();
+                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getMember(), true)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -201,7 +205,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getAuthor(), true)).queue();
+                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getMember(), true)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {

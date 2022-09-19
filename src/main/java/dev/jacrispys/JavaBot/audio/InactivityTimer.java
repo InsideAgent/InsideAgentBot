@@ -73,7 +73,7 @@ public class InactivityTimer extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        if (!isInBotChannel(event.getGuild(), event.getChannelLeft()) && vcJoinEpoch.containsKey(event.getMember().getIdLong())) {
+        if (isInBotChannel(event.getGuild(), event.getChannelLeft()) && vcJoinEpoch.containsKey(event.getMember().getIdLong())) {
             try {
                 MySqlStats stats = MySqlStats.getInstance();
                 long millis = System.currentTimeMillis() - vcJoinEpoch.get(event.getMember().getIdLong());
@@ -96,6 +96,7 @@ public class InactivityTimer extends ListenerAdapter {
             for (Member member : event.getChannelJoined().getMembers()) {
                 vcJoinEpoch.put(member.getIdLong(), System.currentTimeMillis());
             }
+            return;
         }
         if (isInBotChannel(event.getGuild(), event.getChannelJoined())) {
             vcJoinEpoch.put(event.getMember().getIdLong(), System.currentTimeMillis());
@@ -108,6 +109,7 @@ public class InactivityTimer extends ListenerAdapter {
             for (Member member : event.getChannelJoined().getMembers()) {
                 vcJoinEpoch.put(member.getIdLong(), System.currentTimeMillis());
             }
+            return;
         }
         if (isInBotChannel(event.getGuild(), event.getChannelJoined())) {
             vcJoinEpoch.put(event.getMember().getIdLong(), System.currentTimeMillis());
@@ -117,12 +119,9 @@ public class InactivityTimer extends ListenerAdapter {
     protected boolean isInBotChannel(Guild guild, AudioChannel channel) {
         GuildAudioManager manager = GuildAudioManager.getGuildAudioManager(guild);
         long userChannel = channel.getIdLong();
-        if(!guild.getSelfMember().getVoiceState().inAudioChannel()) return false;
+        if(guild.getSelfMember().getVoiceState().getChannel() == null) return false;
         long selfChannel = guild.getSelfMember().getVoiceState().getChannel().getIdLong();
-        if (manager.audioPlayer.getPlayingTrack() != null && selfChannel == userChannel) {
-            return true;
-        }
-        return false;
+        return manager.audioPlayer.getPlayingTrack() != null && selfChannel == userChannel;
     }
 
     private static void inactivityMessage(TextChannel channel) {

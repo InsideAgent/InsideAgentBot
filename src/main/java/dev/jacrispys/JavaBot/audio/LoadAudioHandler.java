@@ -16,18 +16,16 @@ import java.util.concurrent.SynchronousQueue;
 public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
 
 
-    public Message loadAndPlay(final String trackUrl, VoiceChannel voiceChannel, User requester, boolean playTop) {
+    public Message loadAndPlay(final String trackUrl, VoiceChannel voiceChannel, Member requester, boolean playTop) {
         final SynchronousQueue<Message> queue = new SynchronousQueue<>();
         guildAudioManager.getAudioManager().loadItemOrdered(guildAudioManager, trackUrl, new AudioLoadResultHandler() {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                guildAudioManager.setRequester(audioTrack, requester);
+                guildAudioManager.setRequester(audioTrack, requester.getUser());
 
                 try {
-                    Guild guild = requester.getJDA().getGuildById(guildAudioManager().getCurrentGuild());
-                    Member member = guild.getMemberById(requester.getIdLong());
-                    MySqlStats.getInstance().incrementUserStat(member, UserStats.SONG_QUEUES);
+                    MySqlStats.getInstance().incrementUserStat(requester, UserStats.SONG_QUEUES);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -46,14 +44,14 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
                     Member member = guild.getMemberById(requester.getIdLong());
                     if(audioPlaylist.isSearchResult()) {
                         MySqlStats.getInstance().incrementUserStat(member, UserStats.SONG_QUEUES);
-                    } else {
-                        MySqlStats.getInstance().incrementUserStat(member, audioPlaylist.getTracks().size(), UserStats.SONG_QUEUES);
+                    } else if (!audioPlaylist.isSearchResult()){
+                        MySqlStats.getInstance().incrementUserStat(member, UserStats.PLAYLIST_QUEUES);
                     }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
                 for (AudioTrack track : audioPlaylist.getTracks()) {
-                    guildAudioManager.setRequester(track, requester);
+                    guildAudioManager.setRequester(track, requester.getUser());
                 }
                 try {
                     queue.put(new MessageBuilder().setEmbeds(guildAudioManager.playListLoaded(trackUrl, audioPlaylist, voiceChannel, playTop)).build());
