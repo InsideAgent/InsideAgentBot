@@ -4,15 +4,17 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
+import dev.jacrispys.JavaBot.api.libs.utils.mysql.UserStats;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.*;
 
+import java.sql.SQLException;
 import java.util.concurrent.SynchronousQueue;
 
 
 public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
+
 
     public Message loadAndPlay(final String trackUrl, VoiceChannel voiceChannel, User requester, boolean playTop) {
         final SynchronousQueue<Message> queue = new SynchronousQueue<>();
@@ -21,6 +23,15 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 guildAudioManager.setRequester(audioTrack, requester);
+
+                try {
+                    Guild guild = requester.getJDA().getGuildById(guildAudioManager().getCurrentGuild());
+                    Member member = guild.getMemberById(requester.getIdLong());
+                    MySqlStats.getInstance().incrementUserStat(member, UserStats.SONG_QUEUES);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
                 try {
                     queue.put(new MessageBuilder().setEmbeds(guildAudioManager.trackLoaded(trackUrl, audioTrack, voiceChannel, playTop)).build());
                 } catch (InterruptedException e) {
@@ -30,6 +41,17 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
+                try {
+                    Guild guild = requester.getJDA().getGuildById(guildAudioManager().getCurrentGuild());
+                    Member member = guild.getMemberById(requester.getIdLong());
+                    if(audioPlaylist.isSearchResult()) {
+                        MySqlStats.getInstance().incrementUserStat(member, UserStats.SONG_QUEUES);
+                    } else {
+                        MySqlStats.getInstance().incrementUserStat(member, audioPlaylist.getTracks().size(), UserStats.SONG_QUEUES);
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 for (AudioTrack track : audioPlaylist.getTracks()) {
                     guildAudioManager.setRequester(track, requester);
                 }
@@ -69,7 +91,7 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
         }
     }
 
-    public Message skipTrack(GuildAudioManager audioManager) {
-        return audioManager.skipTrack();
+    public Message skipTrack(GuildAudioManager audioManager, Member request) {
+        return audioManager.skipTrack(request);
     }
 }

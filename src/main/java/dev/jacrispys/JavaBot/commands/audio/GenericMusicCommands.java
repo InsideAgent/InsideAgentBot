@@ -107,7 +107,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 }
             }
         } else if (message.equalsIgnoreCase("-skip") || message.equalsIgnoreCase("-s")) {
-            event.getGuildChannel().sendMessage(audioHandler.skipTrack(audioManager)).queue();
+            event.getGuildChannel().sendMessage(audioHandler.skipTrack(audioManager, event.getMember())).queue();
         } else if (event.getMessage().getContentRaw().contains("-volume")) {
             try {
                 int i = Integer.parseInt(event.getMessage().getContentRaw().split("-volume ")[1]);

@@ -86,7 +86,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     if(audioManager.audioPlayer.getPlayingTrack() == null) {
                         event.getHook().editOriginal(event.getMessage()).queue();
                     } else {
-                        event.getHook().editOriginal(audioManager.skipTrack()).queue();
+                        event.getHook().editOriginal(audioManager.skipTrack(event.getMember())).queue();
                     }
                 }
                 case ("showQueue") -> {

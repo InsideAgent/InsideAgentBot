@@ -31,7 +31,7 @@ public class AudioActivity {
 
     protected Object getGuildStat(long guildId, AudioActivities activity) throws SQLException {
         Statement stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT " + activity.name().toLowerCase() + " FROM audio_activity WHERE guild_ID=" + guildId + " AND user_ID=" + user.getUser().getIdLong());
+        ResultSet rs = stmt.executeQuery("SELECT " + activity.name().toLowerCase() + " FROM audio_activity WHERE guild_id=" + guildId + " AND user_id=" + user.getUser().getIdLong());
         rs.beforeFirst();
         rs.next();
         return rs.getObject(activity.name().toLowerCase());

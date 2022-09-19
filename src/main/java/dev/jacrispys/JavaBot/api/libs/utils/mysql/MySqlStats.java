@@ -1,6 +1,7 @@
 package dev.jacrispys.JavaBot.api.libs.utils.mysql;
 
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
+import net.dv8tion.jda.api.entities.Member;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -117,6 +118,36 @@ public class MySqlStats {
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate("REPLACE INTO jda_stats (play_counter, pause_counter, playtime_millis, hijack_counter, command_counter) VALUES " + play_counter + pause_counter + playtime_millis + hijack_counter + command_counter);
+            statement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void incrementUserStat(Member member, UserStats stat) {
+        try {
+            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet set = statement.executeQuery("SELECT " + stat.name().toLowerCase() + " FROM audio_activity WHERE guild_id=" + member.getGuild().getIdLong() + " AND user_id=" + member.getIdLong());
+            set.beforeFirst();
+            set.next();
+            long statValue = set.getLong(stat.name().toLowerCase());
+            statement.executeUpdate("UPDATE audio_activity SET " + stat.name().toLowerCase() + "=" + (statValue + 1) + " WHERE guild_id=" + member.getGuild().getIdLong() + " AND user_id=" + member.getIdLong());
+            statement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void incrementUserStat(Member member, long increment, UserStats stat) {
+        try {
+            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet set = statement.executeQuery("SELECT " + stat.name().toLowerCase() + " FROM audio_activity WHERE guild_id=" + member.getGuild().getIdLong() + " AND user_id=" + member.getIdLong());
+            set.beforeFirst();
+            set.next();
+            long statValue = set.getLong(stat.name().toLowerCase());
+            statement.executeUpdate("UPDATE audio_activity SET " + stat.name().toLowerCase() + "=" + (statValue + increment) + " WHERE guild_id=" + member.getGuild().getIdLong() + " AND user_id=" + member.getIdLong());
             statement.close();
 
         } catch (SQLException e) {

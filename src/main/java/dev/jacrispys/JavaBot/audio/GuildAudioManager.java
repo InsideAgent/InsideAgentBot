@@ -9,6 +9,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
+import dev.jacrispys.JavaBot.api.libs.utils.mysql.UserStats;
 import dev.jacrispys.JavaBot.audio.objects.Genres;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.SecretData;
@@ -287,9 +288,12 @@ public class GuildAudioManager {
     /**
      *  Skip's the current track by using {@link TrackScheduler#nextTrack()}
      */
-    public Message skipTrack() {
+    public Message skipTrack(Member request) {
         AudioTrack track = audioPlayer.getPlayingTrack();
         MessageBuilder message = new MessageBuilder();
+        if (!(requester.get(track).equals(request.getUser()))) {
+            sqlStats.incrementUserStat(request, UserStats.SKIP_OTHERS);
+        }
         if(track == null) {
             message.append("Could not skip track, as no track was playing!");
             return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
@@ -454,7 +458,7 @@ public class GuildAudioManager {
     }
 
     /**
-     * copy of {@link GuildAudioManager#skipTrack()} without a confirmation message.
+     * copy of {@link GuildAudioManager#skipTrack(Member request)} without a confirmation message.
      */
     @SuppressWarnings("unused")
     public void skipNoMessage() {
@@ -612,13 +616,13 @@ public class GuildAudioManager {
         if (!djEnabled) {
             hijackQueue = new LinkedBlockingQueue<>(scheduler.getTrackQueue());
             clearQueue();
-            skipTrack();
+            skipTrack(guild.getMember(sender));
             djEnabled = true;
             sqlStats.incrementGuildStat(currentGuild, StatType.HIJACK_COUNTER);
         } else {
             djEnabled = false;
             clearQueue();
-            skipTrack();
+            skipTrack(guild.getMember(sender));
             scheduler.setQueue(hijackQueue);
             MessageBuilder message = new MessageBuilder();
             message.append("So sad but, the party is over now! :(");
@@ -837,5 +841,7 @@ public class GuildAudioManager {
 
         return new MessageBuilder().setEmbeds(eb.build()).setActionRows(ActionRow.of(buttons)).build();
     }
+
+
 
 }

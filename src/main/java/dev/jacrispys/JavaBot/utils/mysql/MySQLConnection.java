@@ -65,7 +65,7 @@ public class MySQLConnection {
             String command = "INSERT IGNORE INTO guilds (ID,TicketChannel) VALUES (" + guild.getId() + ", " + defaultChannel.getId() + ");";
             statement.execute("INSERT IGNORE INTO guild_general_stats (ID) VALUE (" + guild.getIdLong() + ")");
             for(Member member : guild.getMembers()) {
-                statement.execute("INSERT IGNORE INTO audio_activity (user_ID, guild_ID) VALUES (" + member.getIdLong() + "," + guild.getIdLong() + ")");
+                statement.execute("INSERT IGNORE INTO audio_activity (user_id, guild_id) VALUES (" + member.getIdLong() + "," + guild.getIdLong() + ")");
             }
             statement.execute(command);
             statement.close();

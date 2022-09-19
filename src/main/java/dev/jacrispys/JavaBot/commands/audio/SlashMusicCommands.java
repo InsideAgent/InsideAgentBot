@@ -139,7 +139,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                 boolean playTop = (commandName.equalsIgnoreCase("playtop"));
                 event.getHook().editOriginal(Objects.requireNonNull(audioHandler.loadAndPlay(track, channel, event.getUser(), playTop))).queue();
             }
-            case "skip" -> event.reply(audioHandler.skipTrack(audioManager)).queue();
+            case "skip" -> event.reply(audioHandler.skipTrack(audioManager, event.getMember())).queue();
             case "volume" -> event.reply(audioManager.setVolume(Objects.requireNonNull(event.getOption("volume")).getAsInt())).queue();
             case "clear" -> event.reply(audioManager.clearQueue()).queue();
             case "stop", "pause" -> event.reply(audioManager.pausePlayer()).queue();
