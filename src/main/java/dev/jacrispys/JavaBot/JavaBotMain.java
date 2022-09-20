@@ -5,6 +5,7 @@ import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySource
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import dev.jacrispys.JavaBot.api.analytics.utils.ListenTimeTracker;
 import dev.jacrispys.JavaBot.api.libs.utils.JavalinManager;
 import dev.jacrispys.JavaBot.audio.AudioPlayerButtons;
 import dev.jacrispys.JavaBot.audio.GenerateGenrePlaylist;
@@ -102,6 +103,7 @@ public class JavaBotMain {
         jda.addEventListener(new UnclassifiedSlashCommands(jda));
         jda.addEventListener(EmbedCLI.getInstance());
         jda.addEventListener(new GenerateGenrePlaylist());
+        jda.addEventListener(new ListenTimeTracker(jda));
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
 
 

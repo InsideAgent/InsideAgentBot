@@ -1,15 +1,12 @@
 package dev.jacrispys.JavaBot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
-import dev.jacrispys.JavaBot.api.libs.utils.mysql.UserStats;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +34,6 @@ public class InactivityTimer extends ListenerAdapter {
     private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
     private static final Map<Long, ScheduledFuture<?>> runnables = new HashMap<>();
-    private final Map<Long, Long> vcJoinEpoch = new HashMap<>();
 
     @SuppressWarnings("all")
     public static void startInactivity(AudioPlayer player, Long guildId, JDA jda) {
@@ -73,55 +69,11 @@ public class InactivityTimer extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        if (isInBotChannel(event.getGuild(), event.getChannelLeft()) && vcJoinEpoch.containsKey(event.getMember().getIdLong())) {
-            try {
-                MySqlStats stats = MySqlStats.getInstance();
-                long millis = System.currentTimeMillis() - vcJoinEpoch.get(event.getMember().getIdLong());
-                stats.incrementUserStat(event.getMember(), millis, UserStats.LISTEN_TIME);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-
-        }
         if (event.getChannelLeft().getMembers().contains(event.getGuild().getSelfMember())) {
             if (event.getChannelLeft().getMembers().size() < 2) {
                 startInactivity(GuildAudioManager.getGuildAudioManager(event.getGuild()).audioPlayer, event.getGuild().getIdLong(), event.getJDA());
             }
         }
-    }
-
-    @Override
-    public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-        if (event.getMember().equals(event.getGuild().getSelfMember())) {
-            for (Member member : event.getChannelJoined().getMembers()) {
-                vcJoinEpoch.put(member.getIdLong(), System.currentTimeMillis());
-            }
-            return;
-        }
-        if (isInBotChannel(event.getGuild(), event.getChannelJoined())) {
-            vcJoinEpoch.put(event.getMember().getIdLong(), System.currentTimeMillis());
-        }
-    }
-
-    @Override
-    public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
-        if (event.getMember().equals(event.getGuild().getSelfMember())) {
-            for (Member member : event.getChannelJoined().getMembers()) {
-                vcJoinEpoch.put(member.getIdLong(), System.currentTimeMillis());
-            }
-            return;
-        }
-        if (isInBotChannel(event.getGuild(), event.getChannelJoined())) {
-            vcJoinEpoch.put(event.getMember().getIdLong(), System.currentTimeMillis());
-        }
-    }
-
-    protected boolean isInBotChannel(Guild guild, AudioChannel channel) {
-        GuildAudioManager manager = GuildAudioManager.getGuildAudioManager(guild);
-        long userChannel = channel.getIdLong();
-        if(guild.getSelfMember().getVoiceState().getChannel() == null) return false;
-        long selfChannel = guild.getSelfMember().getVoiceState().getChannel().getIdLong();
-        return manager.audioPlayer.getPlayingTrack() != null && selfChannel == userChannel;
     }
 
     private static void inactivityMessage(TextChannel channel) {
