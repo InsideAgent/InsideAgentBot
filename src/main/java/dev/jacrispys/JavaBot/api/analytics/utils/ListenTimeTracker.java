@@ -35,6 +35,7 @@ public class ListenTimeTracker extends ListenerAdapter {
                 GuildAudioManager manager = GuildAudioManager.getGuildAudioManager(jda.getGuildById(guild));
                 if (manager.audioPlayer.getPlayingTrack() != null) {
                     for (Member member : jda.getGuildById(guild).getVoiceChannelById(listeningGuilds.get(guild)).getMembers()) {
+                        if(member.equals(jda.getGuildById(guild).getSelfMember())) continue;
                         try {
                             MySqlStats stats = MySqlStats.getInstance();
                             stats.incrementUserStat(member, 5000L, UserStats.LISTEN_TIME);
