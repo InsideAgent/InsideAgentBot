@@ -7,13 +7,14 @@ import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.audio.LoadAudioHandler;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.Region;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.MalformedURLException;
@@ -72,7 +73,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String track = event.getMessage().getAttachments().get(0).getUrl();
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(track, channel, event.getMember(), false)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(track, channel, event.getMember(), false)).queue();
                 return;
 
             } else if (message.contains("-play")) {
@@ -90,7 +91,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getMember(), false)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(trackUrl, channel, event.getMember(), false)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -103,7 +104,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getMember(), false)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(ytSearch, channel, event.getMember(), false)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -111,47 +112,47 @@ public class GenericMusicCommands extends ListenerAdapter {
                 }
             }
         } else if (message.equalsIgnoreCase("-skip") || message.equalsIgnoreCase("-s")) {
-            event.getGuildChannel().sendMessage(audioHandler.skipTrack(audioManager, event.getMember())).queue();
+            event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.skipTrack(audioManager, event.getMember())).queue();
         } else if (event.getMessage().getContentRaw().contains("-volume")) {
             try {
                 int i = Integer.parseInt(event.getMessage().getContentRaw().split("-volume ")[1]);
-                event.getGuildChannel().sendMessage(audioManager.setVolume(i)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioManager.setVolume(i)).queue();
             } catch (NumberFormatException ex) {
                 event.getMessage().reply(event.getMessage().getContentRaw().split("-volume ")[1] + " is not a number 1 - 100!").queue();
             }
         } else if (message.equalsIgnoreCase("-clear")) {
-            event.getGuildChannel().sendMessage(audioManager.clearQueue()).queue();
+            event.getGuildChannel().sendMessage((MessageCreateData) audioManager.clearQueue()).queue();
         } else if (message.equalsIgnoreCase("-pause") || message.equalsIgnoreCase("-stop")) {
-            event.getGuildChannel().sendMessage(audioManager.pausePlayer()).queue();
+            event.getGuildChannel().sendMessage((MessageCreateData) audioManager.pausePlayer()).queue();
         } else if (message.equalsIgnoreCase("-resume") || message.equalsIgnoreCase("-play")) {
-            event.getGuildChannel().sendMessage(audioManager.resumePlayer()).queue();
+            event.getGuildChannel().sendMessage((MessageCreateData) audioManager.resumePlayer()).queue();
         } else if (message.equalsIgnoreCase("-shuffle")) {
-            event.getGuildChannel().sendMessage(audioManager.shufflePlayer()).queue();
+            event.getGuildChannel().sendMessage((MessageCreateData) audioManager.shufflePlayer()).queue();
         } else if (message.equalsIgnoreCase("-dc") || message.equalsIgnoreCase("-disconnect") || message.equalsIgnoreCase("-leave")) {
-            event.getGuildChannel().sendMessage(audioManager.disconnectBot()).queue();
+            event.getGuildChannel().sendMessage((MessageCreateData) audioManager.disconnectBot()).queue();
         } else if (message.equalsIgnoreCase("-move") || message.equalsIgnoreCase("-follow")) {
             audioManager.followUser(event.getMember());
         } else if (message.equalsIgnoreCase("-song") || message.equalsIgnoreCase("-info")) {
-            event.getGuildChannel().sendMessage(audioManager.sendTrackInfo()).queue();
+            event.getGuildChannel().sendMessage((MessageCreateData) audioManager.sendTrackInfo()).queue();
         } else if (message.equalsIgnoreCase("-q") || message.equalsIgnoreCase("-queue")) {
-            event.getGuildChannel().sendMessage(audioManager.displayQueue()).queue();
+            event.getGuildChannel().sendMessage((MessageCreateData) audioManager.displayQueue()).queue();
         } else if (message.contains("-remove")) {
             try {
                 int position = Integer.parseInt(event.getMessage().getContentRaw().split("-remove ")[1]);
-                event.getGuildChannel().sendMessage(audioManager.removeTrack(position)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioManager.removeTrack(position)).queue();
             } catch (NumberFormatException ex) {
                 event.getMessage().reply("Could not parse: " + event.getMessage().getContentRaw().split("-remove ")[1] + " as a number!").queue();
 
             }
         } else if (message.contains("-seek")) {
             String time = event.getMessage().getContentRaw().split("-seek ")[1];
-            event.getGuildChannel().sendMessage(audioManager.seekTrack(time)).queue();
+            event.getGuildChannel().sendMessage((MessageCreateData) audioManager.seekTrack(time)).queue();
         } else if (message.equalsIgnoreCase("-hijack")) {
             if (event.getAuthor().getIdLong() != 731364923120025705L) {
                 event.getMessage().reply("You sir! Are not a certified DJ! Begone! ヽ(⌐■_■)ノ♬").queue();
                 return;
             }
-            event.getGuildChannel().sendMessage(audioManager.enableDJ(event.getAuthor(), event.getGuild())).queue();
+            event.getGuildChannel().sendMessage((MessageCreateData) audioManager.enableDJ(event.getAuthor(), event.getGuild())).queue();
         } else if (message.equalsIgnoreCase("-fix")) {
             try {
                 VoiceChannel vc = (VoiceChannel) event.getMember().getVoiceState().getChannel();
@@ -163,15 +164,15 @@ public class GenericMusicCommands extends ListenerAdapter {
             }
         } else if (message.contains("-loop")) {
             if (message.split("-loop ").length == 1 || message.split("-loop ")[1].equalsIgnoreCase("queue")) {
-                event.getGuildChannel().sendMessage(audioManager.loopQueue()).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioManager.loopQueue()).queue();
             } else if (message.split("-loop ")[1].equalsIgnoreCase("song")) {
-                event.getGuildChannel().sendMessage(audioManager.loopSong()).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioManager.loopSong()).queue();
             }
         } else if (message.contains("-move ")) {
             try {
                 int pos1 = Integer.parseInt(message.split("-move ")[1].split(" ")[0]);
                 int pos2 = Integer.parseInt(message.split("-move " + pos1 + " ")[1]);
-                event.getGuildChannel().sendMessage(audioManager.moveSong(pos1, pos2)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioManager.moveSong(pos1, pos2)).queue();
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
                 event.getGuildChannel().sendMessage("Cannot parse integer positions! Please use the format: `-move [pos1] [pos2]` where pos1,pos2 are numbers!").queue();
             }
@@ -192,7 +193,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(trackUrl, channel, event.getMember(), true)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(trackUrl, channel, event.getMember(), true)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -205,7 +206,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                event.getGuildChannel().sendMessage(audioHandler.loadAndPlay(ytSearch, channel, event.getMember(), true)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(ytSearch, channel, event.getMember(), true)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -220,7 +221,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 } else if (message.contains("-st")) {
                     indexNumber = Integer.parseInt(message.split("-st ")[1]);
                 }
-                event.getGuildChannel().sendMessage(audioManager.skipTo(indexNumber)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioManager.skipTo(indexNumber)).queue();
             } catch (NumberFormatException ignored) {
                 event.getGuildChannel().sendMessage("Error: Cannot skip to a non-number value!").queue();
             }
@@ -241,7 +242,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 return;
             }
             GenerateGenrePlaylist.limit.put(event.getAuthor(), limit);
-            event.getMessage().reply(audioManager.genreList(event.getAuthor().getIdLong())).queue(m -> {
+            event.getMessage().reply((MessageCreateData) audioManager.genreList(event.getAuthor().getIdLong())).queue(m -> {
                 String[] ones = {"zero", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "\uD83D\uDD1F"};
                 for (int i = 0; i < 10; i++) {
                     m.addReaction(Emoji.fromUnicode(ones[i + 1])).queue();

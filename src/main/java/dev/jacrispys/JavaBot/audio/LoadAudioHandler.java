@@ -9,6 +9,7 @@ import dev.jacrispys.JavaBot.api.libs.utils.mysql.UserStats;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageData;
 
 import java.sql.SQLException;
 import java.util.concurrent.SynchronousQueue;
@@ -17,8 +18,8 @@ import java.util.concurrent.SynchronousQueue;
 public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
 
 
-    public Message loadAndPlay(final String trackUrl, VoiceChannel voiceChannel, Member requester, boolean playTop) {
-        final SynchronousQueue<Message> queue = new SynchronousQueue<>();
+    public MessageData loadAndPlay(final String trackUrl, VoiceChannel voiceChannel, Member requester, boolean playTop) {
+        final SynchronousQueue<MessageData> queue = new SynchronousQueue<>();
         guildAudioManager.getAudioManager().loadItemOrdered(guildAudioManager, trackUrl, new AudioLoadResultHandler() {
 
             @Override
@@ -79,16 +80,14 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
             }
         });
         try {
-            Message message = queue.take();
-            System.out.println(message.getContentRaw());
-            return message;
+            return queue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public Message skipTrack(GuildAudioManager audioManager, Member request) {
+    public MessageData skipTrack(GuildAudioManager audioManager, Member request) {
         return audioManager.skipTrack(request);
     }
 }

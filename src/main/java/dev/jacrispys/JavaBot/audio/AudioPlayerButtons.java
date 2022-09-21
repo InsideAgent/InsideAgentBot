@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,21 +80,21 @@ public class AudioPlayerButtons extends ListenerAdapter {
                 }
                 case ("togglePlayer") -> {
                     audioManager.togglePlayer();
-                    event.editMessage(event.getMessage()).queue();
+                    event.editMessage((MessageEditData) event.getMessage()).queue();
                 }
                 case ("skipTrack") -> {
                     event.deferReply().queue();
                     nowPlayingId.put(fromButtonGuild, event.getMessage().getIdLong());
                     if(audioManager.audioPlayer.getPlayingTrack() == null) {
-                        event.getHook().editOriginal(event.getMessage()).queue();
+                        event.getHook().editOriginal((MessageEditData) event.getMessage()).queue();
                     } else {
-                        event.getHook().editOriginal(audioManager.skipTrack(event.getMember())).queue();
+                        event.getHook().editOriginal((MessageEditData) audioManager.skipTrack(event.getMember())).queue();
                     }
                 }
                 case ("showQueue") -> {
-                    event.reply(audioManager.displayQueue()).setEphemeral(true).queue();
+                    event.reply((MessageCreateData) audioManager.displayQueue()).setEphemeral(true).queue();
                     if (!event.isAcknowledged()) {
-                        event.editMessage(event.getMessage()).queue();
+                        event.editMessage((MessageEditData) event.getMessage()).queue();
                     }
                 }
             }

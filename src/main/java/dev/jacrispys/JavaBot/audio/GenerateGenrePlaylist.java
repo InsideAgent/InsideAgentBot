@@ -6,6 +6,8 @@ import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.SpotifyManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
@@ -13,6 +15,8 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.hc.core5.http.ParseException;
 import org.jetbrains.annotations.NotNull;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
@@ -98,7 +102,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     StringBuilder genre = new StringBuilder();
                     chosenGenres.get(event.getUser()).forEach(pos -> genre.append(Genres.getValues().get(pos)).append(","));
                     Recommendations requestData = genrePlaylist.generatePlaylistFromGenre(genre.toString(), limit.get(event.getUser()));
-                    event.getHook().editOriginal(GuildAudioManager.getGuildAudioManager(event.getGuild()).generateRadio(requestData, channel, event.getMember())).queue();
+                    event.getHook().editOriginal((MessageEditData) GuildAudioManager.getGuildAudioManager(event.getGuild()).generateRadio(requestData, channel, event.getMember())).queue();
 
                 }
                 case ("nextGenre") -> {
@@ -121,21 +125,21 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                 }
                 case ("togglePlayer") -> {
                     audioManager.togglePlayer();
-                    event.editMessage(event.getMessage()).queue();
+                    event.editMessage((MessageEditData) event.getMessage()).queue();
                 }
                 case ("skipTrack") -> {
                     event.deferReply().queue();
                     nowPlayingId.put(fromButtonGuild, event.getMessage().getIdLong());
                     if(audioManager.audioPlayer.getPlayingTrack() == null) {
-                        event.getHook().editOriginal(event.getMessage()).queue();
+                        event.getHook().editOriginal((MessageEditData) event.getMessage()).queue();
                     } else {
-                        event.getHook().editOriginal(audioManager.skipTrack(event.getMember())).queue();
+                        event.getHook().editOriginal((MessageEditData) audioManager.skipTrack(event.getMember())).queue();
                     }
                 }
                 case ("showQueue") -> {
-                    event.reply(audioManager.displayQueue()).setEphemeral(true).queue();
+                    event.reply((MessageCreateData) audioManager.displayQueue()).setEphemeral(true).queue();
                     if (!event.isAcknowledged()) {
-                        event.editMessage(event.getMessage()).queue();
+                        event.editMessage((MessageEditData) event.getMessage()).queue();
                     }
                 }
             }

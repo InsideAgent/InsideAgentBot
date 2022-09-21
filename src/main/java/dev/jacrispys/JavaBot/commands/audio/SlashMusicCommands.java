@@ -14,6 +14,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import net.dv8tion.jda.api.utils.messages.MessageData;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.MalformedURLException;
@@ -139,19 +142,19 @@ public class SlashMusicCommands extends ListenerAdapter {
                     track = Objects.requireNonNull(event.getOption("file")).getAsAttachment().getUrl();
                 }
                 boolean playTop = (commandName.equalsIgnoreCase("playtop"));
-                event.getHook().editOriginal(Objects.requireNonNull(audioHandler.loadAndPlay(track, channel, event.getMember(), playTop))).queue();
+                event.getHook().editOriginal((MessageEditData) audioHandler.loadAndPlay(track, channel, event.getMember(), playTop)).queue();
             }
-            case "skip" -> event.reply(audioHandler.skipTrack(audioManager, event.getMember())).queue();
-            case "volume" -> event.reply(audioManager.setVolume(Objects.requireNonNull(event.getOption("volume")).getAsInt())).queue();
-            case "clear" -> event.reply(audioManager.clearQueue()).queue();
-            case "stop", "pause" -> event.reply(audioManager.pausePlayer()).queue();
-            case "resume" -> event.reply(audioManager.resumePlayer()).queue();
-            case "dc", "leave", "disconnect" -> event.reply(audioManager.disconnectBot()).queue();
-            case "follow" -> event.reply(audioManager.followUser(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
-            case "queue" -> event.reply(audioManager.displayQueue()).queue();
-            case "shuffle" -> event.reply(audioManager.shufflePlayer()).queue();
-            case "song", "song-info", "info" -> event.reply(audioManager.sendTrackInfo()).setEphemeral(true).queue();
-            case "remove" -> event.reply(audioManager.removeTrack(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
+            case "skip" -> event.reply((MessageCreateData) audioHandler.skipTrack(audioManager, event.getMember())).queue();
+            case "volume" -> event.reply((MessageCreateData) audioManager.setVolume(Objects.requireNonNull(event.getOption("volume")).getAsInt())).queue();
+            case "clear" -> event.reply((MessageCreateData) audioManager.clearQueue()).queue();
+            case "stop", "pause" -> event.reply((MessageCreateData) audioManager.pausePlayer()).queue();
+            case "resume" -> event.reply((MessageCreateData) audioManager.resumePlayer()).queue();
+            case "dc", "leave", "disconnect" -> event.reply((MessageCreateData) audioManager.disconnectBot()).queue();
+            case "follow" -> event.reply((MessageCreateData) audioManager.followUser(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
+            case "queue" -> event.reply((MessageCreateData) audioManager.displayQueue()).queue();
+            case "shuffle" -> event.reply((MessageCreateData) audioManager.shufflePlayer()).queue();
+            case "song", "song-info", "info" -> event.reply((MessageCreateData) audioManager.sendTrackInfo()).setEphemeral(true).queue();
+            case "remove" -> event.reply((MessageCreateData) audioManager.removeTrack(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
             case "seek" -> {
                 StringBuilder stringBuilder = new StringBuilder();
                 if (event.getOption("hours") != null) {
@@ -162,19 +165,19 @@ public class SlashMusicCommands extends ListenerAdapter {
                 stringBuilder.append(Objects.requireNonNull(event.getOption("minutes")).getAsInt()).append(":");
                 if (Objects.requireNonNull(event.getOption("seconds")).getAsInt() < 10) stringBuilder.append("0");
                 stringBuilder.append(Objects.requireNonNull(event.getOption("seconds")).getAsInt());
-                event.reply(audioManager.seekTrack(stringBuilder.toString())).queue();
+                event.reply((MessageCreateData) audioManager.seekTrack(stringBuilder.toString())).queue();
             }
-            case "fix" -> event.reply(audioManager.fixAudio(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
+            case "fix" -> event.reply((MessageCreateData) audioManager.fixAudio(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
             case "loop" -> {
-                Message message;
+                MessageData message;
                 if (event.getOption("type") != null) {
                     message = Objects.requireNonNull(event.getOption("type")).getAsString().equalsIgnoreCase("queue") ? audioManager.loopQueue() : audioManager.loopSong();
                 } else message = audioManager.loopQueue();
-                event.reply(message).queue();
+                event.reply((MessageCreateData) message).queue();
             }
-            case "move" -> event.reply(audioManager.moveSong(Objects.requireNonNull(event.getOption("pos1")).getAsInt(), Objects.requireNonNull(event.getOption("pos2")).getAsInt())).queue();
-            case "hijack" -> event.reply(audioManager.enableDJ(event.getUser(), event.getGuild())).queue();
-            case "skipto" -> event.reply(audioManager.skipTo(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
+            case "move" -> event.reply((MessageCreateData) audioManager.moveSong(Objects.requireNonNull(event.getOption("pos1")).getAsInt(), Objects.requireNonNull(event.getOption("pos2")).getAsInt())).queue();
+            case "hijack" -> event.reply((MessageCreateData) audioManager.enableDJ(event.getUser(), event.getGuild())).queue();
+            case "skipto" -> event.reply((MessageCreateData) audioManager.skipTo(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
             case "radio" -> {
                 event.deferReply().setEphemeral(false).queue();
                 if(GenerateGenrePlaylist.reactMessage.containsKey(event.getUser())) {
@@ -186,7 +189,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                     return;
                 }
                 GenerateGenrePlaylist.limit.put(event.getUser(), event.getOption("limit").getAsInt());
-                event.getHook().editOriginal(audioManager.genreList(event.getUser().getIdLong())).queue();
+                event.getHook().editOriginal((MessageEditData) audioManager.genreList(event.getUser().getIdLong())).queue();
                 event.getHook().retrieveOriginal().queue(message -> {
                     String[] ones = {"zero", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "\uD83D\uDD1F"};
                     for (int i = 0; i < 10; i++) {
