@@ -4,9 +4,9 @@ import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -81,7 +81,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 }
                 UUID id = UUID.randomUUID();
                 String buttonId = "builder:" + id;
-                EmbedCLI.getInstance().addEmbedCLI((event.getOption("channel") != null ? event.getOption("channel").getAsChannel() : event.getGuildChannel()), id.toString());
+                EmbedCLI.getInstance().addEmbedCLI((event.getOption("channel") != null ? event.getOption("channel").getAsChannel().asGuildMessageChannel() : event.getGuildChannel().asStandardGuildMessageChannel()), id.toString());
                 event.getHook().editOriginal("Click Below!").setActionRow(Button.primary(buttonId, "Edit Embed?")).queue();
             }
             case "auth-token" -> {

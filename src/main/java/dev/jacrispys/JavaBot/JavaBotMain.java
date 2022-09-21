@@ -17,7 +17,6 @@ import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.commands.audio.GenericMusicCommands;
 import dev.jacrispys.JavaBot.commands.audio.SlashMusicCommands;
 import dev.jacrispys.JavaBot.commands.debug.GenericDebugCommands;
-import dev.jacrispys.JavaBot.commands.debug.SlashDebugCommands;
 import dev.jacrispys.JavaBot.commands.private_message.DefaultPrivateMessageResponse;
 import dev.jacrispys.JavaBot.events.BotStartup;
 import dev.jacrispys.JavaBot.utils.SecretData;

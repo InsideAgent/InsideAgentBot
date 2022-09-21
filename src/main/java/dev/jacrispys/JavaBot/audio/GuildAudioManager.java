@@ -15,14 +15,15 @@ import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.ErrorResponse;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -235,9 +236,9 @@ public class GuildAudioManager {
      * @param trackUrl part of {@param channel} message.
      */
     public Message trackNotFound(String trackUrl) {
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         message.append("Could not find: ").append(trackUrl);
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     /**
@@ -245,9 +246,9 @@ public class GuildAudioManager {
      * @param exception is a non-blocking error.
      */
     public Message trackLoadFailed(String trackUrl, FriendlyException exception) {
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         message.append("Could not play: ").append(trackUrl).append(" \n `Reason: ").append(exception.getLocalizedMessage()).append("`");
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     /**
@@ -290,13 +291,13 @@ public class GuildAudioManager {
      */
     public Message skipTrack(Member request) {
         AudioTrack track = audioPlayer.getPlayingTrack();
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         if (!(requester.get(track).equals(request.getUser()))) {
             sqlStats.incrementUserStat(request, UserStats.SKIP_OTHERS);
         }
         if(track == null) {
             message.append("Could not skip track, as no track was playing!");
-            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+            return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         }
         if (queueLoop || songLoop) {
             message.append("Track skipped! Loop was disabled!");
@@ -306,7 +307,7 @@ public class GuildAudioManager {
         queueLoop = false;
         songLoop = false;
         scheduler.nextTrack();
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     /**
@@ -330,14 +331,14 @@ public class GuildAudioManager {
      * @param i volume # 1-100 for normal audio, 500 max (distortion)
      */
     public Message setVolume(int i) {
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         if (i < 0 || i > 500) {
             message.append("Volume must be between 1-500!");
         } else {
             message.append("Volume is currently set at: ").append(String.valueOf(i));
         }
         audioPlayer.setVolume(i);
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     public static int queuePage;
@@ -347,9 +348,9 @@ public class GuildAudioManager {
      */
     public Message displayQueue() {
         if(audioPlayer.getPlayingTrack() == null) {
-            MessageBuilder message = new MessageBuilder();
+            MessageCreateBuilder message = new MessageCreateBuilder();
             message.append("Cannot display queue when no track is playing!");
-            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+            return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         }
 
         queuePage = 1;
@@ -393,7 +394,7 @@ public class GuildAudioManager {
         buttons.add(Button.primary("nextPage:" + currentGuild, "▶️"));
         buttons.add(Button.primary("lastPage:" + currentGuild, "⏩"));
 
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : (new MessageBuilder().setEmbeds(eb.build()).setActionRows(ActionRow.of(buttons)).build());
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : (new MessageCreateBuilder().setEmbeds(eb.build()).setActionRows(ActionRow.of(buttons)).build());
 
     }
 
@@ -474,10 +475,10 @@ public class GuildAudioManager {
      *                Clears current queue with {@link TrackScheduler#setQueue(BlockingQueue)} by creating a blank {@link LinkedBlockingQueue<AudioTrack>}
      */
     public Message clearQueue() {
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         message.append("Clearing queue!");
         scheduler.setQueue(new LinkedBlockingQueue<>());
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
 
     }
 
@@ -485,39 +486,39 @@ public class GuildAudioManager {
      *                if {@link AudioPlayer#isPaused()} does nothing, otherwise pauses player.
      */
     public Message pausePlayer() {
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         if (!audioPlayer.isPaused()) {
             message.append("Paused ⏸️");
             audioPlayer.setPaused(true);
             if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild, jdaInstance);
             sqlStats.incrementGuildStat(currentGuild, StatType.PAUSE_COUNTER);
         }
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     /**
      *                if {@link AudioPlayer#isPaused()} unpauses the player.
      */
     public Message resumePlayer() {
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         if (audioPlayer.isPaused()) {
             message.append("Resumed ▶️");
             audioPlayer.setPaused(false);
         } else message.append("Audio Player is not paused!");
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     /**
      *                obtains instance of queue with {@link TrackScheduler#getTrackQueue()} and randomizes it with collections.
      */
     public Message shufflePlayer() {
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
         Collections.shuffle(trackList);
         BlockingQueue<AudioTrack> tracks = new LinkedBlockingQueue<>(trackList);
         scheduler.setQueue(tracks);
         message.append("Shuffling! \uD83C\uDFB2");
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     /**
@@ -525,9 +526,9 @@ public class GuildAudioManager {
      */
     public Message sendTrackInfo() {
         if (audioPlayer.getPlayingTrack() == null) {
-            MessageBuilder message = new MessageBuilder();
+            MessageCreateBuilder message = new MessageCreateBuilder();
             message.append("Cannot get track info as no song is playing!");
-            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+            return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         }
         AudioTrack track = audioPlayer.getPlayingTrack();
         EmbedBuilder eb = new EmbedBuilder();
@@ -544,7 +545,7 @@ public class GuildAudioManager {
         eb.addField("Video Source:", track.getInfo().uri + "\n" + durationSlider + "\n" + time, false);
         eb.setAuthor("-Requested By: " + getRequester().get(track).getName(), null, getRequester().get(track).getEffectiveAvatarUrl());
 
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageBuilder().setEmbeds(eb.build()).build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageCreateBuilder().setEmbeds(eb.build()).build();
     }
 
     /**
@@ -553,7 +554,7 @@ public class GuildAudioManager {
     public Message removeTrack(int position) {
         BlockingQueue<AudioTrack> tracks = scheduler.getTrackQueue();
         AudioTrack removed = tracks.stream().toList().get(position - 1);
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         if (removed != null) {
             message.append("Successfully Removed: `").append(removed.getInfo().author).append(" - ").append(removed.getInfo().title).append("` from the queue!");
             ArrayList<AudioTrack> trackList = new ArrayList<>(tracks.stream().toList());
@@ -563,7 +564,7 @@ public class GuildAudioManager {
         } else {
             message.append("Could not locate track at position: ").append(String.valueOf(position)).append("!");
         }
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
 
     }
 
@@ -577,17 +578,17 @@ public class GuildAudioManager {
                     ? input : "00:" + input;
             long millis = dtf.parse(adjust.apply(time)).get(ChronoField.MILLI_OF_DAY);
             audioPlayer.getPlayingTrack().setPosition(millis);
-            MessageBuilder message = new MessageBuilder();
+            MessageCreateBuilder message = new MessageCreateBuilder();
             message.append("Seeking to: ").append(time).append("!");
-            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+            return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         } catch (Exception ex) {
-            MessageBuilder message = new MessageBuilder();
+            MessageCreateBuilder message = new MessageCreateBuilder();
             if(audioPlayer.getPlayingTrack() != null) {
                 message.append("Invalid use of seek! Please use the format 'HH:mm:ss'");
             } else {
                 message.append("No track found playing! Please play a track to use this feature!");
             }
-            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+            return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         }
     }
 
@@ -610,7 +611,7 @@ public class GuildAudioManager {
     @SuppressWarnings("all")
     public Message enableDJ(User sender, Guild guild) {
         if(sender.getIdLong() != 731364923120025705L) {
-            return new MessageBuilder().setContent("You sir! Are not a certified DJ! Begone! ヽ(⌐■_■)ノ♬").build();
+            return new MessageCreateBuilder().setContent("You sir! Are not a certified DJ! Begone! ヽ(⌐■_■)ノ♬").build();
         }
         if (!djEnabled) {
             hijackQueue = new LinkedBlockingQueue<>(scheduler.getTrackQueue());
@@ -623,7 +624,7 @@ public class GuildAudioManager {
             clearQueue();
             skipTrack(guild.getMember(sender));
             scheduler.setQueue(hijackQueue);
-            MessageBuilder message = new MessageBuilder();
+            MessageCreateBuilder message = new MessageCreateBuilder();
             message.append("So sad but, the party is over now! :(");
             return message.build();
         }
@@ -650,7 +651,7 @@ public class GuildAudioManager {
 
             }
         });
-        return new MessageBuilder().setEmbeds(djEnabledEmbed(guild.getJDA())).build();
+        return new MessageCreateBuilder().setEmbeds(djEnabledEmbed(guild.getJDA())).build();
 
 
     }
@@ -662,7 +663,7 @@ public class GuildAudioManager {
      *  manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
      */
     public Message loopQueue() {
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         if (songLoop) {
             songLoop = false;
             queueLoop = false;
@@ -672,28 +673,28 @@ public class GuildAudioManager {
         if (queueLoop) {
             queueLoop = false;
             message.append("Disabled queue loop! \uD83D\uDD01");
-            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+            return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         }
         queueLoop = true;
         message.append("Enabled queue loop! \uD83D\uDD01");
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     /**
      *  manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
      */
     public Message loopSong() {
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         queueLoop = false;
 
         if (songLoop) {
             songLoop = false;
             message.append("Disabled song loop! \uD83D\uDD02");
-            return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+            return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         }
         songLoop = true;
         message.append("Enabled song loop! \uD83D\uDD02");
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     /**
@@ -706,9 +707,9 @@ public class GuildAudioManager {
         AudioTrack song1 = trackList.get(pos1 - 1);
         Collections.swap(trackList, pos1 - 1, pos2 - 1);
         scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         message.append("Moved song `").append(song1.getInfo().author).append(" - ").append(song1.getInfo().title).append("` to position: `").append(String.valueOf(pos2)).append("`");
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     /**
@@ -724,24 +725,24 @@ public class GuildAudioManager {
             trackList.clear();
         }
         scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         message.append("Successfully removed: ").append(String.valueOf((startSize - indexNumber) > 0 ? indexNumber : startSize)).append(" songs from the queue!");
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     public Message followUser(Member sender) {
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         if (Objects.requireNonNull(sender.getVoiceState()).inAudioChannel()) {
             sender.getGuild().getAudioManager().openAudioConnection(sender.getVoiceState().getChannel());
             message.append("Following! ✈️");
         } else {
             message.append("You are not in a VoiceChannel that I can access!");
         }
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     public Message fixAudio(Member sender) {
-        MessageBuilder message = new MessageBuilder();
+        MessageCreateBuilder message = new MessageCreateBuilder();
         if(sender.getVoiceState() != null && sender.getVoiceState().inAudioChannel() && sender.getVoiceState().getChannel() != null) {
             VoiceChannel vc = (VoiceChannel) sender.getVoiceState().getChannel();
             vc.getManager().setRegion(Region.US_WEST).queue();
@@ -750,7 +751,7 @@ public class GuildAudioManager {
         } else {
             message.append("Could not locate your voice channel!");
         }
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     public Message disconnectBot() {
@@ -760,16 +761,16 @@ public class GuildAudioManager {
                 audioPlayer.destroy();
                 jdaInstance.getGuildById(currentGuild).getAudioManager().setAutoReconnect(false);
                 jdaInstance.getGuildById(currentGuild).getAudioManager().closeAudioConnection();
-                MessageBuilder message = new MessageBuilder();
+                MessageCreateBuilder message = new MessageCreateBuilder();
                 EmbedBuilder eb = new EmbedBuilder();
                 eb.setColor(Color.CYAN);
                 eb.setAuthor("|  Destroyed audio player and cleared queue! (Disconnecting ☮️)", null, jdaInstance.getSelfUser().getEffectiveAvatarUrl());
                 message.setEmbeds(eb.build());
-                return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
-            } else return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageBuilder().setContent("I am not currently connected to a voice channel!").build();
+                return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+            } else return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageCreateBuilder().setContent("I am not currently connected to a voice channel!").build();
         } catch (Exception ex) {
             ex.printStackTrace();
-            return new MessageBuilder().setContent("Error").build();
+            return new MessageCreateBuilder().setContent("Error").build();
         }
     }
 
@@ -804,7 +805,7 @@ public class GuildAudioManager {
         embedBuilder.addField("Estimated time until track plays: ", "`" + timeUntilPlay + "`", false);
         embedBuilder.setFooter("From Playlist: ❌");
         embedBuilder.setColor(Color.decode("#34d2eb"));
-        return djEnabled ? new MessageBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageBuilder().setEmbeds(embedBuilder.build()).build();
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build();
     }
 
     public Message genreList(long idLong) {
@@ -838,7 +839,7 @@ public class GuildAudioManager {
         buttons.add(Button.primary("lastGenre:" + idLong, "⏩"));
 
 
-        return new MessageBuilder().setEmbeds(eb.build()).setActionRows(ActionRow.of(buttons)).build();
+        return new MessageCreateBuilder().setEmbeds(eb.build()).setActionRows(ActionRow.of(buttons)).build();
     }
 
 

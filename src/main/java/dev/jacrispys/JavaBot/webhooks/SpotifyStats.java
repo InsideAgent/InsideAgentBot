@@ -3,8 +3,8 @@ package dev.jacrispys.JavaBot.webhooks;
 import club.minnced.discord.webhook.external.JDAWebhookClient;
 import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Webhook;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.managers.WebhookManager;
 
 import java.io.IOException;

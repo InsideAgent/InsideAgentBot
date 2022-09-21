@@ -1,11 +1,10 @@
 package dev.jacrispys.JavaBot.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
@@ -17,6 +16,9 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 
 import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
@@ -29,10 +31,10 @@ import java.util.Map;
 public class EmbedCLI extends ListenerAdapter {
 
     private static EmbedCLI instance = null;
-    private static final Map<String, Channel> buttonIds = new HashMap<>();
+    private static final Map<String, GuildMessageChannel> buttonIds = new HashMap<>();
     private final Map<String, Message> messageId = new HashMap<>();
 
-    public void addEmbedCLI(Channel channel, String buttonId) {
+    public void addEmbedCLI(GuildMessageChannel channel, String buttonId) {
         buttonIds.put(buttonId, channel);
     }
 
@@ -46,8 +48,8 @@ public class EmbedCLI extends ListenerAdapter {
     private EmbedCLI() {
     }
 
-    protected Message generateEmbedMessage(String buttonId) {
-        MessageBuilder message = new MessageBuilder("To be sent in: " + buttonIds.get(buttonId.replace("builder:", "")).getAsMention());
+    protected MessageEditData generateEmbedMessage(String buttonId) {
+        MessageEditBuilder message = new MessageEditBuilder().setContent("To be sent in: " + buttonIds.get(buttonId.replace("builder:", "")).getAsMention());
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Example Title");
         message.setEmbeds(builder.build());
@@ -71,7 +73,7 @@ public class EmbedCLI extends ListenerAdapter {
                         .addOption("Clear Description", "clear-desc", "Removes the description of the Embed!")
                         .build()));
         components.add(ActionRow.of(Button.success("success:" + buttonId.replace("builder:", ""), "Send Embed!")));
-        message.setActionRows(components);
+        message.setComponents(components);
         return message.build();
     }
 
@@ -84,8 +86,8 @@ public class EmbedCLI extends ListenerAdapter {
         } else if (buttonIds.containsKey(event.getComponentId().replace("success:", ""))) {
             MessageEmbed embed = event.getMessage().getEmbeds().get(0);
             TextChannel channel = (TextChannel) buttonIds.get(event.getComponentId().replace("success:", ""));
-            channel.sendMessage(new MessageBuilder(event.getUser().getAsMention() + " sent embed:").setEmbeds(embed).build()).queue();
-            event.editMessage(new MessageBuilder("\u200B").build()).queue();
+            channel.sendMessage(new MessageCreateBuilder().addContent(event.getUser().getAsMention() + " sent embed:").setEmbeds(embed).build()).queue();
+            event.editMessage(new MessageEditBuilder().setContent("\u200B").build()).queue();
             buttonIds.remove(event.getComponentId().replace("success", ""));
             messageId.remove(event.getComponentId().replace("success", ""));
         }

@@ -6,8 +6,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.UserStats;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.sql.SQLException;
 import java.util.concurrent.SynchronousQueue;
@@ -31,7 +32,7 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
                 }
 
                 try {
-                    queue.put(new MessageBuilder().setEmbeds(guildAudioManager.trackLoaded(trackUrl, audioTrack, voiceChannel, playTop)).build());
+                    queue.put(new MessageCreateBuilder().setEmbeds(guildAudioManager.trackLoaded(trackUrl, audioTrack, voiceChannel, playTop)).build());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -52,7 +53,7 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
                     guildAudioManager.setRequester(track, requester.getUser());
                 }
                 try {
-                    queue.put(new MessageBuilder().setEmbeds(guildAudioManager.playListLoaded(trackUrl, audioPlaylist, voiceChannel, playTop)).build());
+                    queue.put(new MessageCreateBuilder().setEmbeds(guildAudioManager.playListLoaded(trackUrl, audioPlaylist, voiceChannel, playTop)).build());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -1,7 +1,7 @@
 package dev.jacrispys.JavaBot.webhooks;
 
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Webhook;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.jetbrains.annotations.Nullable;
 
 public class WebAgent {

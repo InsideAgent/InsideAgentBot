@@ -5,7 +5,6 @@ import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -19,6 +18,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -65,7 +66,7 @@ public class SlashDebugCommands extends ListenerAdapter {
                 event.deferReply(true).queue();
                 long guildId = event.getOption("guildid") != null ? event.getOption("guildid").getAsLong() : event.getGuild().getIdLong();
                 if (guildId == event.getGuild().getIdLong()) {
-                    event.getHook().editOriginal(new MessageBuilder().setEmbeds(latencyEmbed(event.getGuild(), Instant.now().toEpochMilli() - (event.getInteraction().getTimeCreated().toInstant().toEpochMilli()))).build()).queue();
+                    event.getHook().editOriginal(new MessageEditBuilder().setEmbeds(latencyEmbed(event.getGuild(), Instant.now().toEpochMilli() - (event.getInteraction().getTimeCreated().toInstant().toEpochMilli()))).build()).queue();
                 } else {
                     if (!(event.getJDA().getGuilds().contains(event.getJDA().getGuildById(guildId)))) {
                         event.getHook().editOriginal("I cannot return a request from that guild!").queue();
@@ -77,7 +78,7 @@ public class SlashDebugCommands extends ListenerAdapter {
                     event.getUser().openPrivateChannel().queue(dm -> dm.sendMessage("Click below to obtain UUID for latency verification. (Verify in" + guild.getName() + ") \n || " + uuid + " ||").queue(m -> m.delete().queueAfter(10, TimeUnit.MINUTES)));
                 }
             }
-            case "active" -> event.reply(new MessageBuilder().setEmbeds(activePlayers(event.getUser())).build()).setEphemeral(true).queue();
+            case "active" -> event.reply(new MessageCreateBuilder().setEmbeds(activePlayers(event.getUser())).build()).setEphemeral(true).queue();
         }
     }
 
@@ -85,7 +86,7 @@ public class SlashDebugCommands extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (!event.isFromGuild()) return;
         if (trackedGuilds.containsKey(event.getGuild().getIdLong()) && (trackedGuilds.get(event.getGuild().getIdLong()).component1().toString().equals(event.getMessage().getContentRaw()))) {
-            trackedGuilds.get(event.getGuild().getIdLong()).component2().editOriginal(new MessageBuilder().setEmbeds(latencyEmbed(event.getGuild(), (Instant.now().toEpochMilli() - (event.getMessage().getTimeCreated().toInstant().toEpochMilli())))).build()).queue();
+            trackedGuilds.get(event.getGuild().getIdLong()).component2().editOriginal(new MessageEditBuilder().setEmbeds(latencyEmbed(event.getGuild(), (Instant.now().toEpochMilli() - (event.getMessage().getTimeCreated().toInstant().toEpochMilli())))).build()).queue();
             event.getMessage().delete().queue();
             trackedGuilds.remove(event.getGuild().getIdLong());
         }
