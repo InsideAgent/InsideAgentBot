@@ -337,7 +337,7 @@ public class GuildAudioManager {
         if (i < 0 || i > 500) {
             message.setContent("Volume must be between 1-500!");
         } else {
-            message.setContent("Volume is currently set at: " + String.valueOf(i));
+            message.setContent("Volume is currently set at: " + i);
         }
         audioPlayer.setVolume(i);
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
@@ -368,7 +368,7 @@ public class GuildAudioManager {
         for (int i = 0; i <= 10; i++) {
             try {
                 AudioTrack track = trackList.get(i);
-                queue.append("`" + i + 1 + ". " + track.getInfo().author + " - " + track.getInfo().title + "` \n");
+                queue.append("`").append(i).append(1).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append("` \n");
             } catch (IndexOutOfBoundsException ex) {
                 break;
             }
@@ -564,7 +564,7 @@ public class GuildAudioManager {
             tracks = new LinkedBlockingQueue<>(trackList);
             scheduler.setQueue(tracks);
         } else {
-            message.setContent("Could not locate track at position: " + String.valueOf(position) + "!");
+            message.setContent("Could not locate track at position: " + position + "!");
         }
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
 
@@ -710,7 +710,7 @@ public class GuildAudioManager {
         Collections.swap(trackList, pos1 - 1, pos2 - 1);
         scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
         MessageCreateBuilder message = new MessageCreateBuilder();
-        message.setContent("Moved song `" + song1.getInfo().author + " - " + song1.getInfo().title + "` to position: `" + String.valueOf(pos2) + "`");
+        message.setContent("Moved song `" + song1.getInfo().author + " - " + song1.getInfo().title + "` to position: `" + pos2 + "`");
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
@@ -728,7 +728,7 @@ public class GuildAudioManager {
         }
         scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
         MessageCreateBuilder message = new MessageCreateBuilder();
-        message.setContent("Successfully removed: " + String.valueOf((startSize - indexNumber) > 0 ? indexNumber : startSize) + " songs from the queue!");
+        message.setContent("Successfully removed: " + ((startSize - indexNumber) > 0 ? indexNumber : startSize) + " songs from the queue!");
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
@@ -822,7 +822,7 @@ public class GuildAudioManager {
         for (int i = 0; i < 10; i++) {
             try {
                 String genre = Genres.getValues().get(i);
-                genres.append("`" + i + 1 + ". " + genre + "` \n");
+                genres.append("`").append(i).append(1).append(". ").append(genre).append("` \n");
             } catch (IndexOutOfBoundsException ex) {
                 break;
             }
