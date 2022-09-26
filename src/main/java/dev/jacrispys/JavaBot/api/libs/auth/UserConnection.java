@@ -5,7 +5,8 @@ import javax.security.auth.login.LoginException;
 public class UserConnection extends ClientConnection {
 
 
-    protected UserConnection() throws LoginException {
+    protected UserConnection() throws LoginException, InterruptedException {
+        super();
 
     }
 }

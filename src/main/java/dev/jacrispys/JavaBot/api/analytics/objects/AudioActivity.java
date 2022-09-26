@@ -12,11 +12,10 @@ import java.util.Map;
 public class AudioActivity {
 
 
-    private final GuildUser user;
+    private final JdaUser user;
 
     private final Connection connection;
-    private final long guildId;
-    private static Map<AudioUser, AudioActivity> instances = new HashMap<>();
+    private final static Map<AudioUser, AudioActivity> instances = new HashMap<>();
 
     public static AudioActivity getAudioActivity(AudioUser user) throws SQLException {
         return instances.getOrDefault(user, null) != null ? instances.get(user) : new AudioActivity(user);
@@ -25,7 +24,6 @@ public class AudioActivity {
     private AudioActivity(AudioUser user) throws SQLException {
         this.user = user;
         instances.put(user, this);
-        this.guildId = user.getUserGuild().getIdLong();
         this.connection = MySQLConnection.getInstance().getConnection("inside_agent_bot");
     }
 
@@ -61,19 +59,19 @@ public class AudioActivity {
         }
     }
 
-    public long getSongQueues() throws SQLException {
+    public long getSongQueues(long guildId) throws SQLException {
         return (long) getGuildStat(guildId, AudioActivities.SONG_QUEUES);
     }
 
-    public long getPlayListQueues() throws SQLException {
+    public long getPlayListQueues(long guildId) throws SQLException {
         return (long) getGuildStat(guildId, AudioActivities.PLAYLIST_QUEUES);
     }
 
-    public long getListenTimeMillis() throws SQLException {
+    public long getListenTimeMillis(long guildId) throws SQLException {
         return (long) getGuildStat(guildId, AudioActivities.LISTEN_TIME);
     }
 
-    public long getSkipOthers() throws SQLException {
+    public long getSkipOthers(long guildId) throws SQLException {
         return (long) getGuildStat(guildId, AudioActivities.SKIP_OTHERS);
     }
 

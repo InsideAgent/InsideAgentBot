@@ -46,7 +46,7 @@ public class AgentApiBuilder {
         return this;
     }
 
-    public AgentApi build() throws AuthorizationException, LoginException, SQLException {
+    public AgentApi build() throws AuthorizationException, LoginException, SQLException, InterruptedException {
         ClientConnection auth = TokenAuth.authorize(userId, authToken);
         if(auth instanceof DeveloperConnection) {
             return new AgentApiImpl((DeveloperConnection) auth, clientOptions);

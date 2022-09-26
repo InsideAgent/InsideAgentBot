@@ -718,7 +718,7 @@ public class GuildAudioManager {
      * @param indexNumber to skip track queue to (adjusted for 0 index)
      */
     public MessageData skipTo(int indexNumber) {
-        indexNumber -= 1;
+        indexNumber--;
         ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
         int startSize = scheduler.getTrackQueue().size();
         if (indexNumber > 0 && scheduler.getTrackQueue().size() > indexNumber) {

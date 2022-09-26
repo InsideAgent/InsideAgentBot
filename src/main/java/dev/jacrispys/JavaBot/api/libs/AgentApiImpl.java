@@ -1,6 +1,8 @@
 package dev.jacrispys.JavaBot.api.libs;
 
 import dev.jacrispys.JavaBot.api.analytics.GuildAnalytics;
+import dev.jacrispys.JavaBot.api.analytics.objects.JdaUser;
+import dev.jacrispys.JavaBot.api.analytics.objects.JdaUserImpl;
 import dev.jacrispys.JavaBot.api.libs.auth.ClientConnection;
 import dev.jacrispys.JavaBot.api.libs.auth.DeveloperConnection;
 import dev.jacrispys.JavaBot.api.libs.auth.UserConnection;
@@ -68,5 +70,14 @@ public class AgentApiImpl implements AgentApi {
     @Override
     public GuildAnalytics getGuildAnalytics(AgentApi api, long guildId) {
         return new GuildAnalytics(api, guildId);
+    }
+
+    /**
+     * @param userId
+     * @return
+     */
+    @Override
+    public JdaUser getJdaUser(long userId) {
+        return new JdaUserImpl(getConnection().getJDA(), userId);
     }
 }

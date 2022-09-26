@@ -19,12 +19,12 @@ public class TokenAuth {
     protected TokenAuth() throws SQLException {
     }
 
-    public static <T extends ClientConnection> T authorize(long userId, String authToken) throws AuthorizationException, LoginException, SQLException {
+    public static <T extends ClientConnection> T authorize(long userId, String authToken) throws AuthorizationException, LoginException, SQLException, InterruptedException {
         return new TokenAuth().createConnection(userId, authToken);
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends ClientConnection> T createConnection(long userId, String authToken) throws AuthorizationException, LoginException {
+    protected <T extends ClientConnection> T createConnection(long userId, String authToken) throws AuthorizationException, LoginException, InterruptedException {
         if (validateAuth(userId, authToken)) {
             return (T) new DeveloperConnection();
         } else return (T) new UserConnection();
