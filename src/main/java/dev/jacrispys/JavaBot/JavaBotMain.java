@@ -5,6 +5,7 @@ import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySource
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import dev.jacrispys.JavaBot.api.analytics.objects.GuildStats;
 import dev.jacrispys.JavaBot.api.analytics.utils.ListenTimeTracker;
 import dev.jacrispys.JavaBot.api.libs.utils.JavalinManager;
 import dev.jacrispys.JavaBot.audio.AudioPlayerButtons;
@@ -43,8 +44,6 @@ public class JavaBotMain {
     public static AudioPlayerManager audioManager;
 
     public static void main(String[] args) throws Exception {
-
-
         AnsiConsole.systemInstall();
         logger.info("{} - Jansi Installed.", className);
 

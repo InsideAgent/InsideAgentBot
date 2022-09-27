@@ -36,6 +36,7 @@ import se.michaelthelin.spotify.model_objects.specification.TrackSimplified;
 
 import java.awt.*;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.List;

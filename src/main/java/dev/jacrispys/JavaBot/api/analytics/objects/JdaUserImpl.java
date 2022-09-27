@@ -39,7 +39,7 @@ public class JdaUserImpl implements JdaUser {
      */
     @Override
     public GuildUser getGuildUser(Guild guild) {
-        return null;
+        return new GuildUserImpl(jda,this, guild.getMember(getUser()), guild);
     }
 
     /**
@@ -47,6 +47,6 @@ public class JdaUserImpl implements JdaUser {
      */
     @Override
     public User getUser() {
-        return null;
+        return jda.getUserById(this.userId);
     }
 }

@@ -8,6 +8,7 @@ import dev.jacrispys.JavaBot.api.libs.AgentApi;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 
@@ -168,6 +169,11 @@ public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioG
     @Override
     public GuildUser getGuildUser(User user) {
         return null;
+    }
+
+    @Override
+    public Guild getParentGuild() {
+        return jda.getGuildById(guildId);
     }
 
 }
