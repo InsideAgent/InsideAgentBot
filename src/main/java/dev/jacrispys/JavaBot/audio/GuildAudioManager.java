@@ -347,7 +347,7 @@ public class GuildAudioManager {
     public static int queuePage;
 
     /**
-     *                creates a Dynamic {@link MessageEmbed} with multiple {@link Button} to search pages for the current queue
+     * creates a Dynamic {@link MessageEmbed} with multiple {@link Button} to search pages for the current queue
      */
     public MessageData displayQueue() {
         if(audioPlayer.getPlayingTrack() == null) {

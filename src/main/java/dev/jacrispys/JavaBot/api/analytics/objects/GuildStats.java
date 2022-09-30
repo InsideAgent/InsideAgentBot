@@ -1,7 +1,7 @@
 package dev.jacrispys.JavaBot.api.analytics.objects;
 
 import dev.jacrispys.JavaBot.audio.objects.GuildBookmark;
-import dev.jacrispys.JavaBot.audio.objects.GuildPlaylist;
+import dev.jacrispys.JavaBot.audio.objects.GuildPlaylistImpl;
 import dev.jacrispys.JavaBot.api.analytics.AudioGuildAnalytics;
 import dev.jacrispys.JavaBot.api.analytics.GeneralGuildAnalytics;
 import dev.jacrispys.JavaBot.api.libs.AgentApi;
@@ -96,10 +96,10 @@ public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioG
     }
 
     /**
-     * @return custom {@link GuildPlaylist} object
+     * @return custom {@link GuildPlaylistImpl} object
      */
     @Override
-    public GuildPlaylist getGuildPlaylists() {
+    public GuildPlaylistImpl getGuildPlaylists() {
         return null;
     }
 
@@ -108,7 +108,7 @@ public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioG
      * @return a value from the DB of how many plays a guild playlist has
      */
     @Override
-    public long getPlaylistPlays(GuildPlaylist playlist) {
+    public long getPlaylistPlays(GuildPlaylistImpl playlist) {
         return 0;
     }
 
