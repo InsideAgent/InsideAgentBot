@@ -320,7 +320,7 @@ public class GuildAudioManager {
     @SuppressWarnings("all")
     private void attachToVoiceChannel(Guild guild, VoiceChannel channel) {
 
-        boolean inVoiceChannel = guild.getSelfMember().getVoiceState() != null;
+        boolean inVoiceChannel = guild.getSelfMember().getVoiceState().getChannel() != null;
 
         if (!inVoiceChannel) {
             AudioManager manager = guild.getAudioManager();
@@ -759,7 +759,7 @@ public class GuildAudioManager {
 
     public MessageData disconnectBot() {
         try {
-            if(jdaInstance.getGuildById(currentGuild).getSelfMember().getVoiceState().inAudioChannel()) {
+            if(jdaInstance.getGuildById(currentGuild).getSelfMember().getVoiceState().getChannel() == null && this.audioPlayer.getPlayingTrack() == null) {
                 clearQueue();
                 audioPlayer.destroy();
                 jdaInstance.getGuildById(currentGuild).getAudioManager().setAutoReconnect(false);
