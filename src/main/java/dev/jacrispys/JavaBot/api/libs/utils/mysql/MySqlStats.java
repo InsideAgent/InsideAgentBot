@@ -27,8 +27,7 @@ public class MySqlStats {
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId);
             set.beforeFirst();
-            set.next();
-            long statValue = set.getLong(statType.name().toLowerCase());
+            long statValue = set.next() ? set.getLong(statType.name().toLowerCase()) : 0L;
             statement.executeUpdate("UPDATE guild_general_stats SET " + statType.name().toLowerCase() + "=" + (statValue + 1) + " WHERE ID=" + guildId);
             statement.close();
             incrementJdaStat(statType);
@@ -43,8 +42,7 @@ public class MySqlStats {
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId);
             set.beforeFirst();
-            set.next();
-            long statValue = set.getLong(statType.name().toLowerCase());
+            long statValue = set.next() ? set.getLong(statType.name().toLowerCase()) : 0L;
             statement.executeUpdate("UPDATE guild_general_stats SET " + statType.name().toLowerCase() + "=" + (statValue + increment) + " WHERE ID=" + guildId);
             statement.close();
 
@@ -81,8 +79,7 @@ public class MySqlStats {
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM jda_stats");
             set.beforeFirst();
-            set.next();
-            long statValue = set.getLong(statType.name().toLowerCase());
+            long statValue = set.next() ? set.getLong(statType.name().toLowerCase()) : 0L;
             statement.executeUpdate("UPDATE jda_stats SET " + statType.name().toLowerCase() + "=" + (statValue + 1));
             statement.close();
 
@@ -96,8 +93,7 @@ public class MySqlStats {
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM jda_stats");
             set.beforeFirst();
-            set.next();
-            long statValue = set.getLong(statType.name().toLowerCase());
+            long statValue = set.next() ? set.getLong(statType.name().toLowerCase()) : 0L;
             statement.executeUpdate("UPDATE jda_stats SET " + statType.name().toLowerCase() + "=" + (statValue + increment));
             statement.close();
 
@@ -130,8 +126,7 @@ public class MySqlStats {
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + stat.name().toLowerCase() + " FROM audio_activity WHERE guild_id=" + member.getGuild().getIdLong() + " AND user_id=" + member.getIdLong());
             set.beforeFirst();
-            set.next();
-            long statValue = set.getLong(stat.name().toLowerCase());
+            long statValue = set.next() ? set.getLong(stat.name().toLowerCase()) : 0L;
             statement.executeUpdate("UPDATE audio_activity SET " + stat.name().toLowerCase() + "=" + (statValue + 1) + " WHERE guild_id=" + member.getGuild().getIdLong() + " AND user_id=" + member.getIdLong());
             statement.close();
 
@@ -145,8 +140,7 @@ public class MySqlStats {
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + stat.name().toLowerCase() + " FROM audio_activity WHERE guild_id=" + member.getGuild().getIdLong() + " AND user_id=" + member.getIdLong());
             set.beforeFirst();
-            set.next();
-            long statValue = set.getLong(stat.name().toLowerCase());
+            long statValue = set.next() ? set.getLong(stat.name().toLowerCase()) : 0L;
             statement.executeUpdate("UPDATE audio_activity SET " + stat.name().toLowerCase() + "=" + (statValue + increment) + " WHERE guild_id=" + member.getGuild().getIdLong() + " AND user_id=" + member.getIdLong());
             statement.close();
 

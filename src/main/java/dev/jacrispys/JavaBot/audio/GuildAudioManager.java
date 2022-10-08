@@ -320,7 +320,7 @@ public class GuildAudioManager {
     @SuppressWarnings("all")
     private void attachToVoiceChannel(Guild guild, VoiceChannel channel) {
 
-        boolean inVoiceChannel = guild.getSelfMember().getVoiceState().inAudioChannel();
+        boolean inVoiceChannel = guild.getSelfMember().getVoiceState() != null;
 
         if (!inVoiceChannel) {
             AudioManager manager = guild.getAudioManager();
@@ -778,7 +778,7 @@ public class GuildAudioManager {
     }
 
     public MessageData generateRadio(Recommendations requestData, VoiceChannel channel, Member member) {
-        Arrays.stream(requestData.getTracks()).toList().forEach(track -> audioHandler.loadAndPlay("https://open.spotify.com/track/" +  track.getId(), channel, member, false));
+        Arrays.stream(requestData.getTracks()).toList().forEach(track -> audioHandler.loadAndPlay("https://open.spotify.com/track/" +  track.getId(), channel, member, false, true));
         List<String> genres = new ArrayList<>();
         Arrays.stream(requestData.getSeeds()).toList().forEach(seed -> {
             if(seed.getType() == ModelObjectType.GENRE) {

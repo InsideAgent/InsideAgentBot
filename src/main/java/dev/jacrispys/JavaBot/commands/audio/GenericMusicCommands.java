@@ -73,7 +73,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String track = event.getMessage().getAttachments().get(0).getUrl();
-                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(track, channel, event.getMember(), false)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(track, channel, event.getMember(), false, false)).queue();
                 return;
 
             } else if (message.contains("-play")) {
@@ -91,7 +91,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(trackUrl, channel, event.getMember(), false)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(trackUrl, channel, event.getMember(), false, false)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -104,7 +104,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(ytSearch, channel, event.getMember(), false)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(ytSearch, channel, event.getMember(), false, false)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -193,7 +193,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 new URL(trackUrl);
-                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(trackUrl, channel, event.getMember(), true)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(trackUrl, channel, event.getMember(), true, false)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
@@ -206,7 +206,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                     return;
                 }
                 String ytSearch = ("ytsearch:" + trackUrl);
-                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(ytSearch, channel, event.getMember(), true)).queue();
+                event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(ytSearch, channel, event.getMember(), true, false)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
