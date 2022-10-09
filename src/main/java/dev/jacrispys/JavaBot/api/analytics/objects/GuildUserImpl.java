@@ -1,9 +1,11 @@
 package dev.jacrispys.JavaBot.api.analytics.objects;
 
+import jdk.jfr.Name;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 
 public class GuildUserImpl extends JdaUserImpl implements GuildUser {
 

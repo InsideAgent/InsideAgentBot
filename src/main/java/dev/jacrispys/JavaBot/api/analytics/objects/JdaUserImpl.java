@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.entities.User;
 import java.util.List;
 
 public class JdaUserImpl implements JdaUser {
-
     private final long userId;
     private final JDA jda;
 

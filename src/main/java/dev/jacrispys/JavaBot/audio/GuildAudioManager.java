@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageData;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -808,7 +809,7 @@ public class GuildAudioManager {
         embedBuilder.addField("Estimated time until track plays: ", "`" + timeUntilPlay + "`", false);
         embedBuilder.setFooter("From Playlist: ❌");
         embedBuilder.setColor(Color.decode("#34d2eb"));
-        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build();
+        return djEnabled ? new MessageEditBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageEditBuilder().setEmbeds(embedBuilder.build()).build();
     }
 
     public MessageData genreList(long idLong) {

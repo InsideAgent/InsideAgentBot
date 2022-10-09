@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.entities.Guild;
 
 public class PlaylistBuilder {
 
-    // TODO: 9/29/2022 DB setup, impl in Java 
+    // TODO: 9/29/2022 DB setup, impl in Java
 
     private final Guild guild;
     private final String playlistUrl;
@@ -12,6 +12,11 @@ public class PlaylistBuilder {
     private PlaylistBuilder(Guild guild, String playlistUrl) {
         this.guild = guild;
         this.playlistUrl = playlistUrl;
+
+        int i = 0;
+        for(; i < 5; i++) {
+
+        }
     }
 
 
