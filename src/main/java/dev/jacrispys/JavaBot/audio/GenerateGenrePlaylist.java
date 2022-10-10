@@ -39,8 +39,16 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     public static Map<User, Long> reactMessage = new HashMap<>();
     public static Map<User, Integer> limit = new HashMap<>();
 
+    public static Map<User, Integer> popularity = new HashMap<>();
+
     public Recommendations generatePlaylistFromGenre(String genres, int limit) throws IOException, ParseException, SpotifyWebApiException {
         final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).build();
+        return request.execute();
+    }
+
+    public Recommendations generatePlaylistFromGenre(String genres, int limit, int popularity) throws IOException, ParseException, SpotifyWebApiException {
+        if (popularity > 100 || popularity < 0) popularity = 100;
+        final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).max_popularity(popularity).build();
         return request.execute();
     }
 
@@ -48,10 +56,10 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         try {
             Guild fromButtonGuild = event.getGuild();
-            GuildAudioManager audioManager =  GuildAudioManager.getGuildAudioManager(fromButtonGuild);
+            GuildAudioManager audioManager = GuildAudioManager.getGuildAudioManager(fromButtonGuild);
             String buttonName = event.getComponentId().split(":")[0];
             int pages = (int) Math.ceil((float) Genres.getValues().size() / 10);
-            if(event.isAcknowledged()) return;
+            if (event.isAcknowledged()) return;
             if (event.getUser().getIdLong() != Long.parseLong(event.getComponentId().split(":")[1])) {
                 event.reply("Only the owner of this embed can edit it!").setEphemeral(true).queue();
                 return;
@@ -90,7 +98,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     assert event.getMember().getVoiceState() != null;
                     assert event.getMember().getVoiceState().getChannel() != null;
                     channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
-                    if(channel == null) {
+                    if (channel == null) {
                         event.getHook().editOriginal("Cannot add tracks, as you are not in a voice channel!").queue();
                         chosenGenres.remove(event.getUser());
                         reactMessage.remove(event.getUser());
@@ -101,7 +109,15 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     GenerateGenrePlaylist genrePlaylist = new GenerateGenrePlaylist();
                     StringBuilder genre = new StringBuilder();
                     chosenGenres.get(event.getUser()).forEach(pos -> genre.append(Genres.getValues().get(pos)).append(","));
-                    Recommendations requestData = genrePlaylist.generatePlaylistFromGenre(genre.toString(), limit.get(event.getUser()));
+                    Recommendations requestData;
+                    if (popularity.containsKey(event.getUser())) {
+                        requestData = genrePlaylist.generatePlaylistFromGenre(genre.toString(), limit.get(event.getUser()), popularity.get(event.getUser()));
+                    } else {
+                        requestData = genrePlaylist.generatePlaylistFromGenre(genre.toString(), limit.get(event.getUser()));
+                    }
+                    chosenGenres.remove(event.getUser());
+                    reactMessage.remove(event.getUser());
+                    positionList.clear();
                     event.getHook().editOriginal((MessageEditData) GuildAudioManager.getGuildAudioManager(event.getGuild()).generateRadio(requestData, channel, event.getMember())).queue();
 
                 }
@@ -130,7 +146,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                 case ("skipTrack") -> {
                     event.deferReply().queue();
                     nowPlayingId.put(fromButtonGuild, event.getMessage().getIdLong());
-                    if(audioManager.audioPlayer.getPlayingTrack() == null) {
+                    if (audioManager.audioPlayer.getPlayingTrack() == null) {
                         event.getHook().editOriginal((MessageEditData) event.getMessage()).queue();
                     } else {
                         event.getHook().editOriginal((MessageEditData) audioManager.skipTrack(event.getMember())).queue();
@@ -158,8 +174,8 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
         for (int i = 0; i < 10; i++) {
             try {
-                String genre = Genres.getValues().get((page -1) * 10 + i);
-                if(chosenGenres.containsKey(user) && chosenGenres.get(user).contains((page -1) * 10 + (i))) {
+                String genre = Genres.getValues().get((page - 1) * 10 + i);
+                if (chosenGenres.containsKey(user) && chosenGenres.get(user).contains((page - 1) * 10 + (i))) {
                     genres.append("`").append("✅ ").append(genre).append("` \n");
                     continue;
                 }
@@ -171,7 +187,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
         String pageNumber = "Page " + genrePage + "/" + (int) Math.ceil((float) Genres.getValues().size() / 10);
         int size = chosenGenres.containsKey(user) ? chosenGenres.get(user).size() : 0;
-        eb.setFooter(pageNumber + " | Max 5 genres! | "+ size + "/5 Currently Selected!");
+        eb.setFooter(pageNumber + " | Max 5 genres! | " + size + "/5 Currently Selected!");
 
         eb.addField("React to genres you want added!", genres.toString(), false);
         return eb;
@@ -181,18 +197,18 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
-        if(reactMessage.containsValue(event.getMessageIdLong()) && reactMessage.getOrDefault(event.getUser(), 0L) != event.getMessageIdLong()) {
-            if(event.getUser().equals(event.getGuild().getSelfMember().getUser())) return;
+        if (reactMessage.containsValue(event.getMessageIdLong()) && reactMessage.getOrDefault(event.getUser(), 0L) != event.getMessageIdLong()) {
+            if (event.getUser().equals(event.getGuild().getSelfMember().getUser())) return;
             event.getReaction().removeReaction(event.getUser()).queue();
             return;
         }
-        if(reactMessage.getOrDefault(event.getUser(), 0L) == event.getMessageIdLong()) {
+        if (reactMessage.getOrDefault(event.getUser(), 0L) == event.getMessageIdLong()) {
             event.retrieveMessage().queue(msg -> {
                 List<UnicodeEmoji> unicodes = new ArrayList<>();
                 msg.getReactions().forEach(reaction -> unicodes.add(reaction.getEmoji().asUnicode()));
                 msg.editMessageEmbeds(addGenre(msg.getEmbeds().get(0), unicodes.indexOf(event.getReaction().getEmoji().asUnicode()), event.getUser())).queue();
-                Button button =  msg.getButtonById("submitGenres:" + event.getUserIdLong());
-                if(positionList.size() > 0 && !(positionList.size() > 5)) {
+                Button button = msg.getButtonById("submitGenres:" + event.getUserIdLong());
+                if (positionList.size() > 0 && !(positionList.size() > 5)) {
                     button = button.asEnabled();
                 } else {
                     button = button.asDisabled();
@@ -212,7 +228,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         EmbedBuilder eb = new EmbedBuilder(embed);
         List<String> embedLines = new ArrayList<>(List.of(embed.getFields().get(0).getValue().split("\n")));
         int page = genrePage;
-        if((page -1) * 10 + (position) < 125) {
+        if ((page - 1) * 10 + (position) < 125) {
             String line = embedLines.get(position);
             if (!line.startsWith("`✅")) {
                 line = line.replace((position + 1) + ".", "✅");
@@ -226,7 +242,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
             chosenGenres.put(user, positionList);
         }
         embedLines = embedLines.stream()
-                .map(s -> s+"\n")
+                .map(s -> s + "\n")
                 .collect(Collectors.toList());
         StringBuilder builder = new StringBuilder();
         embedLines.forEach(builder::append);
@@ -235,7 +251,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         assert title != null;
         eb.addField(title, builder.toString(), false);
 
-        eb.setFooter("Page " + page + "/13" + " | Max 5 genres! | "+ chosenGenres.get(user).size() + "/5 Currently Selected!");
+        eb.setFooter("Page " + page + "/13" + " | Max 5 genres! | " + chosenGenres.get(user).size() + "/5 Currently Selected!");
 
         return eb.build();
     }
@@ -252,10 +268,10 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
     @Override
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
-        if(reactMessage.containsValue(event.getMessageIdLong())) {
+        if (reactMessage.containsValue(event.getMessageIdLong())) {
             reactMessage.keySet().forEach(key -> reactMessage.values().forEach(value -> {
-                if(value.equals(event.getMessageIdLong())) {
-                    if(reactMessage.get(key).equals(value)) {
+                if (value.equals(event.getMessageIdLong())) {
+                    if (reactMessage.get(key).equals(value)) {
                         chosenGenres.remove(key);
                     }
                 }

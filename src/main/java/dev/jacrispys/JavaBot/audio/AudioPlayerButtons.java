@@ -80,15 +80,14 @@ public class AudioPlayerButtons extends ListenerAdapter {
                 }
                 case ("togglePlayer") -> {
                     audioManager.togglePlayer();
-                    event.editMessage((MessageEditData) event.getMessage()).queue();
+                    event.deferEdit().queue();
                 }
                 case ("skipTrack") -> {
-                    event.deferReply().queue();
                     nowPlayingId.put(fromButtonGuild, event.getMessage().getIdLong());
                     if(audioManager.audioPlayer.getPlayingTrack() == null) {
-                        event.getHook().editOriginal((MessageEditData) event.getMessage()).queue();
+                        event.deferEdit().queue();
                     } else {
-                        event.getHook().editOriginal((MessageEditData) audioManager.skipTrack(event.getMember())).queue();
+                        event.reply((MessageCreateData) audioManager.skipTrack(event.getMember())).queue();
                     }
                 }
                 case ("showQueue") -> {

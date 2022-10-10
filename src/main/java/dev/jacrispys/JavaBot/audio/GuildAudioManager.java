@@ -821,10 +821,10 @@ public class GuildAudioManager {
         eb.setTitle("Choose your genres!");
         eb.setColor(Color.decode("#42f5c8"));
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 1; i <= 10; i++) {
             try {
                 String genre = Genres.getValues().get(i);
-                genres.append("`").append(i).append(1).append(". ").append(genre).append("` \n");
+                genres.append("`").append(i).append(". ").append(genre).append("` \n");
             } catch (IndexOutOfBoundsException ex) {
                 break;
             }
@@ -843,7 +843,7 @@ public class GuildAudioManager {
         buttons.add(Button.primary("lastGenre:" + idLong, "⏩"));
 
 
-        return new MessageCreateBuilder().setEmbeds(eb.build()).setComponents(ActionRow.of(buttons)).build();
+        return new MessageEditBuilder().setEmbeds(eb.build()).setComponents(ActionRow.of(buttons)).build();
     }
 
 

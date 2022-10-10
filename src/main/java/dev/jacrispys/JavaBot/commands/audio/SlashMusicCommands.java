@@ -86,6 +86,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                         .addOption(OptionType.ATTACHMENT, "file", "track to add to queue", true),
                 Commands.slash("radio", "Starts a radio based off picked genre!")
                         .addOption(OptionType.INTEGER, "limit", "The amount of songs that will be generated (max: 500).", true)
+                        .addOption(OptionType.INTEGER, "popularity", "Scale from 0 - 100 on the max popularity a song can have", false)
         );
         return commands;
     }
@@ -189,6 +190,9 @@ public class SlashMusicCommands extends ListenerAdapter {
                     return;
                 }
                 GenerateGenrePlaylist.limit.put(event.getUser(), event.getOption("limit").getAsInt());
+                if(event.getOption("popularity") != null) {
+                    GenerateGenrePlaylist.popularity.put(event.getUser(), event.getOption("popularity").getAsInt());
+                }
                 event.getHook().editOriginal((MessageEditData) audioManager.genreList(event.getUser().getIdLong())).queue();
                 event.getHook().retrieveOriginal().queue(message -> {
                     String[] ones = {"zero", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "\uD83D\uDD1F"};
