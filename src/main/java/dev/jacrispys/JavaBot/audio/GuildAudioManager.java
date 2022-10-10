@@ -239,20 +239,36 @@ public class GuildAudioManager {
     /**
      * @param trackUrl part of {@param channel} message.
      */
-    public MessageData trackNotFound(String trackUrl) {
-        MessageCreateBuilder message = new MessageCreateBuilder();
-        message.setContent("Could not find: " + trackUrl);
-        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+    public MessageData trackNotFound(String trackUrl, boolean editMsg) {
+        MessageData data;
+        if(editMsg) {
+            MessageEditBuilder message = new MessageEditBuilder();
+            message.setContent("Could not find: " + trackUrl);
+            data = message.build();
+        } else {
+            MessageCreateBuilder message = new MessageCreateBuilder();
+            message.setContent("Could not find: " + trackUrl);
+            data = message.build();
+        }
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : data;
     }
 
     /**
      * @param trackUrl  part of {@param channel} message.
      * @param exception is a non-blocking error.
      */
-    public MessageData trackLoadFailed(String trackUrl, FriendlyException exception) {
-        MessageCreateBuilder message = new MessageCreateBuilder();
-        message.setContent("Could not play: " + trackUrl + " \n `Reason: " + exception.getLocalizedMessage() + "`");
-        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+    public MessageData trackLoadFailed(String trackUrl, FriendlyException exception, boolean editMsg) {
+        MessageData data;
+        if(editMsg) {
+            MessageEditBuilder message = new MessageEditBuilder();
+            message.setContent("Could not play: " + trackUrl + " \n `Reason: " + exception.getLocalizedMessage() + "`");
+            data = message.build();
+        } else {
+            MessageCreateBuilder message = new MessageCreateBuilder();
+            message.setContent("Could not play: " + trackUrl + " \n `Reason: " + exception.getLocalizedMessage() + "`");
+            data = message.build();
+        }
+        return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : data;
     }
 
     /**
@@ -367,10 +383,10 @@ public class GuildAudioManager {
         eb.setColor(Color.decode("#42f5c8"));
 
         ArrayList<AudioTrack> trackList = new ArrayList<>(tracks.stream().toList());
-        for (int i = 0; i <= 10; i++) {
+        for (int i = 1; i <= 10; i++) {
             try {
                 AudioTrack track = trackList.get(i);
-                queue.append("`").append(i).append(1).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append("` \n");
+                queue.append("`").append(i).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append("` \n");
             } catch (IndexOutOfBoundsException ex) {
                 break;
             }

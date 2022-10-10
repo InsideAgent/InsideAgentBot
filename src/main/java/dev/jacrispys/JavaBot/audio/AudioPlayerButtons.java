@@ -108,7 +108,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
         eb.clearFields();
         StringBuilder queue = new StringBuilder();
         ArrayList<AudioTrack> trackList = new ArrayList<>(audioManager.scheduler.getTrackQueue().stream().toList());
-        for (int i = 0; i <= 10; i++) {
+        for (int i = 0; i < 10; i++) {
             try {
                 AudioTrack track = trackList.get((page - 1) * 10 + i);
                 String time;

@@ -48,7 +48,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
     public Recommendations generatePlaylistFromGenre(String genres, int limit, int popularity) throws IOException, ParseException, SpotifyWebApiException {
         if (popularity > 100 || popularity < 0) popularity = 100;
-        final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).max_popularity(popularity).build();
+        final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).target_popularity(popularity).build();
         return request.execute();
     }
 

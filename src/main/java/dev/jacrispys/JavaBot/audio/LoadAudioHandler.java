@@ -36,7 +36,6 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
                 }
 
                 try {
-
                     queue.put(editMsg ? new MessageEditBuilder().setEmbeds(guildAudioManager.trackLoaded(trackUrl, audioTrack, voiceChannel, playTop)).build() : new MessageCreateBuilder().setEmbeds(guildAudioManager.trackLoaded(trackUrl, audioTrack, voiceChannel, playTop)).build());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -67,7 +66,7 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
             @Override
             public void noMatches() {
                 try {
-                    queue.put(guildAudioManager.trackNotFound(trackUrl));
+                    queue.put(guildAudioManager.trackNotFound(trackUrl, editMsg));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -77,7 +76,7 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
             @Override
             public void loadFailed(FriendlyException e) {
                 try {
-                    queue.put(guildAudioManager.trackLoadFailed(trackUrl, e));
+                    queue.put(guildAudioManager.trackLoadFailed(trackUrl, e, editMsg));
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
