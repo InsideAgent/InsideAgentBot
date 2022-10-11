@@ -60,9 +60,13 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
             String buttonName = event.getComponentId().split(":")[0];
             int pages = (int) Math.ceil((float) Genres.getValues().size() / 10);
             if (event.isAcknowledged()) return;
-            if (event.getUser().getIdLong() != Long.parseLong(event.getComponentId().split(":")[1])) {
-                event.reply("Only the owner of this embed can edit it!").setEphemeral(true).queue();
-                return;
+            switch (buttonName) {
+                case "firstGenre", "backGenre", "submitGenres", "nextGenre", "lastGenre" -> {
+                    if (event.getUser().getIdLong() != Long.parseLong(event.getComponentId().split(":")[1])) {
+                        event.reply("Only the owner of this embed can edit it!").setEphemeral(true).queue();
+                        return;
+                    }
+                }
             }
 
             switch (buttonName) {
@@ -137,25 +141,6 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                         if (!event.isAcknowledged()) {
                             event.reply("You are already on the final page!").setEphemeral(true).queue();
                         }
-                    }
-                }
-                case ("togglePlayer") -> {
-                    audioManager.togglePlayer();
-                    event.editMessage((MessageEditData) event.getMessage()).queue();
-                }
-                case ("skipTrack") -> {
-                    event.deferReply().queue();
-                    nowPlayingId.put(fromButtonGuild, event.getMessage().getIdLong());
-                    if (audioManager.audioPlayer.getPlayingTrack() == null) {
-                        event.getHook().editOriginal((MessageEditData) event.getMessage()).queue();
-                    } else {
-                        event.getHook().editOriginal((MessageEditData) audioManager.skipTrack(event.getMember())).queue();
-                    }
-                }
-                case ("showQueue") -> {
-                    event.reply((MessageCreateData) audioManager.displayQueue()).setEphemeral(true).queue();
-                    if (!event.isAcknowledged()) {
-                        event.editMessage((MessageEditData) event.getMessage()).queue();
                     }
                 }
             }
