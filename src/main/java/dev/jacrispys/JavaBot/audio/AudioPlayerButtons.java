@@ -110,7 +110,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
         ArrayList<AudioTrack> trackList = new ArrayList<>(audioManager.scheduler.getTrackQueue().stream().toList());
         for (int i = 0; i < 10; i++) {
             try {
-                AudioTrack track = trackList.get((page - 1) * 10 + i);
+                AudioTrack track = trackList.get((page - 1) * 10 + (i - 1));
                 String time;
                 if (track.getDuration() < 3600000) {
                     time = ("[" + DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss") + "]");

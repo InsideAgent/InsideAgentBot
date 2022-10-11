@@ -385,7 +385,7 @@ public class GuildAudioManager {
         ArrayList<AudioTrack> trackList = new ArrayList<>(tracks.stream().toList());
         for (int i = 1; i <= 10; i++) {
             try {
-                AudioTrack track = trackList.get(i);
+                AudioTrack track = trackList.get(i - 1);
                 queue.append("`").append(i).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append("` \n");
             } catch (IndexOutOfBoundsException ex) {
                 break;
