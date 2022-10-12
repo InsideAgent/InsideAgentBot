@@ -615,8 +615,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Maven: net.dv8tion:JDA:5.0.0-alpha.20" level="project" />
-    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: net.dv8tion:JDA:5.0.0-alpha.21" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.36" level="project" />
     <orderEntry type="library" name="Maven: com.neovisionaries:nv-websocket-client:2.14" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okhttp3:okhttp:4.9.3" level="project" />
@@ -634,25 +633,33 @@
     <orderEntry type="library" name="Maven: com.squareup.okio:okio:3.2.0" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okio:okio-jvm:3.2.0" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.6.20" level="project" />
-    <orderEntry type="library" name="Maven: io.javalin:javalin:4.6.4" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-webapp:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-xml:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-servlet:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-security:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util-ajax:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-server:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-client:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-client:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-servlet:9.4.48.v20220622" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.32" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.32" level="project" />
+    <orderEntry type="library" name="Maven: io.javalin:javalin:5.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.toolchain:jetty-jakarta-servlet-api:5.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-webapp:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-servlet:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-security:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-xml:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-jetty-server:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-jetty-common:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-core-common:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-servlet:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-core-server:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-annotations:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-plus:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.transaction:jakarta.transaction-api:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-jndi:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm:9.3" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm-commons:9.3" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm-tree:9.3" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm-analysis:9.3" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-jetty-api:11.0.12" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10" level="project" />
     <orderEntry type="library" name="Maven: com.github.walkyst:lavaplayer-fork:1.3.97.1" level="project" />
     <orderEntry type="library" name="Maven: com.sedmelluq:lava-common:1.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.10" level="project" />
@@ -672,10 +679,10 @@
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.2.11" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.2.11" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jetbrains:annotations:23.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.32" level="project" />
+    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.33" level="project" />
     <orderEntry type="library" name="Maven: org.fusesource.jansi:jansi:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.jline:jline:3.21.0" level="project" />
-    <orderEntry type="library" name="Maven: se.michaelthelin.spotify:spotify-web-api-java:7.2.0" level="project" />
+    <orderEntry type="library" name="Maven: se.michaelthelin.spotify:spotify-web-api-java:7.2.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.9.0" level="project" />
     <orderEntry type="library" name="Maven: com.neovisionaries:nv-i18n:1.29" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents.client5:httpclient5-cache:5.1.3" level="project" />
