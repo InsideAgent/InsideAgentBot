@@ -5,9 +5,7 @@ import dev.jacrispys.JavaBot.api.libs.utils.mysql.UserStats;
 import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,23 +47,20 @@ public class ListenTimeTracker extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-        if (event.getMember().getIdLong() == event.getGuild().getSelfMember().getIdLong()) {
-            listeningGuilds.put(event.getGuild().getIdLong(), event.getChannelJoined().getIdLong());
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+        if (event.getChannelJoined() != null && event.getChannelLeft() == null) {
+            if (event.getMember().getIdLong() == event.getGuild().getSelfMember().getIdLong()) {
+                listeningGuilds.put(event.getGuild().getIdLong(), event.getChannelJoined().getIdLong());
+            }
+        } else if (event.getChannelJoined() != null && event.getChannelLeft() != null) {
+            if (event.getMember().getIdLong() == event.getGuild().getSelfMember().getIdLong()) {
+                listeningGuilds.put(event.getGuild().getIdLong(), event.getChannelJoined().getIdLong());
+            }
+        } else if (event.getChannelLeft() != null && event.getChannelJoined() == null) {
+            if (event.getMember().getIdLong() == event.getGuild().getSelfMember().getIdLong()) {
+                listeningGuilds.remove(event.getMember().getIdLong());
+            }
         }
     }
 
-    @Override
-    public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
-        if (event.getMember().getIdLong() == event.getGuild().getSelfMember().getIdLong()) {
-            listeningGuilds.put(event.getGuild().getIdLong(), event.getChannelJoined().getIdLong());
-        }
-    }
-
-    @Override
-    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        if (event.getMember().getIdLong() == event.getGuild().getSelfMember().getIdLong()) {
-            listeningGuilds.remove(event.getMember().getIdLong());
-        }
-    }
 }

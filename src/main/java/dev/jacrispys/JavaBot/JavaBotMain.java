@@ -29,7 +29,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.fusesource.jansi.AnsiConsole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +42,6 @@ public class JavaBotMain {
     public static AudioPlayerManager audioManager;
 
     public static void main(String[] args) throws Exception {
-        AnsiConsole.systemInstall();
-        logger.info("{} - Jansi Installed.", className);
-
         logger.info("{} - Installing & loading data Files.", className);
         SecretData.initLoginInfo();
         String devToken = SecretData.getToken(true);

@@ -1,7 +1,8 @@
 package dev.jacrispys.JavaBot.commands;
 
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
-import net.dv8tion.jda.api.entities.*;
+import jakarta.annotation.Nonnull;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -16,7 +17,6 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;

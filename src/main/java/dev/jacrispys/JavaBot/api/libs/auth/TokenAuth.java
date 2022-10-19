@@ -2,9 +2,8 @@ package dev.jacrispys.JavaBot.api.libs.auth;
 
 import dev.jacrispys.JavaBot.api.exceptions.AuthorizationException;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
+import jakarta.annotation.Nonnull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
 import java.sql.Connection;
 import java.sql.ResultSet;

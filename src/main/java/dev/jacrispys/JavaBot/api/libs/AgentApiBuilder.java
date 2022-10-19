@@ -6,10 +6,10 @@ import dev.jacrispys.JavaBot.api.libs.auth.DeveloperConnection;
 import dev.jacrispys.JavaBot.api.libs.auth.TokenAuth;
 import dev.jacrispys.JavaBot.api.libs.auth.UserConnection;
 import dev.jacrispys.JavaBot.api.libs.utils.AgentOptions;
+import jakarta.annotation.Nonnull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.helpers.CheckReturnValue;
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
 
