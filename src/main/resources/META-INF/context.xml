@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <Resource name="jdbc/TheDatabase" auth="Container"
+              type="javax.sql.DataSource" driverClassName="com.mysql.jdbc.Driver"
+              maxActive="100" maxIdle="30" maxWait="1000"
+              poolPreparedStatements="true" maxOpenPreparedStatements="100"
+              username="user" password="pass" validationQuery="SELECT 1"
+              url="jdbc:mysql://localhost:3306/inside_agent_bot"/>
+</Context>

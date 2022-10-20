@@ -619,7 +619,6 @@
     <orderEntry type="library" name="Maven: com.neovisionaries:nv-websocket-client:2.14" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okhttp3:okhttp:4.9.3" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.4.10" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.4.10" level="project" />
     <orderEntry type="library" name="Maven: club.minnced:opus-java:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: club.minnced:opus-java-api:1.1.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.java.dev.jna:jna:4.4.0" level="project" />
@@ -629,9 +628,11 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.13.2" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.13.2.2" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.13.2" level="project" />
+    <orderEntry type="library" name="Maven: com.squareup.okio:okio:3.2.0" level="project" />
+    <orderEntry type="library" name="Maven: com.squareup.okio:okio-jvm:3.2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.6.20" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okhttp:okhttp:2.7.5" level="project" />
-    <orderEntry type="library" name="Maven: com.squareup.okio:okio:1.6.0" level="project" />
-    <orderEntry type="library" name="Maven: io.javalin:javalin:5.0.1" level="project" />
+    <orderEntry type="library" name="Maven: io.javalin:javalin:5.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:11.0.12" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty.toolchain:jetty-jakarta-servlet-api:5.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:11.0.12" level="project" />
@@ -675,17 +676,17 @@
     <orderEntry type="library" name="Maven: club.minnced:discord-webhooks:0.8.2" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20210307" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:22.0.0" level="project" />
-    <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.2.11" level="project" />
-    <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.2.11" level="project" />
+    <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.4.4" level="project" />
+    <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.33" level="project" />
-    <orderEntry type="library" name="Maven: se.michaelthelin.spotify:spotify-web-api-java:7.2.1" level="project" />
-    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.9.0" level="project" />
+    <orderEntry type="library" name="Maven: se.michaelthelin.spotify:spotify-web-api-java:7.2.2" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.9.1" level="project" />
     <orderEntry type="library" name="Maven: com.neovisionaries:nv-i18n:1.29" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents.client5:httpclient5-cache:5.1.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents.client5:httpclient5:5.1.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents.core5:httpcore5:5.1.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents.core5:httpcore5-h2:5.1.3" level="project" />
     <orderEntry type="library" name="Maven: javax.annotation:javax.annotation-api:1.3.2" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:2.0.3" level="project" />
   </component>
 </module>
