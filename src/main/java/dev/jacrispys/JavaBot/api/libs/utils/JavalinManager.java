@@ -36,7 +36,7 @@ public class JavalinManager {
         app.get("/", ctx -> {
             String query = ctx.queryParam("code");
             if(query != null) {
-                ctx.result("You May now close the tab.");
+                ctx.result("<body style=color:green;background-color:#121212;> Success! You May now close the tab. </body>");
                 if(!exchangeCode(query)) {
                     ctx.html("<body style=color:red;background-color:#121212;> ERROR: Invalid auth code! Please use a valid discord oauth method! If you think this is an error please contact an administrator. </body>");
                 }
@@ -108,7 +108,7 @@ public class JavalinManager {
     protected String tokenGenerator() {
         SecureRandom secureRandom = new SecureRandom();
         Base64.Encoder encoder = Base64.getUrlEncoder();
-        byte[] randomBytes = new byte[48];
+        byte[] randomBytes = new byte[64];
         secureRandom.nextBytes(randomBytes);
         return encoder.encodeToString(randomBytes);
     }
