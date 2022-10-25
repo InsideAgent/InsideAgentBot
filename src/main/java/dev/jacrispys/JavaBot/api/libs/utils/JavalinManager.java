@@ -1,11 +1,14 @@
 package dev.jacrispys.JavaBot.api.libs.utils;
 
+import dev.jacrispys.JavaBot.JavaBotMain;
 import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import io.javalin.Javalin;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -23,6 +26,7 @@ public class JavalinManager {
     private final String REDIRECT_URI = "https://bot.insideagent.pro";
 
     private final OkHttpClient client = new OkHttpClient();
+    private static final Logger logger = LoggerFactory.getLogger(JavalinManager.class);
 
     public JavalinManager(int port) {
         initJavalin(port);
@@ -63,6 +67,7 @@ public class JavalinManager {
 
             DataObject jsonResponse =  DataObject.fromJson(response.body().byteStream());
             if (jsonResponse.hasKey("error")) {
+                logger.error("Could not create auth token: " + jsonResponse.get("error"));
                 return false;
             } else {
                 String token = jsonResponse.get("token_type") + " " + jsonResponse.getString("access_token");
@@ -77,6 +82,7 @@ public class JavalinManager {
             }
 
         } catch (IOException e) {
+            logger.error("Could not create auth token: " +  e.getMessage());
             return false;
         } catch (SQLException ex) {
             ex.printStackTrace();
