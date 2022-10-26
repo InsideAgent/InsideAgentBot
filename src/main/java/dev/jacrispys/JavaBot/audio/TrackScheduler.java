@@ -53,13 +53,18 @@ public class TrackScheduler extends AudioEventAdapter {
      */
     public void nextTrack() {
         AudioTrack nextTrack = queue.poll();
+        if(nextTrack == null) {
+            InactivityTimer.startInactivity(audioPlayer, guild.getIdLong(), guild.getJDA());
+            return;
+        }
         audioPlayer.startTrack(nextTrack, false);
-        if(nextTrack == null) InactivityTimer.startInactivity(audioPlayer, guild.getIdLong(), guild.getJDA());
     }
 
 
     @SuppressWarnings("all")
     public void onTrackEnd(AudioPlayer audioPlayer, AudioTrack track, AudioTrackEndReason endReason) {
+
+
         if(GuildAudioManager.getGuildAudioManager(guild).queueLoop) {
             User requester = Objects.requireNonNull(GuildAudioManager.getGuildAudioManager(guild).getRequester()).get(track);
             AudioTrack loopedTrack = track.makeClone();
@@ -77,6 +82,7 @@ public class TrackScheduler extends AudioEventAdapter {
                 return;
             }
             nextTrack();
+            if(queue.isEmpty() && audioPlayer.getPlayingTrack() == null) guild.getAudioManager().openAudioConnection(guild.getSelfMember().getVoiceState().getChannel());
         }
     }
 

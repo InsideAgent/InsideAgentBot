@@ -783,6 +783,7 @@ public class GuildAudioManager {
                 jdaInstance.getGuildById(currentGuild).getAudioManager().setAutoReconnect(false);
                 jdaInstance.getGuildById(currentGuild).getAudioManager().closeAudioConnection();
                 System.out.println(jdaInstance.getGuildById(currentGuild).getName());
+                System.out.println(jdaInstance.getGuildById(currentGuild).getSelfMember().getVoiceState().getChannel().getName());
                 MessageCreateBuilder message = new MessageCreateBuilder();
                 EmbedBuilder eb = new EmbedBuilder();
                 eb.setColor(Color.CYAN);
