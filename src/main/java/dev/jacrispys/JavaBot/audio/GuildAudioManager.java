@@ -776,11 +776,13 @@ public class GuildAudioManager {
 
     public MessageData disconnectBot() {
         try {
-            if(jdaInstance.getGuildById(currentGuild).getSelfMember().getVoiceState().getChannel() == null && this.audioPlayer.getPlayingTrack() == null) {
+            if(jdaInstance.getGuildById(currentGuild).getSelfMember().getVoiceState() != null) {
                 clearQueue();
+                if (this.audioPlayer.getPlayingTrack() != null) skipNoMessage();
                 audioPlayer.destroy();
                 jdaInstance.getGuildById(currentGuild).getAudioManager().setAutoReconnect(false);
                 jdaInstance.getGuildById(currentGuild).getAudioManager().closeAudioConnection();
+                System.out.println(jdaInstance.getGuildById(currentGuild).getName());
                 MessageCreateBuilder message = new MessageCreateBuilder();
                 EmbedBuilder eb = new EmbedBuilder();
                 eb.setColor(Color.CYAN);
@@ -788,7 +790,7 @@ public class GuildAudioManager {
                 message.setEmbeds(eb.build());
                 return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
             } else return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageCreateBuilder().setContent("I am not currently connected to a voice channel!").build();
-        } catch (Exception ex) {
+        } catch (NullPointerException ex) {
             ex.printStackTrace();
             return new MessageCreateBuilder().setContent("Error").build();
         }

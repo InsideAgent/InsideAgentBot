@@ -5,6 +5,7 @@ import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import io.javalin.Javalin;
+import io.javalin.http.HttpStatus;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import okhttp3.*;
 import org.slf4j.Logger;
@@ -30,8 +31,8 @@ public class JavalinManager {
 
     public JavalinManager(int port) {
         initJavalin(port);
-        this.CLIENT_ID = SecretData.getDiscordId(true);
-        this.CLIENT_SECRET = SecretData.getDiscordSecret(true);
+        this.CLIENT_ID = SecretData.getDiscordId(false);
+        this.CLIENT_SECRET = SecretData.getDiscordSecret(false);
     }
 
 
@@ -40,10 +41,12 @@ public class JavalinManager {
         app.get("/", ctx -> {
             String query = ctx.queryParam("code");
             if(query != null) {
-                ctx.html("<body style=color:green;background-color:#121212;> Success! You May now close the tab. </body>");
                 if(!exchangeCode(query)) {
                     ctx.html("<body style=color:red;background-color:#121212;> ERROR: Invalid auth code! Please use a valid discord oauth method! If you think this is an error please contact an administrator. </body>");
+                    return;
                 }
+                ctx.redirect("/success");
+                ctx.html("<body style=color:green;background-color:#121212;> Success! You May now close the tab. </body>");
                 return;
             }
             ctx.result("Error, invalid query!");
