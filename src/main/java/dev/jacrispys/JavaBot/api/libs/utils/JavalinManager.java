@@ -40,7 +40,7 @@ public class JavalinManager {
         app.get("/", ctx -> {
             String query = ctx.queryParam("code");
             if(query != null) {
-                ctx.result("<body style=color:green;background-color:#121212;> Success! You May now close the tab. </body>");
+                ctx.html("<body style=color:green;background-color:#121212;> Success! You May now close the tab. </body>");
                 if(!exchangeCode(query)) {
                     ctx.html("<body style=color:red;background-color:#121212;> ERROR: Invalid auth code! Please use a valid discord oauth method! If you think this is an error please contact an administrator. </body>");
                 }
@@ -68,6 +68,7 @@ public class JavalinManager {
             DataObject jsonResponse =  DataObject.fromJson(response.body().byteStream());
             if (jsonResponse.hasKey("error")) {
                 logger.error("Could not create auth token: " + jsonResponse.get("error"));
+                logger.error(jsonResponse.toString());
                 return false;
             } else {
                 String token = jsonResponse.get("token_type") + " " + jsonResponse.getString("access_token");
