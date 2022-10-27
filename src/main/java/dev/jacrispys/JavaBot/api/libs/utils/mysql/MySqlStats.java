@@ -1,6 +1,7 @@
 package dev.jacrispys.JavaBot.api.libs.utils.mysql;
 
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
+import dev.jacrispys.JavaBot.utils.mysql.SqlInstanceManager;
 import net.dv8tion.jda.api.entities.Member;
 
 import java.sql.Connection;
@@ -18,7 +19,7 @@ public class MySqlStats {
     }
 
     protected MySqlStats() throws SQLException {
-        this.connection = MySQLConnection.getInstance().getConnection("inside_agent_bot");
+        this.connection = SqlInstanceManager.getInstance().getConnection();
         instance = this;
     }
 
@@ -32,8 +33,7 @@ public class MySqlStats {
             statement.close();
             incrementJdaStat(statType);
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
         }
     }
 

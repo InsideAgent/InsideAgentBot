@@ -1,7 +1,7 @@
 package dev.jacrispys.JavaBot.api.libs.auth;
 
 import dev.jacrispys.JavaBot.api.exceptions.AuthorizationException;
-import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
+import dev.jacrispys.JavaBot.utils.mysql.SqlInstanceManager;
 import jakarta.annotation.Nonnull;
 
 import javax.security.auth.login.LoginException;
@@ -13,12 +13,12 @@ import java.util.Objects;
 
 public class TokenAuth {
 
-    private Connection connection = MySQLConnection.getInstance().getConnection("inside_agent_bot");
+    private final Connection connection = SqlInstanceManager.getInstance().getConnection();
 
-    protected TokenAuth() throws SQLException {
+    protected TokenAuth() {
     }
 
-    public static <T extends ClientConnection> T authorize(long userId, String authToken) throws AuthorizationException, LoginException, SQLException, InterruptedException {
+    public static <T extends ClientConnection> T authorize(long userId, String authToken) throws AuthorizationException, LoginException, InterruptedException {
         return new TokenAuth().createConnection(userId, authToken);
     }
 
@@ -32,8 +32,7 @@ public class TokenAuth {
     protected boolean validateAuth(long userId, String authToken) throws AuthorizationException {
 
         if (authorizeToken(userId, authToken)) {
-            if (authorizeDevToken(userId, authToken)) return true;
-            return false;
+            return authorizeDevToken(userId, authToken);
         } else throw new AuthorizationException("Could not verify your auth token!");
 
     }
@@ -55,7 +54,7 @@ public class TokenAuth {
     }
 
 
-    protected boolean authorizeDevToken(long userId, @Nonnull String devToken) throws AuthorizationException {
+    protected boolean authorizeDevToken(long userId, @Nonnull String devToken) {
         try {
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = statement.executeQuery("SELECT token, dev_auth from api_auth WHERE user_id=" + userId);

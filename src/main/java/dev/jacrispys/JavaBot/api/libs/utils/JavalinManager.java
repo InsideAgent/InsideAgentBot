@@ -4,6 +4,7 @@ import dev.jacrispys.JavaBot.JavaBotMain;
 import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
+import dev.jacrispys.JavaBot.utils.mysql.SqlInstanceManager;
 import io.javalin.Javalin;
 import io.javalin.http.HttpStatus;
 import net.dv8tion.jda.api.utils.data.DataObject;
@@ -104,7 +105,7 @@ public class JavalinManager {
             long id = userData.getLong("id");
 
             MySQLConnection connection = MySQLConnection.getInstance();
-            Connection sql = connection.getConnection("inside_agent_bot");
+            Connection sql = SqlInstanceManager.getInstance().getConnection();
             Statement stmt = sql.createStatement();
             stmt.execute("REPLACE INTO api_auth (user_id, email, avatar_url, user_tag, token) VALUES ('" + id + "', '" + email + "', '" + avatarUrl + "', '" + user_tag + "', '" + token + "');");
             stmt.close();

@@ -20,6 +20,7 @@ public class MySQLConnection {
     public MySQLConnection() {
         try {
             SecretData.initLoginInfo();
+            this.connection = SqlInstanceManager.getInstance().getConnection();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -30,37 +31,12 @@ public class MySQLConnection {
         return INSTANCE != null ? INSTANCE : new MySQLConnection();
     }
 
-    private final Map<String, Connection> connections = new HashMap<>();
-
-    public Connection getConnection(String dataBase) throws SQLException {
-        if (connections.containsKey(dataBase)) {
-            return connections.get(dataBase);
-        }
-        try {
-            String userName = "Jacrispys";
-            String db_password = SecretData.getDataBasePass();
-
-            String url = "jdbc:mysql://" + SecretData.getDBHost() + ":3306/" + dataBase + "?autoReconnect=true";
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            Connection connection = DriverManager.getConnection(url, userName, db_password);
-            connections.put(dataBase, connection);
-            return connection;
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new SQLException("Could not connect to the given database!");
-        }
-    }
+    private Connection connection = null;
 
 
     public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
         try {
-            Statement statement = getConnection("inside_agent_bot").createStatement();
+            Statement statement = connection.createStatement();
             String command = "INSERT IGNORE INTO guilds (ID,TicketChannel) VALUES (" + guild.getId() + ", " + defaultChannel.getId() + ");";
             statement.execute("INSERT IGNORE INTO guild_general_stats (ID) VALUE (" + guild.getIdLong() + ")");
             for(Member member : guild.getMembers()) {
@@ -78,7 +54,7 @@ public class MySQLConnection {
 
     public void executeCommand(String command) {
         try {
-            Statement statement = getConnection("inside_agent_bot").createStatement();
+            Statement statement = connection.createStatement();
             statement.execute(command);
             statement.close();
 
@@ -89,7 +65,7 @@ public class MySQLConnection {
 
     public void executeUpdate(String command) {
         try {
-            Statement statement = getConnection("inside_agent_bot").createStatement();
+            Statement statement = connection.createStatement();
             statement.executeUpdate(command);
             statement.close();
 
@@ -101,7 +77,7 @@ public class MySQLConnection {
     public ResultSet queryCommand(String query) throws Exception {
         Statement statement;
         try {
-            statement = getConnection("inside_agent_bot").createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             return statement.executeQuery(query);
         } catch (Exception e) {
             throw new Exception("Could not query selected data!");
@@ -110,13 +86,13 @@ public class MySQLConnection {
     }
 
     public void setMusicChannel(Guild guild, long channelId) throws SQLException {
-        Statement statement = getConnection("inside_agent_bot").createStatement();
+        Statement statement = connection.createStatement();
         statement.executeUpdate("UPDATE guilds SET musicChannel=" + channelId + " WHERE ID=" + guild.getId());
         statement.close();
     }
 
     public Long getMusicChannel(Guild guild) throws SQLException {
-        ResultSet rs = getConnection("inside_agent_bot").createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT musicChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
+        ResultSet rs = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT musicChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
         rs.beforeFirst();
         rs.next();
         long channel = rs.getLong("musicChannel");

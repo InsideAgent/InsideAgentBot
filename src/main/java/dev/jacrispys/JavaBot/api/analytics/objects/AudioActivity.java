@@ -1,6 +1,7 @@
 package dev.jacrispys.JavaBot.api.analytics.objects;
 
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
+import dev.jacrispys.JavaBot.utils.mysql.SqlInstanceManager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -24,7 +25,7 @@ public class AudioActivity {
     private AudioActivity(AudioUser user) throws SQLException {
         this.user = user;
         instances.put(user, this);
-        this.connection = MySQLConnection.getInstance().getConnection("inside_agent_bot");
+        this.connection = SqlInstanceManager.getInstance().getConnection();
     }
 
     protected Object getGuildStat(long guildId, AudioActivities activity) throws SQLException {

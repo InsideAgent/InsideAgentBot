@@ -21,7 +21,7 @@ import dev.jacrispys.JavaBot.commands.private_message.DefaultPrivateMessageRespo
 import dev.jacrispys.JavaBot.events.BotStartup;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import dev.jacrispys.JavaBot.utils.SpotifyManager;
-import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
+import dev.jacrispys.JavaBot.utils.mysql.SqlInstanceManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.naming.ConfigurationException;
+import java.sql.Connection;
 
 
 public class JavaBotMain {
@@ -61,8 +62,7 @@ public class JavaBotMain {
         logger.info("{} - Login Successful!", className);
 
         logger.info("{} - Connecting to MySQL Database...", className);
-        MySQLConnection mySQLConnection = new MySQLConnection();
-        mySQLConnection.getConnection("inside_agent_bot");
+        Connection connection = SqlInstanceManager.getInstance().getConnection();
         logger.info("{} - DB-Connection Successful!", className);
 
         logger.info("{} - Connecting to spotify source manager...", className);

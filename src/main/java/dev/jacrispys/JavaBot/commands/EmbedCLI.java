@@ -8,14 +8,15 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
@@ -55,7 +56,7 @@ public class EmbedCLI extends ListenerAdapter {
         message.setEmbeds(builder.build());
         List<ActionRow> components = new ArrayList<>();
         components.add(ActionRow.of(
-                SelectMenu.create("select:" + buttonId.replace("builder:", ""))
+                StringSelectMenu.create("select:" + buttonId.replace("builder:", ""))
                         .addOption("Title", "title", "Set the Embed Title!")
                         .addOption("Color", "color", "Set the embed color!")
                         .addOption("Add Field", "add", "Adds a new field!")
@@ -94,7 +95,7 @@ public class EmbedCLI extends ListenerAdapter {
     }
 
     @Override
-    public void onSelectMenuInteraction(SelectMenuInteractionEvent event) {
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
         if (buttonIds.containsKey(event.getComponentId().replace("select:", ""))) {
             String selection = event.getValues().get(0);
             if (selection.equalsIgnoreCase("add")) {
