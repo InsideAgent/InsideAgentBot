@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Base64;
@@ -106,8 +107,11 @@ public class JavalinManager {
 
             MySQLConnection connection = MySQLConnection.getInstance();
             Connection sql = SqlInstanceManager.getInstance().getConnection();
+            boolean dev = false;
+            ResultSet query = sql.createStatement().executeQuery("SELECT dev_auth FROM api_auth WHERE user_id=" + id);
+            if (!query.wasNull()) dev = query.getBoolean("dev_auth");
             Statement stmt = sql.createStatement();
-            stmt.execute("REPLACE INTO api_auth (user_id, email, avatar_url, user_tag, token) VALUES ('" + id + "', '" + email + "', '" + avatarUrl + "', '" + user_tag + "', '" + token + "');");
+            stmt.execute("REPLACE INTO api_auth (user_id, email, avatar_url, user_tag, token, dev_auth) VALUES ('" + id + "', '" + email + "', '" + avatarUrl + "', '" + user_tag + "', '" + token + "', '" + dev + "');");
             stmt.close();
             UnclassifiedSlashCommands.notifyAuthUser(id, token);
 

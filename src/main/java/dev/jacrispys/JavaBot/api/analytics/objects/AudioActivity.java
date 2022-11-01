@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class AudioActivity {
 
@@ -22,10 +23,10 @@ public class AudioActivity {
         return instances.getOrDefault(user, null) != null ? instances.get(user) : new AudioActivity(user);
     }
 
-    private AudioActivity(AudioUser user) throws SQLException {
+    private AudioActivity(AudioUser user) throws SQLException, ExecutionException, InterruptedException {
         this.user = user;
         instances.put(user, this);
-        this.connection = SqlInstanceManager.getInstance().getConnection();
+        this.connection = SqlInstanceManager.getInstance().getConnectionAsync();
     }
 
     protected Object getGuildStat(long guildId, AudioActivities activity) throws SQLException {

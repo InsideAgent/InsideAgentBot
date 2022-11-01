@@ -62,7 +62,7 @@ public class JavaBotMain {
         logger.info("{} - Login Successful!", className);
 
         logger.info("{} - Connecting to MySQL Database...", className);
-        Connection connection = SqlInstanceManager.getInstance().getConnection();
+        Connection connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
         logger.info("{} - DB-Connection Successful!", className);
 
         logger.info("{} - Connecting to spotify source manager...", className);

@@ -1,55 +1,58 @@
 package dev.jacrispys.JavaBot.utils.mysql;
 
+import dev.jacrispys.JavaBot.JavaBotMain;
+import dev.jacrispys.JavaBot.api.libs.utils.async.AsyncHandler;
+import dev.jacrispys.JavaBot.api.libs.utils.async.AsyncHandlerImpl;
 import dev.jacrispys.JavaBot.utils.SecretData;
+import org.apache.hc.core5.concurrent.CompletedFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
-public class SqlInstanceManager extends Thread {
+public class SqlInstanceManager extends AsyncHandlerImpl {
 
     private Connection connection;
+    private static final Logger logger = LoggerFactory.getLogger(SqlInstanceManager.class);
     private static SqlInstanceManager INSTANCE;
 
     protected SqlInstanceManager() {
         INSTANCE = this;
+        Thread thread = new Thread(this::completeMethod);
+        thread.start();
         try {
-            resetConnection("inside_agent_bot");
-        } catch (SQLException e) {
+            SecretData.initLoginInfo();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        this.start();
     }
 
     public static SqlInstanceManager getInstance() {
         return INSTANCE != null ? INSTANCE : new SqlInstanceManager();
     }
 
-    public Connection getConnection() {
+    private Connection getConnection() {
         return this.connection;
     }
 
-    @Override
-    public void run() {
-        while (true) {
+    public Connection getConnectionAsync() {
+        CompletableFuture<Connection> cf = new CompletableFuture<>();
+        this.methodQueue.add(new MethodRunner(() -> {
             try {
-                if (!connection.isClosed()) {
-                    Thread.sleep(28800000L);
-                    return;
-                }
-                resetConnection("inside_agent_bot");
-
-            } catch (SQLException | InterruptedException ex) {
-                try {
-                    resetConnection("inside_agent_bot");
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+                if (connection.isClosed()) {
+                    cf.complete(resetConnection("inside_agent_bot"));
+                } else cf.complete(connection);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-        }
+        }, cf));
     }
 
-    private void resetConnection(String dataBase) throws SQLException {
+    private Connection resetConnection(String dataBase) throws SQLException {
         try {
             String userName = "Jacrispys";
             String db_password = SecretData.getDataBasePass();
@@ -61,6 +64,7 @@ public class SqlInstanceManager extends Thread {
                 throw new RuntimeException(e);
             }
             connection = DriverManager.getConnection(url, userName, db_password);
+            return connection;
 
 
         } catch (SQLException e) {
