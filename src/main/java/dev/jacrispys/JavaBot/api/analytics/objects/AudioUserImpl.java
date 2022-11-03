@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 
 public class AudioUserImpl extends JdaUserImpl implements AudioUser {
     private final Guild guild;
@@ -18,7 +19,11 @@ public class AudioUserImpl extends JdaUserImpl implements AudioUser {
      */
     @Override
     public AudioActivity getAudioActivity() throws SQLException {
-        return AudioActivity.getAudioActivity(this);
+        try {
+            return AudioActivity.getAudioActivity(this);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

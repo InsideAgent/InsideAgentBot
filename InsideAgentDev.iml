@@ -632,7 +632,7 @@
     <orderEntry type="library" name="Maven: com.squareup.okio:okio-jvm:3.2.0" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.6.20" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okhttp:okhttp:2.7.5" level="project" />
-    <orderEntry type="library" name="Maven: io.javalin:javalin:5.1.1" level="project" />
+    <orderEntry type="library" name="Maven: io.javalin:javalin:5.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:11.0.12" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty.toolchain:jetty-jakarta-servlet-api:5.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:11.0.12" level="project" />
@@ -688,5 +688,6 @@
     <orderEntry type="library" name="Maven: org.apache.httpcomponents.core5:httpcore5-h2:5.1.3" level="project" />
     <orderEntry type="library" name="Maven: javax.annotation:javax.annotation-api:1.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:2.0.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: ch.qos.reload4j:reload4j:1.2.22" level="project" />
   </component>
 </module>

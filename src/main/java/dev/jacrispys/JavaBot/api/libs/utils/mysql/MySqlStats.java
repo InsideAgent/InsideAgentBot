@@ -8,18 +8,19 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.ExecutionException;
 
 public class MySqlStats {
 
     private final Connection connection;
     private static MySqlStats instance = null;
 
-    public static MySqlStats getInstance() throws SQLException {
+    public static MySqlStats getInstance() throws SQLException, ExecutionException, InterruptedException {
         return instance != null ? instance : new MySqlStats();
     }
 
-    protected MySqlStats() throws SQLException {
-        this.connection = SqlInstanceManager.getInstance().getConnection();
+    protected MySqlStats() throws SQLException, ExecutionException, InterruptedException {
+        this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
         instance = this;
     }
 

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class UnclassifiedSlashCommands extends ListenerAdapter {
 
@@ -31,7 +32,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
         this.jda = jda;
         try {
             this.sqlStats = MySqlStats.getInstance();
-        } catch (SQLException ignored) {}
+        } catch (SQLException | ExecutionException | InterruptedException ignored) {}
     }
 
     public void initCommands(List<Guild> guilds) {

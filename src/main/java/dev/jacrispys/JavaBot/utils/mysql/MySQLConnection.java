@@ -8,9 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.concurrent.ExecutionException;
 
 public class MySQLConnection {
 
@@ -20,8 +22,8 @@ public class MySQLConnection {
     public MySQLConnection() {
         try {
             SecretData.initLoginInfo();
-            this.connection = SqlInstanceManager.getInstance().getConnection();
-        } catch (IOException e) {
+            this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
+        } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         INSTANCE = this;
@@ -31,7 +33,7 @@ public class MySQLConnection {
         return INSTANCE != null ? INSTANCE : new MySQLConnection();
     }
 
-    private Connection connection = null;
+    private Connection connection;
 
 
     public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
@@ -48,6 +50,7 @@ public class MySQLConnection {
             return true;
         } catch (Exception e) {
             logger.error("{} - Failed to register DB for Guild - " + guild.getName(), MySQLConnection.class.getSimpleName());
+            e.printStackTrace();
             return false;
         }
     }

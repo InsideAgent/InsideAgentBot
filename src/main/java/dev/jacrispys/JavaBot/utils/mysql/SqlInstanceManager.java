@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class SqlInstanceManager extends AsyncHandlerImpl {
 
@@ -39,17 +40,18 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
         return this.connection;
     }
 
-    public Connection getConnectionAsync() {
+    public CompletableFuture<Connection> getConnectionAsync() throws ExecutionException, InterruptedException {
         CompletableFuture<Connection> cf = new CompletableFuture<>();
         this.methodQueue.add(new MethodRunner(() -> {
             try {
-                if (connection.isClosed()) {
+                if (connection == null || connection.isClosed()) {
                     cf.complete(resetConnection("inside_agent_bot"));
                 } else cf.complete(connection);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }, cf));
+        return cf;
     }
 
     private Connection resetConnection(String dataBase) throws SQLException {

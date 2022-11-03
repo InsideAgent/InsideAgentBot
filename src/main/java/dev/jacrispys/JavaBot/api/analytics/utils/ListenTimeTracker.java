@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +38,7 @@ public class ListenTimeTracker extends ListenerAdapter {
                         try {
                             MySqlStats stats = MySqlStats.getInstance();
                             stats.incrementUserStat(member, 5000L, UserStats.LISTEN_TIME);
-                        } catch (SQLException ex) {
+                        } catch (SQLException | ExecutionException | InterruptedException ex) {
                             ex.printStackTrace();
                         }
                     }

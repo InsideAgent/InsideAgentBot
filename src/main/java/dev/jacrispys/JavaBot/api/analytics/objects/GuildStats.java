@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioGuildAnalytics {
 
@@ -30,7 +31,7 @@ public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioG
         this.jda = jda;
         try {
             this.sqlStats = MySqlStats.getInstance();
-        } catch (SQLException e) {
+        } catch (SQLException | ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

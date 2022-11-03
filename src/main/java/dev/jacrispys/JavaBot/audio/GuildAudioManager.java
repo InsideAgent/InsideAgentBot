@@ -43,6 +43,7 @@ import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 
@@ -97,7 +98,7 @@ public class GuildAudioManager {
         try {
             sqlStats = MySqlStats.getInstance();
             logger.info("{} - Initialized SqlStat Manager for current guild.", className);
-        } catch (SQLException ignored) {
+        } catch (SQLException | ExecutionException | InterruptedException ignored) {
         }
     }
 

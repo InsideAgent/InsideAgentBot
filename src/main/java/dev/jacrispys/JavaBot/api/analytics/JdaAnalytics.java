@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.UserSnowflake;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class JdaAnalytics implements AudioAnalytics, GeneralJdaAnalytics {
 
@@ -22,7 +23,7 @@ public class JdaAnalytics implements AudioAnalytics, GeneralJdaAnalytics {
         this.jda = jda;
         try {
             this.sqlStats = MySqlStats.getInstance();
-        } catch (SQLException e) {
+        } catch (SQLException | ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

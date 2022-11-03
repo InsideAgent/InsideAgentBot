@@ -10,15 +10,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class TokenAuth {
 
-    private final Connection connection = SqlInstanceManager.getInstance().getConnection();
+    private final Connection connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
 
-    protected TokenAuth() {
+    protected TokenAuth() throws ExecutionException, InterruptedException {
     }
 
-    public static <T extends ClientConnection> T authorize(long userId, String authToken) throws AuthorizationException, LoginException, InterruptedException {
+    public static <T extends ClientConnection> T authorize(long userId, String authToken) throws AuthorizationException, LoginException, InterruptedException, ExecutionException {
         return new TokenAuth().createConnection(userId, authToken);
     }
 

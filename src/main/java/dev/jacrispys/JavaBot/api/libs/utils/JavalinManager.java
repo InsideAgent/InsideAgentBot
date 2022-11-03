@@ -19,6 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Base64;
+import java.util.concurrent.ExecutionException;
 
 public class JavalinManager {
 
@@ -105,8 +106,7 @@ public class JavalinManager {
             String token = tokenGenerator();
             long id = userData.getLong("id");
 
-            MySQLConnection connection = MySQLConnection.getInstance();
-            Connection sql = SqlInstanceManager.getInstance().getConnection();
+            Connection sql = SqlInstanceManager.getInstance().getConnectionAsync().get();
             boolean dev = false;
             ResultSet query = sql.createStatement().executeQuery("SELECT dev_auth FROM api_auth WHERE user_id=" + id);
             if (!query.wasNull()) dev = query.getBoolean("dev_auth");
@@ -115,7 +115,7 @@ public class JavalinManager {
             stmt.close();
             UnclassifiedSlashCommands.notifyAuthUser(id, token);
 
-    } catch (SQLException ex) {
+    } catch (SQLException | InterruptedException | ExecutionException ex) {
             ex.printStackTrace();
         }
     }

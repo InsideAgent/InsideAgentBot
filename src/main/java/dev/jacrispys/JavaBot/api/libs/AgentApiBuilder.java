@@ -15,6 +15,7 @@ import org.slf4j.helpers.CheckReturnValue;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 
 public class AgentApiBuilder {
 
@@ -49,7 +50,7 @@ public class AgentApiBuilder {
         return this;
     }
 
-    public AgentApi build() throws AuthorizationException, LoginException, SQLException, InterruptedException, IOException {
+    public AgentApi build() throws AuthorizationException, LoginException, SQLException, InterruptedException, IOException, ExecutionException {
         ClientConnection auth = TokenAuth.authorize(userId, authToken);
         if(auth instanceof DeveloperConnection) {
             return new AgentApiImpl((DeveloperConnection) auth, clientOptions);

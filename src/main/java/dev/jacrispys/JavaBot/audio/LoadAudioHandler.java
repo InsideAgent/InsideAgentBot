@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.SynchronousQueue;
 
 
@@ -31,7 +32,7 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
 
                 try {
                     MySqlStats.getInstance().incrementUserStat(requester, UserStats.SONG_QUEUES);
-                } catch (SQLException e) {
+                } catch (SQLException | ExecutionException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
 
@@ -50,7 +51,7 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
                     } else if (!audioPlaylist.isSearchResult()){
                         MySqlStats.getInstance().incrementUserStat(requester, UserStats.PLAYLIST_QUEUES);
                     }
-                } catch (SQLException e) {
+                } catch (SQLException | ExecutionException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 for (AudioTrack track : audioPlaylist.getTracks()) {

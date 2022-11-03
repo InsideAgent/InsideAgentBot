@@ -19,14 +19,14 @@ public class AudioActivity {
     private final Connection connection;
     private final static Map<AudioUser, AudioActivity> instances = new HashMap<>();
 
-    public static AudioActivity getAudioActivity(AudioUser user) throws SQLException {
+    public static AudioActivity getAudioActivity(AudioUser user) throws SQLException, ExecutionException, InterruptedException {
         return instances.getOrDefault(user, null) != null ? instances.get(user) : new AudioActivity(user);
     }
 
     private AudioActivity(AudioUser user) throws SQLException, ExecutionException, InterruptedException {
         this.user = user;
         instances.put(user, this);
-        this.connection = SqlInstanceManager.getInstance().getConnectionAsync();
+        this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
     }
 
     protected Object getGuildStat(long guildId, AudioActivities activity) throws SQLException {
