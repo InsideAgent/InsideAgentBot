@@ -781,10 +781,9 @@ public class GuildAudioManager {
                 clearQueue();
                 if (this.audioPlayer.getPlayingTrack() != null) skipNoMessage();
                 audioPlayer.destroy();
-                jdaInstance.getGuildById(currentGuild).getAudioManager().setAutoReconnect(false);
                 jdaInstance.getGuildById(currentGuild).getAudioManager().closeAudioConnection();
-                System.out.println(jdaInstance.getGuildById(currentGuild).getName());
-                System.out.println(jdaInstance.getGuildById(currentGuild).getSelfMember().getVoiceState().getChannel().getName());
+                InactivityTimer.getRunnables().get(currentGuild).cancel(true);
+                InactivityTimer.getRunnables().remove(currentGuild);
                 MessageCreateBuilder message = new MessageCreateBuilder();
                 EmbedBuilder eb = new EmbedBuilder();
                 eb.setColor(Color.CYAN);

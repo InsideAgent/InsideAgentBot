@@ -35,12 +35,17 @@ public class InactivityTimer extends ListenerAdapter {
 
     private static final Map<Long, ScheduledFuture<?>> runnables = new HashMap<>();
 
+    public static Map<Long, ScheduledFuture<?>> getRunnables() {
+        return runnables;
+    }
+
     @SuppressWarnings("all")
     public static void startInactivity(AudioPlayer player, Long guildId, JDA jda) {
         long startMillis = System.currentTimeMillis();
         Runnable service = () -> {
             if (player.getPlayingTrack() != null && !player.isPaused() && jda.getGuildById(guildId).getSelfMember().getVoiceState().getChannel().getMembers().size() > 1) {
                 runnables.get(guildId).cancel(true);
+                runnables.remove(guildId);
             } else {
                 if (inactivityExpired(startMillis)) {
                     try {
@@ -53,7 +58,6 @@ public class InactivityTimer extends ListenerAdapter {
                             AudioManager manager = jda.getGuildById(guildId).getAudioManager();
                             GuildAudioManager.getGuildAudioManager(jda.getGuildById(guildId)).clearQueue();
                             GuildAudioManager.getGuildAudioManager(jda.getGuildById(guildId)).audioPlayer.destroy();
-                            manager.setAutoReconnect(false);
                             manager.closeAudioConnection();
                         }
                         if (!runnables.get(guildId).cancel(true)) {
