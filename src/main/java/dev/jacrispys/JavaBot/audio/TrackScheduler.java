@@ -55,6 +55,7 @@ public class TrackScheduler extends AudioEventAdapter {
         AudioTrack nextTrack = queue.poll();
         if(nextTrack == null) {
             InactivityTimer.startInactivity(audioPlayer, guild.getIdLong(), guild.getJDA());
+            audioPlayer.stopTrack();
             return;
         }
         audioPlayer.startTrack(nextTrack, false);
