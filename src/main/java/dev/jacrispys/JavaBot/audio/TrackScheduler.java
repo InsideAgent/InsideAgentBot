@@ -83,7 +83,7 @@ public class TrackScheduler extends AudioEventAdapter {
                 return;
             }
             nextTrack();
-            if(queue.isEmpty() && audioPlayer.getPlayingTrack() == null) guild.getAudioManager().openAudioConnection(guild.getSelfMember().getVoiceState().getChannel());
+            //if(queue.isEmpty() && audioPlayer.getPlayingTrack() == null) guild.getAudioManager().openAudioConnection(guild.getSelfMember().getVoiceState().getChannel());
         }
     }
 

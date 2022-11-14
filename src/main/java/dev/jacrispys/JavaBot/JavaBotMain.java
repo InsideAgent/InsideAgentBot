@@ -53,7 +53,7 @@ public class JavaBotMain {
         }
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(devToken)
+        JDA jda = JDABuilder.createDefault(botToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
@@ -62,7 +62,6 @@ public class JavaBotMain {
         logger.info("{} - Login Successful!", className);
 
         logger.info("{} - Connecting to MySQL Database...", className);
-        //Connection connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
         logger.info("{} - DB-Connection Successful!", className);
 
         logger.info("{} - Connecting to spotify source manager...", className);
