@@ -142,7 +142,8 @@ public class GenericMusicCommands extends ListenerAdapter {
                 event.getGuildChannel().sendMessage((MessageCreateData) audioManager.removeTrack(position)).queue();
             } catch (NumberFormatException ex) {
                 event.getMessage().reply("Could not parse: " + event.getMessage().getContentRaw().split("-remove ")[1] + " as a number!").queue();
-
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                event.getMessage().reply("Could not remove position: " + event.getMessage().getContentRaw().split("-remove ")[1] + " as it is not in bounds of the current queue.").queue();
             }
         } else if (message.contains("-seek")) {
             String time = event.getMessage().getContentRaw().split("-seek ")[1];

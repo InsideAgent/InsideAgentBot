@@ -86,7 +86,9 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 event.getHook().editOriginal("Click Below!").setActionRow(Button.primary(buttonId, "Edit Embed?")).queue();
             }
             case "auth-token" -> {
-                Button auth = Button.primary("auth:" + event.getUser().getId(), "Authenticate ").withEmoji(Emoji.fromUnicode("\uD83D\uDCE2")).withUrl("https://discord.com/api/oauth2/authorize?client_id=786721755560804373&redirect_uri=https%3A%2F%2Fbot.insideagent.pro&response_type=code&scope=identify%20email");
+                String authLink = "https://discord.com/api/oauth2/authorize?client_id=786721755560804373&redirect_uri=https%3A%2F%2Fbot.insideagent.pro&response_type=code&scope=identify%20email";
+                String devLink = "https://discord.com/api/oauth2/authorize?client_id=892555820292796488&redirect_uri=https%3A%2F%2Fbot.insideagent.pro&response_type=code&scope=identify%20email";
+                Button auth = Button.primary("auth:" + event.getUser().getId(), "Authenticate ").withEmoji(Emoji.fromUnicode("\uD83D\uDCE2")).withUrl(authLink);
                 event.reply("Click the button to authorize!").addActionRow(auth).setEphemeral(true).queue();
             }
         }

@@ -313,12 +313,12 @@ public class GuildAudioManager {
     public MessageData skipTrack(Member request) {
         AudioTrack track = audioPlayer.getPlayingTrack();
         MessageCreateBuilder message = new MessageCreateBuilder();
-        if (!(requester.get(track).equals(request.getUser()))) {
-            sqlStats.incrementUserStat(request, UserStats.SKIP_OTHERS);
-        }
         if(track == null) {
             message.setContent("Could not skip track, as no track was playing!");
             return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        }
+        if (!(requester.get(track).equals(request.getUser()))) {
+            sqlStats.incrementUserStat(request, UserStats.SKIP_OTHERS);
         }
         if (queueLoop || songLoop) {
             message.setContent("Track skipped! Loop was disabled!");
@@ -650,7 +650,7 @@ public class GuildAudioManager {
             return message.build();
         }
         VoiceChannel vc = (VoiceChannel) guild.getMember(sender).getVoiceState().getChannel();
-        this.getAudioManager().loadItemOrdered(this, "http://10.0.0.109:8000/mixxx", new AudioLoadResultHandler() {
+        this.getAudioManager().loadItemOrdered(this, "http://" + SecretData.getDBHost() +  ":8000/mixxx.mp3", new AudioLoadResultHandler() {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
