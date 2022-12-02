@@ -49,7 +49,9 @@ public class JavalinManager {
                     return;
                 }
                 ctx.redirect("/success");
-                ctx.html("<body style=color:green;background-color:#121212;> Success! You May now close the tab. </body>");
+                app.get("/success", ctx1 -> {
+                    ctx1.html("<body style=color:green;background-color:#121212;> Success! You May now close the tab. </body>");
+                });
                 return;
             }
             ctx.result("Error, invalid query!");
@@ -108,11 +110,14 @@ public class JavalinManager {
 
             Connection sql = SqlInstanceManager.getInstance().getConnectionAsync().get();
             boolean dev = false;
-            ResultSet query = sql.createStatement().executeQuery("SELECT dev_auth FROM api_auth WHERE user_id=" + id);
-            if (!query.wasNull()) dev = query.getBoolean("dev_auth");
+            ResultSet query;
+            query = sql.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT dev_auth FROM api_auth WHERE user_id=" + id);
+            query.beforeFirst();
+            if (query.next()) dev = query.getBoolean("dev_auth");
             Statement stmt = sql.createStatement();
-            stmt.execute("REPLACE INTO api_auth (user_id, email, avatar_url, user_tag, token, dev_auth) VALUES ('" + id + "', '" + email + "', '" + avatarUrl + "', '" + user_tag + "', '" + token + "', '" + dev + "');");
+            stmt.execute("REPLACE INTO api_auth (user_id, email, avatar_url, user_tag, token, dev_auth) VALUES ('" + id + "', '" + email + "', '" + avatarUrl + "', '" + user_tag + "', '" + token + "', '" + (dev ? 1 : 0) + "');");
             stmt.close();
+            query.close();
             UnclassifiedSlashCommands.notifyAuthUser(id, token);
 
     } catch (SQLException | InterruptedException | ExecutionException ex) {
