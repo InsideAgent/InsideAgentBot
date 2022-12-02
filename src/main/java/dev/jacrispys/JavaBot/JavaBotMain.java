@@ -1,7 +1,7 @@
 package dev.jacrispys.JavaBot;
 
-import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifyConfig;
-import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySourceManager;
+import com.github.topisenpai.lavasrc.applemusic.AppleMusicSourceManager;
+import com.github.topisenpai.lavasrc.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -48,7 +48,7 @@ public class JavaBotMain {
         String devToken = SecretData.getToken(true);
         String botToken = SecretData.getToken();
 
-        if(devToken == null || botToken == null) {
+        if (devToken == null || botToken == null) {
             throw new ConfigurationException("Config file MUST contain VALID values for all fields!");
         }
 
@@ -67,11 +67,11 @@ public class JavaBotMain {
         logger.info("{} - Connecting to spotify source manager...", className);
         audioManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerLocalSource(audioManager);
-        SpotifyConfig spotifyConfig = new SpotifyConfig();
-        spotifyConfig.setClientId(SecretData.getSpotifyId());
-        spotifyConfig.setClientSecret(SecretData.getSpotifySecret());
-        spotifyConfig.setCountryCode("US");
-        audioManager.registerSourceManager(new SpotifySourceManager(null, spotifyConfig, audioManager));
+        String clientId = SecretData.getSpotifyId();
+        String clientSecret = SecretData.getSpotifySecret();
+        String countryCode = "US";
+        audioManager.registerSourceManager(new SpotifySourceManager(null, clientId, clientSecret, countryCode, audioManager));
+        audioManager.registerSourceManager(new AppleMusicSourceManager(null, null, "us", audioManager));
         AudioSourceManagers.registerRemoteSources(audioManager);
         logger.info("{} - Successfully connected to spotify!", className);
 
