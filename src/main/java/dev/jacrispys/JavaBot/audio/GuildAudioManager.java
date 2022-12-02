@@ -317,7 +317,7 @@ public class GuildAudioManager {
             message.setContent("Could not skip track, as no track was playing!");
             return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         }
-        if (!(requester.get(track).equals(request.getUser()))) {
+        if (requester.getOrDefault(track, null) != null && !(requester.get(track).equals(request.getUser()))) {
             sqlStats.incrementUserStat(request, UserStats.SKIP_OTHERS);
         }
         if (queueLoop || songLoop) {
