@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -123,7 +124,7 @@ public class GuildAudioManager {
      * @param voiceChannel to attach bot to
      * @param playTop      is {@link Boolean} for whether the loaded track should be placed at the top of the queue
      */
-    public MessageEmbed trackLoaded(String trackUrl, AudioTrack track, VoiceChannel voiceChannel, boolean playTop) {
+    public MessageEmbed trackLoaded(String trackUrl, AudioTrack track, AudioChannel voiceChannel, boolean playTop) {
         play(voiceChannel.getGuild(), getGuildAudioManager(voiceChannel.getGuild()), track, voiceChannel, playTop);
         sqlStats.incrementGuildStat(currentGuild, StatType.PLAY_COUNTER);
         return djEnabled ? djEnabledEmbed(voiceChannel.getJDA()) : songLoadedMessage(trackUrl, track);
@@ -135,7 +136,7 @@ public class GuildAudioManager {
      * @param voiceChannel to attach bot to
      * @param playTop      is {@link Boolean} for whether the loaded track should be placed at the top of the queue
      */
-    public MessageEmbed playListLoaded(String trackUrl, AudioPlaylist playlist, VoiceChannel voiceChannel, boolean playTop) {
+    public MessageEmbed playListLoaded(String trackUrl, AudioPlaylist playlist, AudioChannel voiceChannel, boolean playTop) {
         AudioTrack firstTrack = playlist.getSelectedTrack();
 
 
@@ -171,7 +172,7 @@ public class GuildAudioManager {
     /**
      * @param trackUrl of loaded song
      * @param track    instance of loaded track
-     * @return a {@link MessageEmbed} to be sent and managed by {@link GuildAudioManager#trackLoaded(String, AudioTrack, VoiceChannel, boolean)}}
+     * @return a {@link MessageEmbed} to be sent and managed by {@link GuildAudioManager#trackLoaded(String, AudioTrack, AudioChannel, boolean)}}
      */
     private MessageEmbed songLoadedMessage(String trackUrl, AudioTrack track) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -203,7 +204,7 @@ public class GuildAudioManager {
      * @param trackUrl   of loaded playlist
      * @param playlist   instance of AudioPlaylist
      * @param singleSong to determine whether the track was a playlist or a single song from a playlist
-     * @return a {@link MessageEmbed} for {@link GuildAudioManager#playListLoaded(String, AudioPlaylist, VoiceChannel, boolean)} to manage and send.
+     * @return a {@link MessageEmbed} for {@link GuildAudioManager#playListLoaded(String, AudioPlaylist, AudioChannel, boolean)} to manage and send.
      */
     private MessageEmbed playlistLoadedMessage(String trackUrl, AudioPlaylist playlist, boolean singleSong) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -295,7 +296,7 @@ public class GuildAudioManager {
      * @param voiceChannel      to attach bot to.
      * @param playTop           boolean arg to add track to top of queue
      */
-    private void play(Guild guild, GuildAudioManager guildAudioManager, AudioTrack track, VoiceChannel voiceChannel, boolean playTop) {
+    private void play(Guild guild, GuildAudioManager guildAudioManager, AudioTrack track, AudioChannel voiceChannel, boolean playTop) {
 
         attachToVoiceChannel(guild, voiceChannel);
         if (playTop) {
@@ -336,7 +337,7 @@ public class GuildAudioManager {
      * @param channel to attach to.
      */
     @SuppressWarnings("all")
-    private void attachToVoiceChannel(Guild guild, VoiceChannel channel) {
+    private void attachToVoiceChannel(Guild guild, AudioChannel channel) {
 
         boolean inVoiceChannel = guild.getSelfMember().getVoiceState().getChannel() != null;
 

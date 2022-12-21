@@ -130,6 +130,7 @@ public class MySqlStats {
             long statValue = set.next() ? set.getLong(stat.name().toLowerCase()) : 0L;
             statement.executeUpdate("UPDATE audio_activity SET " + stat.name().toLowerCase() + "=" + (statValue + 1) + " WHERE guild_id=" + member.getGuild().getIdLong() + " AND user_id=" + member.getIdLong());
             statement.close();
+            set.close();
 
         } catch (SQLException e) {
             e.printStackTrace();

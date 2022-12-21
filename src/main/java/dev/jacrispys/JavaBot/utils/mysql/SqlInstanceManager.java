@@ -19,10 +19,9 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
 
     private Connection connection;
     private static final Logger logger = LoggerFactory.getLogger(SqlInstanceManager.class);
-    private static SqlInstanceManager INSTANCE;
+    private static final SqlInstanceManager INSTANCE = new SqlInstanceManager();
 
     protected SqlInstanceManager() {
-        INSTANCE = this;
         Thread thread = new Thread(this::completeMethod);
         thread.start();
         try {
@@ -33,7 +32,7 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
     }
 
     public static SqlInstanceManager getInstance() {
-        return INSTANCE != null ? INSTANCE : new SqlInstanceManager();
+        return INSTANCE;
     }
 
     private Connection getConnection() {

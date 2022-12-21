@@ -5,8 +5,11 @@ import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.audio.LoadAudioHandler;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -110,11 +113,15 @@ public class SlashMusicCommands extends ListenerAdapter {
         switch (commandName) {
             case "play", "playtop", "fileplay" -> {
                 event.deferReply().setEphemeral(true).queue();
-                VoiceChannel channel;
+                AudioChannel channel = null;
                 assert event.getMember() != null;
                 assert event.getMember().getVoiceState() != null;
                 assert event.getMember().getVoiceState().getChannel() != null;
-                channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+                if (event.getMember().getVoiceState().getChannel().getType() == ChannelType.STAGE) {
+                    channel = (StageChannel) event.getMember().getVoiceState().getChannel();
+                } else {
+                    channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+                }
                 updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
 
                 String track = null;

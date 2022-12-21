@@ -8,6 +8,7 @@ import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.UserStats;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
@@ -22,7 +23,7 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
 
 
     @NotNull
-    public MessageData loadAndPlay(final String trackUrl, VoiceChannel voiceChannel, Member requester, boolean playTop, boolean editMsg) {
+    public MessageData loadAndPlay(final String trackUrl, AudioChannel voiceChannel, Member requester, boolean playTop, boolean editMsg) {
         final SynchronousQueue<MessageData> queue = new SynchronousQueue<>();
         guildAudioManager.getAudioManager().loadItemOrdered(guildAudioManager, trackUrl, new AudioLoadResultHandler() {
 
