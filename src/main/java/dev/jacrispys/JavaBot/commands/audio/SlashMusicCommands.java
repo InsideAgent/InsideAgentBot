@@ -96,6 +96,7 @@ public class SlashMusicCommands extends ListenerAdapter {
 
     protected void updateGuildCommands(Guild guild) {
     }
+
     protected void updateMusicChannel(Guild guild, TextChannel channel) {
         try {
             MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
@@ -117,11 +118,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                 assert event.getMember() != null;
                 assert event.getMember().getVoiceState() != null;
                 assert event.getMember().getVoiceState().getChannel() != null;
-                if (event.getMember().getVoiceState().getChannel().getType() == ChannelType.STAGE) {
-                    channel = (StageChannel) event.getMember().getVoiceState().getChannel();
-                } else {
-                    channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
-                }
+                channel = (AudioChannel) event.getMember().getVoiceState().getChannel();
                 updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
 
                 String track = null;
@@ -152,17 +149,22 @@ public class SlashMusicCommands extends ListenerAdapter {
                 boolean playTop = (commandName.equalsIgnoreCase("playtop"));
                 event.getHook().editOriginal((MessageEditData) audioHandler.loadAndPlay(track, channel, event.getMember(), playTop, true)).queue();
             }
-            case "skip" -> event.reply((MessageCreateData) audioHandler.skipTrack(audioManager, event.getMember())).queue();
-            case "volume" -> event.reply((MessageCreateData) audioManager.setVolume(Objects.requireNonNull(event.getOption("volume")).getAsInt())).queue();
+            case "skip" ->
+                    event.reply((MessageCreateData) audioHandler.skipTrack(audioManager, event.getMember())).queue();
+            case "volume" ->
+                    event.reply((MessageCreateData) audioManager.setVolume(Objects.requireNonNull(event.getOption("volume")).getAsInt())).queue();
             case "clear" -> event.reply((MessageCreateData) audioManager.clearQueue()).queue();
             case "stop", "pause" -> event.reply((MessageCreateData) audioManager.pausePlayer()).queue();
             case "resume" -> event.reply((MessageCreateData) audioManager.resumePlayer()).queue();
             case "dc", "leave", "disconnect" -> event.reply((MessageCreateData) audioManager.disconnectBot()).queue();
-            case "follow" -> event.reply((MessageCreateData) audioManager.followUser(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
+            case "follow" ->
+                    event.reply((MessageCreateData) audioManager.followUser(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
             case "queue" -> event.reply((MessageCreateData) audioManager.displayQueue()).queue();
             case "shuffle" -> event.reply((MessageCreateData) audioManager.shufflePlayer()).queue();
-            case "song", "song-info", "info" -> event.reply((MessageCreateData) audioManager.sendTrackInfo()).setEphemeral(true).queue();
-            case "remove" -> event.reply((MessageCreateData) audioManager.removeTrack(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
+            case "song", "song-info", "info" ->
+                    event.reply((MessageCreateData) audioManager.sendTrackInfo()).setEphemeral(true).queue();
+            case "remove" ->
+                    event.reply((MessageCreateData) audioManager.removeTrack(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
             case "seek" -> {
                 StringBuilder stringBuilder = new StringBuilder();
                 if (event.getOption("hours") != null) {
@@ -175,7 +177,8 @@ public class SlashMusicCommands extends ListenerAdapter {
                 stringBuilder.append(Objects.requireNonNull(event.getOption("seconds")).getAsInt());
                 event.reply((MessageCreateData) audioManager.seekTrack(stringBuilder.toString())).queue();
             }
-            case "fix" -> event.reply((MessageCreateData) audioManager.fixAudio(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
+            case "fix" ->
+                    event.reply((MessageCreateData) audioManager.fixAudio(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
             case "loop" -> {
                 MessageData message;
                 if (event.getOption("type") != null) {
@@ -183,12 +186,15 @@ public class SlashMusicCommands extends ListenerAdapter {
                 } else message = audioManager.loopQueue();
                 event.reply((MessageCreateData) message).queue();
             }
-            case "move" -> event.reply((MessageCreateData) audioManager.moveSong(Objects.requireNonNull(event.getOption("pos1")).getAsInt(), Objects.requireNonNull(event.getOption("pos2")).getAsInt())).queue();
-            case "hijack" -> event.reply((MessageCreateData) audioManager.enableDJ(event.getUser(), event.getGuild())).queue();
-            case "skipto" -> event.reply((MessageCreateData) audioManager.skipTo(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
+            case "move" ->
+                    event.reply((MessageCreateData) audioManager.moveSong(Objects.requireNonNull(event.getOption("pos1")).getAsInt(), Objects.requireNonNull(event.getOption("pos2")).getAsInt())).queue();
+            case "hijack" ->
+                    event.reply((MessageCreateData) audioManager.enableDJ(event.getUser(), event.getGuild())).queue();
+            case "skipto" ->
+                    event.reply((MessageCreateData) audioManager.skipTo(Objects.requireNonNull(event.getOption("index")).getAsInt())).queue();
             case "radio" -> {
                 event.deferReply().setEphemeral(false).queue();
-                if(GenerateGenrePlaylist.reactMessage.containsKey(event.getUser())) {
+                if (GenerateGenrePlaylist.reactMessage.containsKey(event.getUser())) {
                     event.getHook().editOriginal("Cannot use this command until current request has been fulfilled!").queue();
                     return;
                 }
@@ -197,7 +203,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                     return;
                 }
                 GenerateGenrePlaylist.limit.put(event.getUser(), event.getOption("limit").getAsInt());
-                if(event.getOption("popularity") != null) {
+                if (event.getOption("popularity") != null) {
                     GenerateGenrePlaylist.popularity.put(event.getUser(), event.getOption("popularity").getAsInt());
                 }
                 event.getHook().editOriginal((MessageEditData) audioManager.genreList(event.getUser().getIdLong())).queue();
