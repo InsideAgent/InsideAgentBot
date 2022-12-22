@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
@@ -67,6 +68,8 @@ public class GuildAudioManager {
     private static JDA jdaInstance = null;
 
     private MySqlStats sqlStats;
+
+    private boolean stageEvent = false;
 
     /**
      * @param guild is the instance to retrieve
@@ -162,10 +165,14 @@ public class GuildAudioManager {
     /**
      * @param jda to get self instance
      */
-    private MessageEmbed djEnabledEmbed(JDA jda) {
+    public MessageEmbed djEnabledEmbed(JDA jda) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(Color.decode("#e03131"));
-        embedBuilder.setAuthor( "|   Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬", null, jda.getSelfUser().getEffectiveAvatarUrl());
+        if (djEnabled) {
+            embedBuilder.setAuthor("|   Can't Access this command while the DJ is in charge! ヽ(⌐■_■)ノ♬", null, jda.getSelfUser().getEffectiveAvatarUrl());
+        } else if (stageEvent) {
+            embedBuilder.setAuthor("|   Can't Access this command while a stage event is taking place.", null, jda.getSelfUser().getEffectiveAvatarUrl());
+        }
         return embedBuilder.build();
     }
 
@@ -289,6 +296,10 @@ public class GuildAudioManager {
         return this.requester;
     }
 
+    public boolean isStageEvent() {
+        return stageEvent;
+    }
+
     /**
      * @param guild             instance for the audio to be played in
      * @param guildAudioManager Instance of this class to load the track
@@ -332,6 +343,7 @@ public class GuildAudioManager {
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
+
     /**
      * @param guild   to find active voice channel in.
      * @param channel to attach to.
@@ -346,6 +358,14 @@ public class GuildAudioManager {
             manager.setSendingHandler(sendHandler);
             manager.openAudioConnection(channel);
             manager.setAutoReconnect(true);
+        }
+    }
+
+    public void stageUpdate(boolean stageStarted) {
+        if (stageStarted) {
+            stageEvent = true;
+        } else {
+            stageEvent = false;
         }
     }
 

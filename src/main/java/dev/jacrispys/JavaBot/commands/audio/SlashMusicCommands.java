@@ -12,6 +12,10 @@ import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.stage.StageInstanceCreateEvent;
+import net.dv8tion.jda.api.events.stage.StageInstanceDeleteEvent;
+import net.dv8tion.jda.api.events.stage.update.StageInstanceUpdateTopicEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -106,11 +110,46 @@ public class SlashMusicCommands extends ListenerAdapter {
 
     }
 
+    private StageInstance stageInstance;
+
+    @Override
+    public void onStageInstanceCreate(@NotNull StageInstanceCreateEvent event) {
+        GuildAudioManager manager = GuildAudioManager.getGuildAudioManager(event.getGuild());
+        manager.stageUpdate(true);
+        stageInstance = event.getInstance();
+    }
+
+    @Override
+    public void onStageInstanceDelete(@NotNull StageInstanceDeleteEvent event) {
+        GuildAudioManager manager = GuildAudioManager.getGuildAudioManager(event.getGuild());
+        manager.stageUpdate(false);
+        stageInstance = null;
+    }
+
+    @Override
+    public void onReady(@NotNull ReadyEvent event) {
+        for (Guild guild : event.getJDA().getGuilds()) {
+            for (StageChannel channel : guild.getStageChannels()) {
+                if (channel.getStageInstance() != null) {
+                    GuildAudioManager manager = GuildAudioManager.getGuildAudioManager(guild);
+                    manager.stageUpdate(true);
+                    stageInstance = channel.getStageInstance();
+                }
+            }
+        }
+    }
+
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         String commandName = event.getName();
         GuildAudioManager audioManager = GuildAudioManager.getGuildAudioManager(event.getGuild());
         LoadAudioHandler audioHandler = new LoadAudioHandler(audioManager);
+        if (audioManager.isStageEvent() && stageInstance != null) {
+            if ((!stageInstance.getChannel().isModerator(event.getMember())) && (!stageInstance.getSpeakers().contains(event.getMember()))) {
+                event.replyEmbeds(audioManager.djEnabledEmbed(event.getJDA())).queue();
+                return;
+            }
+        }
         switch (commandName) {
             case "play", "playtop", "fileplay" -> {
                 event.deferReply().setEphemeral(true).queue();
@@ -118,7 +157,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                 assert event.getMember() != null;
                 assert event.getMember().getVoiceState() != null;
                 assert event.getMember().getVoiceState().getChannel() != null;
-                channel = (AudioChannel) event.getMember().getVoiceState().getChannel();
+                channel = event.getMember().getVoiceState().getChannel();
                 updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
 
                 String track = null;
