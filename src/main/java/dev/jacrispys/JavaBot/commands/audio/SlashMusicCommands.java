@@ -4,18 +4,16 @@ import dev.jacrispys.JavaBot.audio.GenerateGenrePlaylist;
 import dev.jacrispys.JavaBot.audio.GuildAudioManager;
 import dev.jacrispys.JavaBot.audio.LoadAudioHandler;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.StageInstance;
 import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.stage.StageInstanceCreateEvent;
 import net.dv8tion.jda.api.events.stage.StageInstanceDeleteEvent;
-import net.dv8tion.jda.api.events.stage.update.StageInstanceUpdateTopicEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -29,7 +27,10 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class SlashMusicCommands extends ListenerAdapter {
 
@@ -195,7 +196,7 @@ public class SlashMusicCommands extends ListenerAdapter {
             case "clear" -> event.reply((MessageCreateData) audioManager.clearQueue()).queue();
             case "stop", "pause" -> event.reply((MessageCreateData) audioManager.pausePlayer()).queue();
             case "resume" -> event.reply((MessageCreateData) audioManager.resumePlayer()).queue();
-            case "dc", "leave", "disconnect" -> event.reply((MessageCreateData) audioManager.disconnectBot()).queue();
+            case "dc", "leave", "disconnect" -> event.reply((MessageCreateData) audioManager.disconnectBot(event.getMember())).queue();
             case "follow" ->
                     event.reply((MessageCreateData) audioManager.followUser(Objects.requireNonNull(event.getMember()))).setEphemeral(true).queue();
             case "queue" -> event.reply((MessageCreateData) audioManager.displayQueue()).queue();

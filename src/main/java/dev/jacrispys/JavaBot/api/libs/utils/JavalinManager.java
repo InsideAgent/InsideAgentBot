@@ -1,12 +1,9 @@
 package dev.jacrispys.JavaBot.api.libs.utils;
 
-import dev.jacrispys.JavaBot.JavaBotMain;
 import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.utils.SecretData;
-import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.mysql.SqlInstanceManager;
 import io.javalin.Javalin;
-import io.javalin.http.HttpStatus;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import okhttp3.*;
 import org.slf4j.Logger;

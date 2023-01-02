@@ -129,7 +129,7 @@ public class GenericMusicCommands extends ListenerAdapter {
         } else if (message.equalsIgnoreCase("-shuffle")) {
             event.getGuildChannel().sendMessage((MessageCreateData) audioManager.shufflePlayer()).queue();
         } else if (message.equalsIgnoreCase("-dc") || message.equalsIgnoreCase("-disconnect") || message.equalsIgnoreCase("-leave")) {
-            event.getGuildChannel().sendMessage((MessageCreateData) audioManager.disconnectBot()).queue();
+            event.getGuildChannel().sendMessage((MessageCreateData) audioManager.disconnectBot(event.getMember())).queue();
         } else if (message.equalsIgnoreCase("-move") || message.equalsIgnoreCase("-follow")) {
             audioManager.followUser(event.getMember());
         } else if (message.equalsIgnoreCase("-song") || message.equalsIgnoreCase("-info")) {

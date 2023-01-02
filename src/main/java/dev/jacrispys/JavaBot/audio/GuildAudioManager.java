@@ -11,13 +11,15 @@ import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.UserStats;
 import dev.jacrispys.JavaBot.audio.objects.Genres;
-import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.SecretData;
+import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Region;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
@@ -39,7 +41,6 @@ import se.michaelthelin.spotify.model_objects.specification.TrackSimplified;
 
 import java.awt.*;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.List;
@@ -362,11 +363,7 @@ public class GuildAudioManager {
     }
 
     public void stageUpdate(boolean stageStarted) {
-        if (stageStarted) {
-            stageEvent = true;
-        } else {
-            stageEvent = false;
-        }
+        stageEvent = stageStarted;
     }
 
     /**
@@ -796,13 +793,13 @@ public class GuildAudioManager {
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
-    public MessageData disconnectBot() {
+    public MessageData disconnectBot(Member member) {
         try {
-            if(jdaInstance.getGuildById(currentGuild).getSelfMember().getVoiceState() != null) {
+            if(member.getGuild().getSelfMember().getVoiceState() != null) {
                 clearQueue();
                 if (this.audioPlayer.getPlayingTrack() != null) skipNoMessage();
                 audioPlayer.destroy();
-                jdaInstance.getGuildById(currentGuild).getAudioManager().closeAudioConnection();
+                member.getGuild().getAudioManager().closeAudioConnection();
                 if (InactivityTimer.getRunnables().containsKey(currentGuild)) {
                     InactivityTimer.getRunnables().get(currentGuild).cancel(true);
                     InactivityTimer.getRunnables().remove(currentGuild);
