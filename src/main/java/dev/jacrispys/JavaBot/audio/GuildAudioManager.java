@@ -1,17 +1,23 @@
 package dev.jacrispys.JavaBot.audio;
 
+import com.github.topisenpai.lavasrc.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeHttpContextFilter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
+import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
+import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterfaceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.jacrispys.JavaBot.JavaBotMain;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.StatType;
 import dev.jacrispys.JavaBot.api.libs.utils.mysql.UserStats;
 import dev.jacrispys.JavaBot.audio.objects.Genres;
 import dev.jacrispys.JavaBot.utils.SecretData;
+import dev.jacrispys.JavaBot.utils.SpotifyManager;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -32,6 +38,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.http.client.methods.HttpGet;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +47,7 @@ import se.michaelthelin.spotify.model_objects.specification.Recommendations;
 import se.michaelthelin.spotify.model_objects.specification.TrackSimplified;
 
 import java.awt.*;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
@@ -395,6 +403,7 @@ public class GuildAudioManager {
         queuePage = 1;
 
         StringBuilder queue = new StringBuilder();
+        StringBuilder queue2 = new StringBuilder();
         BlockingQueue<AudioTrack> tracks = scheduler.getTrackQueue();
 
         EmbedBuilder eb = new EmbedBuilder();
@@ -405,12 +414,24 @@ public class GuildAudioManager {
         for (int i = 1; i <= 10; i++) {
             try {
                 AudioTrack track = trackList.get(i - 1);
-                queue.append("`").append(i).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append("` \n");
-            } catch (IndexOutOfBoundsException ex) {
+                String artistLink = "https://open.spotify.com/artist/" + SpotifyManager.getArtistId(track.getIdentifier());
+                String time;
+                if (track.getDuration() < 3600000) {
+                    time = ("[" + DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss") + "]");
+                } else {
+                    time = ("[" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]");
+                }
+                if (i < 6) {
+                    queue.append(i).append(". [").append(track.getInfo().author).append("](").append(artistLink).append(") - [").append(track.getInfo().title).append("](").append(track.getInfo().uri).append(") ").append(time).append(" \n");
+                } else {
+                    queue2.append(i).append(". [").append(track.getInfo().author).append("](").append(artistLink).append(") - [").append(track.getInfo().title).append("](").append(track.getInfo().uri).append(") ").append(time).append(" \n");
+                }
+            } catch (IndexOutOfBoundsException | IOException ex) {
                 break;
             }
         }
         eb.addField("Current Song: " + audioPlayer.getPlayingTrack().getInfo().author + " - " + audioPlayer.getPlayingTrack().getInfo().title, queue.toString(), false);
+        eb.addField("-[Continued]-", queue2.toString(), false);
 
         String pageNumber = "Page " + queuePage + "/" + (int) Math.ceil((float) scheduler.getTrackQueue().size() / 10);
         String trackInQueue = "Songs in Queue: " + trackList.size();
@@ -436,6 +457,7 @@ public class GuildAudioManager {
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : (new MessageCreateBuilder().setEmbeds(eb.build()).setComponents(ActionRow.of(buttons)).build());
 
     }
+
 
     
 

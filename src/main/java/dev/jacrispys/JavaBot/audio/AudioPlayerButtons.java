@@ -1,6 +1,7 @@
 package dev.jacrispys.JavaBot.audio;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.jacrispys.JavaBot.utils.SpotifyManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -11,6 +12,7 @@ import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -53,7 +55,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
                         }
                         return;
                     }
-                    event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage - 1).build()).queue();
+                    event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), (queuePage - 1)).build()).queue();
                 }
                 case ("remove") -> {
                     if(event.getMessage().isEphemeral()) {
@@ -107,18 +109,25 @@ public class AudioPlayerButtons extends ListenerAdapter {
         EmbedBuilder eb = new EmbedBuilder(embed);
         eb.clearFields();
         StringBuilder queue = new StringBuilder();
+        StringBuilder queue2 = new StringBuilder();
         ArrayList<AudioTrack> trackList = new ArrayList<>(audioManager.scheduler.getTrackQueue().stream().toList());
         for (int i = 0; i < 10; i++) {
             try {
-                AudioTrack track = trackList.get((page - 1) * 10 + (i - 1));
+                AudioTrack track = queuePage == 1 ? trackList.get(i) : trackList.get((page - 1) * 10 + (i - 1));
                 String time;
                 if (track.getDuration() < 3600000) {
                     time = ("[" + DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss") + "]");
                 } else {
                     time = ("[" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]");
                 }
-                queue.append("`").append((page - 1) * 10 + i + 1).append(". ").append(track.getInfo().author).append(" - ").append(track.getInfo().title).append(" ").append(time).append("` \n");
-            } catch (IndexOutOfBoundsException ex) {
+                String artistLink = "https://open.spotify.com/artist/" + SpotifyManager.getArtistId(track.getIdentifier());
+                if (i < 5) {
+                    queue.append((page - 1) * 10 + i + 1).append(". [").append(track.getInfo().author).append("](").append(artistLink).append(") - [").append(track.getInfo().title).append("](").append(track.getInfo().uri).append(") ").append(time).append(" \n");
+                } else {
+                    queue2.append((page - 1) * 10 + i + 1).append(". [").append(track.getInfo().author).append("](").append(artistLink).append(") - [").append(track.getInfo().title).append("](").append(track.getInfo().uri).append(") ").append(time).append(" \n");
+
+                }
+            } catch (IndexOutOfBoundsException | IOException ex) {
                 break;
             }
         }
@@ -136,6 +145,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
         }
         eb.setFooter(pageNumber + " | " + trackInQueue + " | " + queueLengthStr);
         eb.addField("Current Song: " + audioManager.audioPlayer.getPlayingTrack().getInfo().author + " - " + audioManager.audioPlayer.getPlayingTrack().getInfo().title, queue.toString(), false);
+        eb.addField("-[Continued]-", queue2.toString(), false);
         return eb;
 
 
