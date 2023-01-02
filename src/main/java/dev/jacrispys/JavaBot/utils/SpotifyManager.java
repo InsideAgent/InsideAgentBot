@@ -62,17 +62,25 @@ public class SpotifyManager {
     public static final String API_BASE = "https://api.spotify.com/v1/";
     private static final HttpInterfaceManager httpInterfaceManager = HttpClientTools.createDefaultThreadLocalManager();
     private static JsonBrowser getJson(String uri) throws IOException {
-        var request = new HttpGet(uri);
-        request.addHeader("Authorization", "Bearer " + getAccessToken());
-        return HttpClientTools.fetchResponseAsJson(httpInterfaceManager.getInterface(), request);
+        try {
+            var request = new HttpGet(uri);
+            request.addHeader("Authorization", "Bearer " + getAccessToken());
+            return HttpClientTools.fetchResponseAsJson(httpInterfaceManager.getInterface(), request);
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     public static String getArtistId(String id) throws IOException {
-        var json = getJson(API_BASE + "tracks/" + id);
-        if (json == null || json.get("artists").values().isEmpty()) {
+        try {
+            var json = getJson(API_BASE + "tracks/" + id);
+            if (json == null || json.get("artists").values().isEmpty()) {
+                return null;
+            }
+            return json.get("artists").index(0).get("id").text();
+        } catch (Exception ignored) {
             return null;
         }
-        return json.get("artists").index(0).get("id").text();
     }
 
     public static SpotifyManager getInstance() {
