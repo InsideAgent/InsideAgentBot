@@ -1,4 +1,4 @@
-package dev.jacrispys.JavaBot.commands.private_message;
+package dev.jacrispys.JavaBot.commands.message;
 
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
