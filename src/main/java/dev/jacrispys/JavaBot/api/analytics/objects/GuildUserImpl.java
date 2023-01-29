@@ -7,6 +7,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Implementation of the {@link GuildUser} interface
+ * <br> Child of {@link JdaUserImpl}
+ */
 public class GuildUserImpl extends JdaUserImpl implements GuildUser {
 
     private final Member member;

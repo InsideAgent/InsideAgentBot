@@ -6,6 +6,9 @@ import net.dv8tion.jda.api.entities.User;
 
 import java.util.List;
 
+/**
+ * Implementation of the {@link JdaUser} interface
+ */
 public class JdaUserImpl implements JdaUser {
     private final long userId;
     private final JDA jda;
@@ -16,7 +19,7 @@ public class JdaUserImpl implements JdaUser {
     }
 
     /**
-     * @return
+     * @return list of guilds the user is a member of
      */
     @Override
     public List<Guild> getGuilds() {
@@ -24,8 +27,8 @@ public class JdaUserImpl implements JdaUser {
     }
 
     /**
-     * @param guild
-     * @return
+     * @param guild to reference for AudioUser data
+     * @return an instance of the AudioUser
      */
     @Override
     public AudioUser getAudioUser(Guild guild) {
@@ -33,8 +36,8 @@ public class JdaUserImpl implements JdaUser {
     }
 
     /**
-     * @param guild
-     * @return
+     * @return instance of a GuildUser from the given guild
+     * @param guild to get data from
      */
     @Override
     public GuildUser getGuildUser(Guild guild) {
@@ -42,7 +45,7 @@ public class JdaUserImpl implements JdaUser {
     }
 
     /**
-     * @return
+     * @return JDA User object that correlates with this project's adaptation
      */
     @Override
     public User getUser() {
