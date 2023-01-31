@@ -1,5 +1,8 @@
 package dev.jacrispys.JavaBot.api.libs.utils.mysql;
 
+/**
+ * Selections of stat's and their database types
+ */
 public enum StatType {
     PLAY_COUNTER(Long.class),
     PAUSE_COUNTER(Long.class),

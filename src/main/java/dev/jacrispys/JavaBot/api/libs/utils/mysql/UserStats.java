@@ -1,5 +1,8 @@
 package dev.jacrispys.JavaBot.api.libs.utils.mysql;
 
+/**
+ * Selection of all user tracked stats
+ */
 public enum UserStats {
 
     USER_ID,
