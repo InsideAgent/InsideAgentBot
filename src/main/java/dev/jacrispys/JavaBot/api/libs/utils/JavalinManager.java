@@ -18,6 +18,10 @@ import java.sql.Statement;
 import java.util.Base64;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Web-based event listener to exchange Code's through Discord 0Auth
+ * <br> Link to API site: <a href="https://bot.insideagent.pro">bot.insideagent.pro</a>
+ */
 public class JavalinManager {
 
     private Javalin app;
@@ -36,6 +40,10 @@ public class JavalinManager {
     }
 
 
+    /**
+     * Initializes Javalin server to listen for queries
+     * @param port port to start the server on
+     */
     protected void initJavalin(int port) {
         app = Javalin.create().start(port);
         app.get("/", ctx -> {
@@ -55,6 +63,11 @@ public class JavalinManager {
         });
     }
 
+    /**
+     * Http Request builder to exchange the 0Auth code given by discord for credentials
+     * @param code code to exchange
+     * @return True if data was successfully obtained from Discord, false otherwise
+     */
     protected boolean exchangeCode(String code) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("client_id", String.valueOf(CLIENT_ID))
@@ -97,6 +110,11 @@ public class JavalinManager {
     }
 
 
+    /**
+     * Takes data from the {@link JavalinManager#exchangeCode(String)} method to insert into the database
+     * @param userData {@link DataObject} (json) compiled from the Http request
+     * @throws SQLException if a database error occurs
+     */
     protected void authorizeUser(DataObject userData) throws SQLException {
         try {
             String email = userData.getString("email");
@@ -122,6 +140,10 @@ public class JavalinManager {
         }
     }
 
+    /**
+     * Creates a token using a base 64 encoder that will be sent VIA dm's to the user
+     * @return the token generated
+     */
     protected String tokenGenerator() {
         SecureRandom secureRandom = new SecureRandom();
         Base64.Encoder encoder = Base64.getUrlEncoder();
