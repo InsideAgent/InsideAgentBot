@@ -11,11 +11,17 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import javax.security.auth.login.LoginException;
 
-public class ClientConnection {
+/**
+ * General connection obtained through {@link dev.jacrispys.JavaBot.api.libs.AgentApi}
+ * <br> Should not be instantiated!
+ * @see DeveloperConnection
+ * @see UserConnection
+ */
+public abstract class ClientConnection {
 
     private final JDA jda;
 
-    protected ClientConnection() throws LoginException, InterruptedException {
+    protected ClientConnection() throws InterruptedException {
         this.jda = JDABuilder.createDefault(SecretData.getToken())
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -26,6 +32,9 @@ public class ClientConnection {
 
     }
 
+    /**
+     * @return instance of the JDA API
+     */
     public JDA getJDA() {
         return jda;
     }
