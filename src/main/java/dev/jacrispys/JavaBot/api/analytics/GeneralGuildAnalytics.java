@@ -12,6 +12,10 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+/**
+ * Interface for analytics that are for general statistics specific to a guild, but not to audio.
+ * <br> Child of {@link Stats}
+ */
 public interface GeneralGuildAnalytics extends Stats {
 
     OffsetDateTime getJoinDate();

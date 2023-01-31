@@ -17,6 +17,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Executor Util class to update DB for active time tracking
+ */
 public class ListenTimeTracker extends ListenerAdapter {
 
     private final Map<Long, Long> listeningGuilds = new HashMap<>();
@@ -26,6 +29,11 @@ public class ListenTimeTracker extends ListenerAdapter {
         initListener(jda);
     }
 
+    /**
+     * Initializes a {@link ScheduledExecutorService} that run's async every 5 seconds,
+     * <br> checking if any audio players are running, if they are add 5000 MS to {@link UserStats#LISTEN_TIME}
+     * @param jda instance to connect to
+     */
     protected void initListener(JDA jda) {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
@@ -47,6 +55,11 @@ public class ListenTimeTracker extends ListenerAdapter {
         }, 0, 5, TimeUnit.SECONDS);
     }
 
+    /**
+     * Override for {@link ListenerAdapter#onGuildVoiceUpdate(GuildVoiceUpdateEvent)}
+     * manages {@link ListenTimeTracker#listeningGuilds} for which guilds/users are currently active
+     * @param event event to listen to
+     */
     @Override
     public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
         if (event.getChannelJoined() != null && event.getChannelLeft() == null) {
