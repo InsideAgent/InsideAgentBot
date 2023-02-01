@@ -253,7 +253,7 @@ public class GuildAudioManager {
      */
     public MessageData trackNotFound(String trackUrl, boolean editMsg) {
         MessageData data;
-        if(editMsg) {
+        if (editMsg) {
             MessageEditBuilder message = new MessageEditBuilder();
             message.setContent("Could not find: " + trackUrl);
             data = message.build();
@@ -271,7 +271,7 @@ public class GuildAudioManager {
      */
     public MessageData trackLoadFailed(String trackUrl, FriendlyException exception, boolean editMsg) {
         MessageData data;
-        if(editMsg) {
+        if (editMsg) {
             MessageEditBuilder message = new MessageEditBuilder();
             message.setContent("Could not play: " + trackUrl + " \n `Reason: " + exception.getLocalizedMessage() + "`");
             data = message.build();
@@ -323,12 +323,12 @@ public class GuildAudioManager {
     }
 
     /**
-     *  Skip's the current track by using {@link TrackScheduler#nextTrack()}
+     * Skip's the current track by using {@link TrackScheduler#nextTrack()}
      */
     public MessageData skipTrack(Member request) {
         AudioTrack track = audioPlayer.getPlayingTrack();
         MessageCreateBuilder message = new MessageCreateBuilder();
-        if(track == null) {
+        if (track == null) {
             message.setContent("Could not skip track, as no track was playing!");
             return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         }
@@ -388,7 +388,7 @@ public class GuildAudioManager {
      * creates a Dynamic {@link MessageEmbed} with multiple {@link Button} to search pages for the current queue
      */
     public MessageData displayQueue() {
-        if(audioPlayer.getPlayingTrack() == null) {
+        if (audioPlayer.getPlayingTrack() == null) {
             MessageCreateBuilder message = new MessageCreateBuilder();
             message.setContent("Cannot display queue when no track is playing!");
             return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
@@ -453,8 +453,6 @@ public class GuildAudioManager {
     }
 
 
-    
-
     public static Map<Guild, Long> nowPlayingId = new HashMap<>();
 
     /**
@@ -478,7 +476,7 @@ public class GuildAudioManager {
 
             EmbedBuilder eb = new EmbedBuilder();
             User trackSender = requester.get(newSong);
-            if(trackSender == null) trackSender = guild.getJDA().getSelfUser();
+            if (trackSender == null) trackSender = guild.getJDA().getSelfUser();
             eb.setAuthor("|   Currently Playing...", null, trackSender.getAvatarUrl());
             eb.addField(newSong.getInfo().title, "By - " + newSong.getInfo().author, false);
             eb.setColor(Color.decode("#155b5e"));
@@ -489,7 +487,8 @@ public class GuildAudioManager {
             buttons.add(Button.secondary("showQueue:" + channel.getGuild().getId(), "Show Queue"));
             buttons.add(Button.danger("remove:" + channel.getGuild().getId(), "✖️"));
             if (nowPlayingId.getOrDefault(guild, null) != null) {
-                channel.deleteMessageById(nowPlayingId.get(guild)).queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE).handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {}));
+                channel.deleteMessageById(nowPlayingId.get(guild)).queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE).handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
+                }));
             }
             channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue(message -> nowPlayingId.put(guild, message.getIdLong()));
             sqlStats.incrementGuildStat(currentGuild, newSong.getDuration(), StatType.PLAYTIME_MILLIS);
@@ -503,7 +502,7 @@ public class GuildAudioManager {
     public void togglePlayer() {
         try {
             this.audioPlayer.setPaused(!audioPlayer.isPaused());
-            if(audioPlayer.isPaused()) {
+            if (audioPlayer.isPaused()) {
                 InactivityTimer.startInactivity(audioPlayer, currentGuild, jdaInstance);
                 sqlStats.incrementGuildStat(currentGuild, StatType.PAUSE_COUNTER);
             }
@@ -527,7 +526,7 @@ public class GuildAudioManager {
     }
 
     /**
-     *                Clears current queue with {@link TrackScheduler#setQueue(BlockingQueue)} by creating a blank {@link LinkedBlockingQueue<AudioTrack>}
+     * Clears current queue with {@link TrackScheduler#setQueue(BlockingQueue)} by creating a blank {@link LinkedBlockingQueue<AudioTrack>}
      */
     public MessageData clearQueue() {
         MessageCreateBuilder message = new MessageCreateBuilder();
@@ -538,21 +537,21 @@ public class GuildAudioManager {
     }
 
     /**
-     *                if {@link AudioPlayer#isPaused()} does nothing, otherwise pauses player.
+     * if {@link AudioPlayer#isPaused()} does nothing, otherwise pauses player.
      */
     public MessageData pausePlayer() {
         MessageCreateBuilder message = new MessageCreateBuilder();
         if (!audioPlayer.isPaused()) {
             message.setContent("Paused ⏸️");
             audioPlayer.setPaused(true);
-            if(audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild, jdaInstance);
+            if (audioPlayer.isPaused()) InactivityTimer.startInactivity(audioPlayer, currentGuild, jdaInstance);
             sqlStats.incrementGuildStat(currentGuild, StatType.PAUSE_COUNTER);
         }
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
     /**
-     *                if {@link AudioPlayer#isPaused()} unpauses the player.
+     * if {@link AudioPlayer#isPaused()} unpauses the player.
      */
     public MessageData resumePlayer() {
         MessageCreateBuilder message = new MessageCreateBuilder();
@@ -564,7 +563,7 @@ public class GuildAudioManager {
     }
 
     /**
-     *                obtains instance of queue with {@link TrackScheduler#getTrackQueue()} and randomizes it with collections.
+     * obtains instance of queue with {@link TrackScheduler#getTrackQueue()} and randomizes it with collections.
      */
     public MessageData shufflePlayer() {
         MessageCreateBuilder message = new MessageCreateBuilder();
@@ -592,7 +591,7 @@ public class GuildAudioManager {
         float div = ((float) track.getPosition() / (float) track.getDuration() * 20);
         int duration = Math.round(div);
         String emoji = ("\uD83D\uDD18");
-        if(duration > 19) duration = 19;
+        if (duration > 19) duration = 19;
         durationSlider = durationSlider.substring(0, duration) + emoji + durationSlider.substring(duration + 1);
 
         String time = "[" + DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + "/" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]";
@@ -624,13 +623,12 @@ public class GuildAudioManager {
     }
 
     /**
-     * @param time    using {@link DateTimeFormatter} to later be converted into MS
+     * @param time using {@link DateTimeFormatter} to later be converted into MS
      */
     public MessageData seekTrack(String time) {
         try {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-            Function<String, String> adjust = input -> input.indexOf(":", 3) >= 0
-                    ? input : "00:" + input;
+            Function<String, String> adjust = input -> input.indexOf(":", 3) >= 0 ? input : "00:" + input;
             long millis = dtf.parse(adjust.apply(time)).get(ChronoField.MILLI_OF_DAY);
             audioPlayer.getPlayingTrack().setPosition(millis);
             MessageCreateBuilder message = new MessageCreateBuilder();
@@ -638,7 +636,7 @@ public class GuildAudioManager {
             return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         } catch (Exception ex) {
             MessageCreateBuilder message = new MessageCreateBuilder();
-            if(audioPlayer.getPlayingTrack() != null) {
+            if (audioPlayer.getPlayingTrack() != null) {
                 message.setContent("Invalid use of seek! Please use the format 'HH:mm:ss'");
             } else {
                 message.setContent("No track found playing! Please play a track to use this feature!");
@@ -665,7 +663,7 @@ public class GuildAudioManager {
      */
     @SuppressWarnings("all")
     public MessageData enableDJ(User sender, Guild guild) {
-        if(sender.getIdLong() != 731364923120025705L) {
+        if (sender.getIdLong() != 731364923120025705L) {
             return new MessageCreateBuilder().setContent("You sir! Are not a certified DJ! Begone! ヽ(⌐■_■)ノ♬").build();
         }
         if (!djEnabled) {
@@ -684,7 +682,7 @@ public class GuildAudioManager {
             return message.build();
         }
         VoiceChannel vc = (VoiceChannel) guild.getMember(sender).getVoiceState().getChannel();
-        this.getAudioManager().loadItemOrdered(this, "http://" + SecretData.getDBHost() +  ":8000/mixxx.mp3", new AudioLoadResultHandler() {
+        this.getAudioManager().loadItemOrdered(this, "http://" + SecretData.getDBHost() + ":8000/mixxx.mp3", new AudioLoadResultHandler() {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
@@ -715,7 +713,7 @@ public class GuildAudioManager {
     public boolean songLoop = false;
 
     /**
-     *  manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
+     * manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
      */
     public MessageData loopQueue() {
         MessageCreateBuilder message = new MessageCreateBuilder();
@@ -736,7 +734,7 @@ public class GuildAudioManager {
     }
 
     /**
-     *  manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
+     * manages {@link GuildAudioManager#queueLoop} & {@link GuildAudioManager#songLoop}
      */
     public MessageData loopSong() {
         MessageCreateBuilder message = new MessageCreateBuilder();
@@ -753,9 +751,9 @@ public class GuildAudioManager {
     }
 
     /**
-     * @param pos1    is first track position to move.
-     * @param pos2    is second track position to move
-     *                swaps positions of {@param pos1} & {@param pos2}
+     * @param pos1 is first track position to move.
+     * @param pos2 is second track position to move
+     *             swaps positions of {@param pos1} & {@param pos2}
      */
     public MessageData moveSong(int pos1, int pos2) {
         ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
@@ -798,7 +796,7 @@ public class GuildAudioManager {
 
     public MessageData fixAudio(Member sender) {
         MessageCreateBuilder message = new MessageCreateBuilder();
-        if(sender.getVoiceState() != null && sender.getVoiceState().inAudioChannel() && sender.getVoiceState().getChannel() != null) {
+        if (sender.getVoiceState() != null && sender.getVoiceState().inAudioChannel() && sender.getVoiceState().getChannel() != null) {
             VoiceChannel vc = (VoiceChannel) sender.getVoiceState().getChannel();
             vc.getManager().setRegion(Region.US_WEST).queue();
             vc.getManager().setRegion(Region.AUTOMATIC).queue();
@@ -811,7 +809,7 @@ public class GuildAudioManager {
 
     public MessageData disconnectBot(Member member) {
         try {
-            if(member.getGuild().getSelfMember().getVoiceState() != null) {
+            if (member.getGuild().getSelfMember().getVoiceState() != null) {
                 clearQueue();
                 if (this.audioPlayer.getPlayingTrack() != null) skipNoMessage();
                 audioPlayer.destroy();
@@ -826,7 +824,8 @@ public class GuildAudioManager {
                 eb.setAuthor("|  Destroyed audio player and cleared queue! (Disconnecting ☮️)", null, jdaInstance.getSelfUser().getEffectiveAvatarUrl());
                 message.setEmbeds(eb.build());
                 return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
-            } else return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageCreateBuilder().setContent("I am not currently connected to a voice channel!").build();
+            } else
+                return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageCreateBuilder().setContent("I am not currently connected to a voice channel!").build();
         } catch (NullPointerException ex) {
             ex.printStackTrace();
             return new MessageCreateBuilder().setContent("Error").build();
@@ -834,10 +833,10 @@ public class GuildAudioManager {
     }
 
     public MessageData generateRadio(Recommendations requestData, VoiceChannel channel, Member member) {
-        Arrays.stream(requestData.getTracks()).toList().forEach(track -> audioHandler.loadAndPlay("https://open.spotify.com/track/" +  track.getId(), channel, member, false, true));
+        Arrays.stream(requestData.getTracks()).toList().forEach(track -> audioHandler.loadAndPlay("https://open.spotify.com/track/" + track.getId(), channel, member, false, true));
         List<String> genres = new ArrayList<>();
         Arrays.stream(requestData.getSeeds()).toList().forEach(seed -> {
-            if(seed.getType() == ModelObjectType.GENRE) {
+            if (seed.getType() == ModelObjectType.GENRE) {
                 genres.add(seed.getId());
             }
         });
@@ -848,7 +847,7 @@ public class GuildAudioManager {
         embedBuilder.addField("Position in queue: ", "`" + (scheduler.getTrackQueue().size() - (requestData.getTracks().length - 1)) + "`", false);
         long rawTimeUntilPlay = 0;
 
-        for(TrackSimplified track : requestData.getTracks()) {
+        for (TrackSimplified track : requestData.getTracks()) {
             rawTimeUntilPlay -= track.getDurationMs();
         }
         for (AudioTrack queue : scheduler.getTrackQueue().stream().toList()) {
@@ -900,7 +899,6 @@ public class GuildAudioManager {
 
         return new MessageEditBuilder().setEmbeds(eb.build()).setComponents(ActionRow.of(buttons)).build();
     }
-
 
 
 }

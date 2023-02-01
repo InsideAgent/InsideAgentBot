@@ -30,6 +30,10 @@ import java.util.stream.Collectors;
 
 import static dev.jacrispys.JavaBot.audio.GuildAudioManager.nowPlayingId;
 
+/**
+ * Util class that uses {@link se.michaelthelin.spotify.SpotifyApi}
+ * <br> to generate playlists based off of {@link Recommendations}
+ */
 public class GenerateGenrePlaylist extends ListenerAdapter {
 
     public GenerateGenrePlaylist() {
@@ -41,17 +45,40 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
     public static Map<User, Integer> popularity = new HashMap<>();
 
+    /**
+     * Generates a playlist using spotify recommendations.
+     * @param genres up to 5 genres to base the playlist off of
+     * @param limit max amount of songs to be generated
+     * @return recommendation data from spotify
+     * @throws IOException if the spotify request fails
+     * @throws ParseException if the spotify request fails
+     * @throws SpotifyWebApiException if the spotify request fails
+     */
     public Recommendations generatePlaylistFromGenre(String genres, int limit) throws IOException, ParseException, SpotifyWebApiException {
         final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).build();
         return request.execute();
     }
 
+    /**
+     * Generates a playlist using spotify recommendations.
+     * @param genres up to 5 genres to base the playlist off of
+     * @param limit max amount of songs to be generated
+     * @param popularity number between 0-100 of the expected popularity of songs to be generated
+     * @return recommendation data from spotify
+     * @throws IOException if the spotify request fails
+     * @throws ParseException if the spotify request fails
+     * @throws SpotifyWebApiException if the spotify request fails
+     */
     public Recommendations generatePlaylistFromGenre(String genres, int limit, int popularity) throws IOException, ParseException, SpotifyWebApiException {
         if (popularity > 100 || popularity < 0) popularity = 100;
         final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).target_popularity(popularity).build();
         return request.execute();
     }
 
+    /**
+     * Adaptation of {@link AudioPlayerButtons} methods.
+     * @see AudioPlayerButtons#onButtonInteraction(ButtonInteractionEvent)
+     */
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         try {
@@ -151,6 +178,10 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
     public static int genrePage;
 
+    /**
+     * Adaptation of {@link AudioPlayerButtons} methods.
+     * @see AudioPlayerButtons#updateEmbed(MessageEmbed, int)
+     */
     private EmbedBuilder updateEmbed(MessageEmbed embed, int page, User user) {
         genrePage = page;
         EmbedBuilder eb = new EmbedBuilder(embed);
@@ -180,6 +211,9 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
     }
 
+    /**
+     * Manages reactions to the embed for genre selection
+     */
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
         if (reactMessage.containsValue(event.getMessageIdLong()) && reactMessage.getOrDefault(event.getUser(), 0L) != event.getMessageIdLong()) {
@@ -209,6 +243,13 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     public static Map<User, List<Integer>> chosenGenres = new HashMap<>();
     private static final List<Integer> positionList = new ArrayList<>();
 
+    /**
+     *
+     * @param embed edits an embed to update new genres to
+     * @param position index in the list of genres to update
+     * @param user the user who interacted with the embed
+     * @return buildable embed to reapply/edit the original
+     */
     protected MessageEmbed addGenre(MessageEmbed embed, int position, User user) {
         EmbedBuilder eb = new EmbedBuilder(embed);
         List<String> embedLines = new ArrayList<>(List.of(embed.getFields().get(0).getValue().split("\n")));
@@ -241,6 +282,9 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         return eb.build();
     }
 
+    /**
+     * Manages important database entries to ensure song announcements are sent
+     */
     protected void updateMusicChannel(Guild guild, TextChannel channel) {
         try {
             MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
@@ -251,6 +295,9 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     }
 
 
+    /**
+     * Resets all current GenreGenerator data when message is deleted.
+     */
     @Override
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
         if (reactMessage.containsValue(event.getMessageIdLong())) {
