@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+@Deprecated(forRemoval = true)
 public class SpotifyStats implements StatHooks<SpotifyStats> {
 
     @SuppressWarnings("all")

@@ -4,6 +4,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Async method handler
+ */
 public abstract class AsyncHandlerImpl implements AsyncHandler{
 
     public record VoidMethodRunner(Runnable runnable, CompletableFuture<Void> cf) {}
@@ -12,6 +15,9 @@ public abstract class AsyncHandlerImpl implements AsyncHandler{
     public final BlockingQueue<MethodRunner> methodQueue = new ArrayBlockingQueue<>(5);
     public final BlockingQueue<VoidMethodRunner> voidMethodQueue = new ArrayBlockingQueue<>(5);
 
+    /**
+     * Continuously completes void functions that have been queued into {@link AsyncHandlerImpl#voidMethodQueue}
+     */
     public void completeVoid() {
         try {
             for (; ; ) {
@@ -24,6 +30,9 @@ public abstract class AsyncHandlerImpl implements AsyncHandler{
         }
     }
 
+    /**
+     * Runs methods from the {@link AsyncHandlerImpl#methodQueue} and checks if they have been completed.
+     */
     public void completeMethod() {
         try {
             for (; ;) {

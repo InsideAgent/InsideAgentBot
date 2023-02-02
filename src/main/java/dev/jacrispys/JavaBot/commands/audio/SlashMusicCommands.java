@@ -32,17 +32,28 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * New solution to commands, registers slash commands for audio and handles their implementations
+ */
 public class SlashMusicCommands extends ListenerAdapter {
 
     public SlashMusicCommands() {
 
     }
 
+    /**
+     * Registers guild specific commands (unused)
+     * @param guilds list of guilds to update commands for
+     */
     public void initCommands(List<Guild> guilds) {
         updateJdaCommands();
         guilds.forEach(this::updateGuildCommands);
     }
 
+    /**
+     * Generates a list of commands to be updated {@link ListenerAdapter#onReady(ReadyEvent)}
+     * @return the list of Commands
+     */
     public List<CommandData> updateJdaCommands() {
         List<CommandData> commands = new ArrayList<>();
         Collections.addAll(commands,
@@ -102,6 +113,9 @@ public class SlashMusicCommands extends ListenerAdapter {
     protected void updateGuildCommands(Guild guild) {
     }
 
+    /**
+     * Internal updates to Database
+     */
     protected void updateMusicChannel(Guild guild, TextChannel channel) {
         try {
             MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
@@ -113,6 +127,9 @@ public class SlashMusicCommands extends ListenerAdapter {
 
     private StageInstance stageInstance;
 
+    /**
+     * Checks for stage instances being created, to allow bot to join stages and play music
+     */
     @Override
     public void onStageInstanceCreate(@NotNull StageInstanceCreateEvent event) {
         GuildAudioManager manager = GuildAudioManager.getGuildAudioManager(event.getGuild());
@@ -120,6 +137,9 @@ public class SlashMusicCommands extends ListenerAdapter {
         stageInstance = event.getInstance();
     }
 
+    /**
+     * Removes compatibility for stage channels once the instance is deleted
+     */
     @Override
     public void onStageInstanceDelete(@NotNull StageInstanceDeleteEvent event) {
         GuildAudioManager manager = GuildAudioManager.getGuildAudioManager(event.getGuild());
@@ -127,6 +147,9 @@ public class SlashMusicCommands extends ListenerAdapter {
         stageInstance = null;
     }
 
+    /**
+     * Accounts for stages running after reboot
+     */
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         for (Guild guild : event.getJDA().getGuilds()) {
@@ -140,6 +163,9 @@ public class SlashMusicCommands extends ListenerAdapter {
         }
     }
 
+    /**
+     * Handles implementation for all registered audio slash commands
+     */
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         String commandName = event.getName();

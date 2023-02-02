@@ -24,6 +24,9 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Legacy music commands using '-' prefix rather than slash commands
+ */
 public class GenericMusicCommands extends ListenerAdapter {
 
     protected void updateMusicChannel(Guild guild, TextChannel channel) {
@@ -36,6 +39,9 @@ public class GenericMusicCommands extends ListenerAdapter {
     }
 
 
+    /**
+     * Handles all commands prefixed with '-'
+     */
     @SuppressWarnings("all")
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;

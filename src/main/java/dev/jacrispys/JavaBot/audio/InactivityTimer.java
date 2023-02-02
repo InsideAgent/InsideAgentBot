@@ -24,11 +24,19 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Manages inactive audio players, and destroys them when needed.
+ */
 public class InactivityTimer extends ListenerAdapter {
 
 
     private static final Logger logger = LoggerFactory.getLogger(InactivityTimer.class);
 
+    /**
+     * Checks if given inactivity period has expired.
+     * @param inactiveStart System Millis that indicate when inactivity was first discovered
+     * @return true if 30 minutes past the start period has elapsed
+     */
     private static boolean inactivityExpired(long inactiveStart) {
         return Duration.ofMillis(System.currentTimeMillis() - inactiveStart).toMillis() >= Duration.ofMinutes(30).toMillis();
     }
@@ -41,6 +49,12 @@ public class InactivityTimer extends ListenerAdapter {
         return runnables;
     }
 
+    /**
+     * Schedules a runnable to check if any audio player's are inactive
+     * @param player audio player to watch inactivity from
+     * @param guildId guild the audioplayer is located in
+     * @param jda instance to JDA API
+     */
     @SuppressWarnings("all")
     public static void startInactivity(AudioPlayer player, Long guildId, JDA jda) {
         long startMillis = System.currentTimeMillis();
@@ -66,6 +80,7 @@ public class InactivityTimer extends ListenerAdapter {
                             logger.error("COULD NOT CANCEL");
                         }
                         runnables.remove(guildId);
+                        return;
                     }
                 }
             }
@@ -73,6 +88,9 @@ public class InactivityTimer extends ListenerAdapter {
         runnables.put(guildId, executorService.scheduleAtFixedRate(service, 0, 5, TimeUnit.SECONDS));
     }
 
+    /**
+     * Starts inactivity if a user has left the VC and meets a number of other criterion
+     */
     @Override
     public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
         if (event.getChannelLeft() != null) {
@@ -84,6 +102,9 @@ public class InactivityTimer extends ListenerAdapter {
         }
     }
 
+    /**
+     * Sends a message to the given channel that the inactivity grace period has expired.
+     */
     private static void inactivityMessage(TextChannel channel) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         User selfUser = channel.getJDA().getSelfUser();

@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+@Deprecated(forRemoval = true)
 public class RegisterGuildCommand extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;

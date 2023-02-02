@@ -6,6 +6,9 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Yaml loader for environment variables from loginInfo file
+ */
 public class SecretData {
     private static Yaml yaml = new Yaml();
     private static Map<String, Object> loginInfo;

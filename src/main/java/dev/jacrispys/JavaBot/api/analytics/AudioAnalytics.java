@@ -7,6 +7,9 @@ import net.dv8tion.jda.api.entities.UserSnowflake;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Base/Parent interface for all analytics connected to audio
+ */
 public interface AudioAnalytics {
     long getPlays() throws SQLException;
     long getPauses() throws SQLException;

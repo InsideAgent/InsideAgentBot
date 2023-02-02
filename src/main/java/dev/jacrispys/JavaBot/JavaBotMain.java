@@ -32,15 +32,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.naming.ConfigurationException;
+import java.io.IOException;
+import java.sql.SQLException;
 
 
+/**
+ * The core class that establishes a connection with {@link JDA} and discord.
+ * <br> Also initializes all other utility/necessary classes.
+ */
 public class JavaBotMain {
+
+    // TODO: 1/26/2023 Add Documentation to all functions 
 
     private static final Logger logger = LoggerFactory.getLogger(JavaBotMain.class);
     private static final String className = JavaBotMain.class.getSimpleName();
     public static AudioPlayerManager audioManager;
 
-    public static void main(String[] args) throws Exception {
+    /**
+     * The main method of the application.
+     * <br>
+     * <br> Starts by initializing ENV login data via {@link SecretData#initLoginInfo()}
+     * <br> Then creates a connection to {@link JDA} through the {@link JDABuilder}
+     * <br> It next registers Audio source managers for multi-platform song searching through {@link AudioSourceManagers}
+     * <br> Finally we add all event listeners and register a {@link io.javalin.Javalin} server to handle API requests (WIP)
+     * <br> <br>
+     * @throws ConfigurationException if any of the token fields are left blank in the config file
+     * @throws IOException if any errors occur whilst obtaining data from the YAML file
+     */
+    public static void main(String[] args) throws ConfigurationException, IOException {
         logger.info("{} - Installing & loading data Files.", className);
         SecretData.initLoginInfo();
         String devToken = SecretData.getToken(true);
@@ -58,9 +77,6 @@ public class JavaBotMain {
                 .enableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE)
                 .build();
         logger.info("{} - Login Successful!", className);
-
-        logger.info("{} - Connecting to MySQL Database...", className);
-        logger.info("{} - DB-Connection Successful!", className);
 
         logger.info("{} - Connecting to spotify source manager...", className);
         audioManager = new DefaultAudioPlayerManager();

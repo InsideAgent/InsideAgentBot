@@ -18,6 +18,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.SynchronousQueue;
 
 
+/**
+ * Manages audio tracks being loaded and played.
+ * @param guildAudioManager the audio manager that the tracks are sourced from.
+ */
 public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
 
 
@@ -90,6 +94,7 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
             throw new RuntimeException(e);
         }
     }
+
 
     public MessageData skipTrack(GuildAudioManager audioManager, Member request) {
         return audioManager.skipTrack(request);

@@ -3,6 +3,7 @@ package dev.jacrispys.JavaBot.api.libs.auth;
 import dev.jacrispys.JavaBot.api.exceptions.AuthorizationException;
 import dev.jacrispys.JavaBot.utils.mysql.SqlInstanceManager;
 import jakarta.annotation.Nonnull;
+import net.dv8tion.jda.api.JDA;
 
 import javax.security.auth.login.LoginException;
 import java.sql.Connection;
@@ -12,6 +13,9 @@ import java.sql.Statement;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Grants authorization to the {@link dev.jacrispys.JavaBot.api.libs.AgentApi} and gives access based on the token
+ */
 public class TokenAuth {
 
     private final Connection connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
@@ -19,17 +23,43 @@ public class TokenAuth {
     protected TokenAuth() throws ExecutionException, InterruptedException {
     }
 
-    public static <T extends ClientConnection> T authorize(long userId, String authToken) throws AuthorizationException, LoginException, InterruptedException, ExecutionException {
+    /**
+     *
+     * @param userId user to authenticate with
+     * @param authToken token to validate through the DataBase
+     * @return either {@link DeveloperConnection} or {@link UserConnection}
+     * @param <T> generic parameter to allow any Child of {@link ClientConnection} to be returned
+     * @throws AuthorizationException if the token in not valid
+     * @throws InterruptedException if {@link ClientConnection}'s call to {@link JDA#awaitReady()} fails
+     * @throws ExecutionException if obtaining a {@link SqlInstanceManager#getInstance()} call fails
+     */
+    public static <T extends ClientConnection> T authorize(long userId, String authToken) throws AuthorizationException, InterruptedException, ExecutionException {
         return new TokenAuth().createConnection(userId, authToken);
     }
 
+    /**
+     * Protected method to create a instance/connection to {@link dev.jacrispys.JavaBot.api.libs.AgentApi}
+     * @param userId user to authenticate with
+     * @param authToken token to validate through the DataBase
+     * @return either {@link DeveloperConnection} or {@link UserConnection}
+     * @param <T> generic parameter to allow any Child of {@link ClientConnection} to be returned
+     * @throws AuthorizationException if the token in not valid
+     * @throws InterruptedException if {@link ClientConnection}'s call to {@link JDA#awaitReady()} fails
+     */
     @SuppressWarnings("unchecked")
-    protected <T extends ClientConnection> T createConnection(long userId, String authToken) throws AuthorizationException, LoginException, InterruptedException {
+    protected <T extends ClientConnection> T createConnection(long userId, String authToken) throws AuthorizationException, InterruptedException {
         if (validateAuth(userId, authToken)) {
             return (T) new DeveloperConnection();
         } else return (T) new UserConnection();
     }
 
+    /**
+     * Calls {@link TokenAuth#authorizeToken(long, String)} to search the database for a token
+     * @param userId user to authenticate with
+     * @param authToken token to validate through the DataBase
+     * @return true if the token is valid, false otherwise
+     * @throws AuthorizationException if the token in not valid
+     */
     protected boolean validateAuth(long userId, String authToken) throws AuthorizationException {
 
         if (authorizeToken(userId, authToken)) {
@@ -38,6 +68,12 @@ public class TokenAuth {
 
     }
 
+    /**
+     * Executes a DB query for the provided userId and authToken to see if a entry exists
+     * @param userId user to authenticate with
+     * @param authToken token to validate through the DataBase
+     * @return true if the token and user exist in the DB, false otherwise
+     */
     protected boolean authorizeToken(long userId, String authToken) {
         try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
@@ -55,6 +91,12 @@ public class TokenAuth {
     }
 
 
+    /**
+     * Clone of {@link TokenAuth#authorizeToken(long, String)}, but has an additional check for a "dev_auth" boolean in the DB
+     * @param userId user to authenticate with
+     * @param devToken token to validate through the DataBase
+     * @return true if the token and user exist in the DB along with a True value for "dev_auth", false otherwise
+     */
     protected boolean authorizeDevToken(long userId, @Nonnull String devToken) {
         try {
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

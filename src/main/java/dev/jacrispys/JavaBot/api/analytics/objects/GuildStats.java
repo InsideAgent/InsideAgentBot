@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Abstraction for {@link dev.jacrispys.JavaBot.api.analytics.GuildAnalytics} to inherit
+ * <br> uses implementations of {@link Stats}, {@link GeneralGuildAnalytics}, and {@link AudioGuildAnalytics}
+ */
 public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioGuildAnalytics {
 
     public final long guildId;
@@ -172,6 +176,9 @@ public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioG
         return null;
     }
 
+    /**
+     * @return an instance of the guild the constructor uses
+     */
     @Override
     public Guild getParentGuild() {
         return jda.getGuildById(guildId);

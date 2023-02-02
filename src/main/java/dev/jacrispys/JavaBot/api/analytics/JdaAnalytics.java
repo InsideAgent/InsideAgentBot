@@ -12,7 +12,12 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Implementation of guild non-specific {@link AudioAnalytics} and {@link GeneralJdaAnalytics}
+ */
 public class JdaAnalytics implements AudioAnalytics, GeneralJdaAnalytics {
+
+    // TODO: 1/31/2023 Finish methods 
 
     public final AgentApi api;
     public final JDA jda;

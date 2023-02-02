@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Manages miscellaneous slash commands that do not fit under a specific category
+ */
 public class UnclassifiedSlashCommands extends ListenerAdapter {
 
     private MySqlStats sqlStats;

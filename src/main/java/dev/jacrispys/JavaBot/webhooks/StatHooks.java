@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Webhook;
 
 import java.net.URL;
 
+@Deprecated(forRemoval = true)
 public interface StatHooks<T>{
 
     T setName(String name);

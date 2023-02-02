@@ -15,6 +15,9 @@ import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Allows for async retrieval of a MySQL Connection instance
+ */
 public class SqlInstanceManager extends AsyncHandlerImpl {
 
     private Connection connection;
@@ -39,7 +42,10 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
         return this.connection;
     }
 
-    public CompletableFuture<Connection> getConnectionAsync() throws ExecutionException, InterruptedException {
+    /**
+     * @return a completed future with the connection object inside
+     */
+    public CompletableFuture<Connection> getConnectionAsync() {
         CompletableFuture<Connection> cf = new CompletableFuture<>();
         this.methodQueue.add(new MethodRunner(() -> {
             try {
@@ -53,6 +59,12 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
         return cf;
     }
 
+    /**
+     * Closes existing connections and creates a new one
+     * @param dataBase database within mysql to target
+     * @return Connection to the database
+     * @throws SQLException if a database error occurs
+     */
     private Connection resetConnection(String dataBase) throws SQLException {
         try {
             String userName = "Jacrispys";

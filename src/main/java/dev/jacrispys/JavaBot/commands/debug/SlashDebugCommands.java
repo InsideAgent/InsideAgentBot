@@ -26,6 +26,9 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Undocumented, developer diagnostic tools to check for specific statistics.
+ */
 public class SlashDebugCommands extends ListenerAdapter {
 
     // TODO: 9/15/2022 Add more debug commands.
