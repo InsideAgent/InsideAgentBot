@@ -14,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Registers guilds into database on bot startup, and guild join events
+ */
 public class BotStartup extends ListenerAdapter {
 
     private final MySQLConnection connection = MySQLConnection.getInstance();

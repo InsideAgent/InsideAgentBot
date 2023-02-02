@@ -13,6 +13,9 @@ import se.michaelthelin.spotify.requests.authorization.client_credentials.Client
 
 import java.io.IOException;
 
+/**
+ * Manages instances of the {@link SpotifyApi}
+ */
 public class SpotifyManager {
 
     private final Thread thread;
@@ -22,6 +25,9 @@ public class SpotifyManager {
     private static SpotifyManager instance = null;
     private static String accessToken;
 
+    /**
+     * Uses credentials to obtain connection to spotify api
+     */
     private SpotifyManager() {
         instance = this;
         this.spotifyApi = new SpotifyApi.Builder().setClientId(SecretData.getSpotifyId()).setClientSecret(SecretData.getSpotifySecret()).build();
@@ -61,6 +67,13 @@ public class SpotifyManager {
 
     public static final String API_BASE = "https://api.spotify.com/v1/";
     private static final HttpInterfaceManager httpInterfaceManager = HttpClientTools.createDefaultThreadLocalManager();
+
+    /**
+     * Gets json object from a given spotify URI
+     * @param uri spotify api endpoint to obtain
+     * @return json data received from the http request
+     * @throws IOException if http request fails
+     */
     private static JsonBrowser getJson(String uri) throws IOException {
         try {
             var request = new HttpGet(uri);
@@ -71,6 +84,9 @@ public class SpotifyManager {
         }
     }
 
+    /**
+     * Obtains the UUID of an artist from a given song
+     */
     public static String getArtistId(String id) throws IOException {
         try {
             var json = getJson(API_BASE + "tracks/" + id);

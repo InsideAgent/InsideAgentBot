@@ -783,6 +783,11 @@ public class GuildAudioManager {
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
+    /**
+     * Moves the audio bot to the channel the sender is in
+     * @param sender user to move to
+     * @return message to confirm action
+     */
     public MessageData followUser(Member sender) {
         MessageCreateBuilder message = new MessageCreateBuilder();
         if (Objects.requireNonNull(sender.getVoiceState()).inAudioChannel()) {
@@ -794,6 +799,11 @@ public class GuildAudioManager {
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
+    /**
+     * Resets region selection for VC
+     * @param sender user to send confirmation to
+     * @return message to confirm action
+     */
     public MessageData fixAudio(Member sender) {
         MessageCreateBuilder message = new MessageCreateBuilder();
         if (sender.getVoiceState() != null && sender.getVoiceState().inAudioChannel() && sender.getVoiceState().getChannel() != null) {
@@ -807,6 +817,11 @@ public class GuildAudioManager {
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
 
+    /**
+     * Removes the bot from the VC and clears its audio channel
+     * @param member to send confirmation to
+     * @return message to confirm action
+     */
     public MessageData disconnectBot(Member member) {
         try {
             if (member.getGuild().getSelfMember().getVoiceState() != null) {
@@ -832,6 +847,13 @@ public class GuildAudioManager {
         }
     }
 
+    /**
+     * Generates a radio based off of genres and popularity
+     * @param requestData data from {@link GenerateGenrePlaylist#generatePlaylistFromGenre(String, int)} to add songs to the queue
+     * @param channel voice channel to send audio to
+     * @param member user that requested the radio
+     * @return message to confirm action
+     */
     public MessageData generateRadio(Recommendations requestData, VoiceChannel channel, Member member) {
         Arrays.stream(requestData.getTracks()).toList().forEach(track -> audioHandler.loadAndPlay("https://open.spotify.com/track/" + track.getId(), channel, member, false, true));
         List<String> genres = new ArrayList<>();
@@ -866,6 +888,10 @@ public class GuildAudioManager {
         return djEnabled ? new MessageEditBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : new MessageEditBuilder().setEmbeds(embedBuilder.build()).build();
     }
 
+    /**
+     * @param idLong id of user to identify buttons with
+     * @return embed that has paginated list of all genres to generate radio from
+     */
     public MessageData genreList(long idLong) {
         GenerateGenrePlaylist.genrePage = 1;
 

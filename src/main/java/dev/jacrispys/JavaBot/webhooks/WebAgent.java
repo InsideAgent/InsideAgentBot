@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.jetbrains.annotations.Nullable;
 
+@Deprecated(forRemoval = true)
 public class WebAgent {
 
     private static Webhook webAgent;
