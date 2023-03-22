@@ -33,11 +33,7 @@ public abstract class GuildStats implements Stats, GeneralGuildAnalytics, AudioG
         this.guildId = guildId;
         this.api = api;
         this.jda = jda;
-        try {
-            this.sqlStats = MySqlStats.getInstance();
-        } catch (SQLException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        this.sqlStats = MySqlStats.getInstance();
     }
 
     /**

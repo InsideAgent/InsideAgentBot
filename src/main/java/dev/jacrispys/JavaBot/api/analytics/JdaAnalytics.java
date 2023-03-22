@@ -26,11 +26,7 @@ public class JdaAnalytics implements AudioAnalytics, GeneralJdaAnalytics {
     protected JdaAnalytics(AgentApi api, JDA jda) {
         this.api = api;
         this.jda = jda;
-        try {
-            this.sqlStats = MySqlStats.getInstance();
-        } catch (SQLException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        this.sqlStats = MySqlStats.getInstance();
     }
 
     /**

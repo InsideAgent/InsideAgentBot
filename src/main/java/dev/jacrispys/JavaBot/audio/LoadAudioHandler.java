@@ -20,6 +20,7 @@ import java.util.concurrent.SynchronousQueue;
 
 /**
  * Manages audio tracks being loaded and played.
+ *
  * @param guildAudioManager the audio manager that the tracks are sourced from.
  */
 public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
@@ -34,11 +35,7 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
             public void trackLoaded(AudioTrack audioTrack) {
                 guildAudioManager.setRequester(audioTrack, requester.getUser());
 
-                try {
-                    MySqlStats.getInstance().incrementUserStat(requester, UserStats.SONG_QUEUES);
-                } catch (SQLException | ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                MySqlStats.getInstance().incrementUserStat(requester, UserStats.SONG_QUEUES);
 
                 try {
                     queue.put(editMsg ? new MessageEditBuilder().setEmbeds(guildAudioManager.trackLoaded(trackUrl, audioTrack, voiceChannel, playTop)).build() : new MessageCreateBuilder().setEmbeds(guildAudioManager.trackLoaded(trackUrl, audioTrack, voiceChannel, playTop)).build());
@@ -49,14 +46,10 @@ public record LoadAudioHandler(GuildAudioManager guildAudioManager) {
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                try {
-                    if(audioPlaylist.isSearchResult()) {
-                        MySqlStats.getInstance().incrementUserStat(requester, UserStats.SONG_QUEUES);
-                    } else if (!audioPlaylist.isSearchResult()){
-                        MySqlStats.getInstance().incrementUserStat(requester, UserStats.PLAYLIST_QUEUES);
-                    }
-                } catch (SQLException | ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
+                if (audioPlaylist.isSearchResult()) {
+                    MySqlStats.getInstance().incrementUserStat(requester, UserStats.SONG_QUEUES);
+                } else if (!audioPlaylist.isSearchResult()) {
+                    MySqlStats.getInstance().incrementUserStat(requester, UserStats.PLAYLIST_QUEUES);
                 }
                 for (AudioTrack track : audioPlaylist.getTracks()) {
                     guildAudioManager.setRequester(track, requester.getUser());

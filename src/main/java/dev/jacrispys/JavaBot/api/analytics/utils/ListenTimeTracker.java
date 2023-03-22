@@ -32,6 +32,7 @@ public class ListenTimeTracker extends ListenerAdapter {
     /**
      * Initializes a {@link ScheduledExecutorService} that run's async every 5 seconds,
      * <br> checking if any audio players are running, if they are add 5000 MS to {@link UserStats#LISTEN_TIME}
+     *
      * @param jda instance to connect to
      */
     protected void initListener(JDA jda) {
@@ -42,13 +43,9 @@ public class ListenTimeTracker extends ListenerAdapter {
                 GuildAudioManager manager = GuildAudioManager.getGuildAudioManager(jda.getGuildById(guild));
                 if (manager.audioPlayer.getPlayingTrack() != null) {
                     for (Member member : jda.getGuildById(guild).getVoiceChannelById(listeningGuilds.get(guild)).getMembers()) {
-                        if(member.equals(jda.getGuildById(guild).getSelfMember())) continue;
-                        try {
-                            MySqlStats stats = MySqlStats.getInstance();
-                            stats.incrementUserStat(member, 5000L, UserStats.LISTEN_TIME);
-                        } catch (SQLException | ExecutionException | InterruptedException ex) {
-                            ex.printStackTrace();
-                        }
+                        if (member.equals(jda.getGuildById(guild).getSelfMember())) continue;
+                        MySqlStats stats = MySqlStats.getInstance();
+                        stats.incrementUserStat(member, 5000L, UserStats.LISTEN_TIME);
                     }
                 }
             }
@@ -58,6 +55,7 @@ public class ListenTimeTracker extends ListenerAdapter {
     /**
      * Override for {@link ListenerAdapter#onGuildVoiceUpdate(GuildVoiceUpdateEvent)}
      * manages {@link ListenTimeTracker#listeningGuilds} for which guilds/users are currently active
+     *
      * @param event event to listen to
      */
     @Override

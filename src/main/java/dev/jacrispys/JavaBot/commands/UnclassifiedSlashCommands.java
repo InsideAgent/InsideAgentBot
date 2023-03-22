@@ -33,9 +33,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
 
     public UnclassifiedSlashCommands(JDA jda) {
         this.jda = jda;
-        try {
-            this.sqlStats = MySqlStats.getInstance();
-        } catch (SQLException | ExecutionException | InterruptedException ignored) {}
+        this.sqlStats = MySqlStats.getInstance();
     }
 
     public void initCommands(List<Guild> guilds) {
@@ -47,8 +45,8 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
         List<CommandData> commands = new ArrayList<>();
         Collections.addAll(commands,
                 Commands.slash("setnick", "Sets the nickname of this bot, or a user.")
-                .addOption(OptionType.STRING, "nickname", "The nickname to give the user", true)
-                .addOption(OptionType.USER, "target", "User to set nickname.", false),
+                        .addOption(OptionType.STRING, "nickname", "The nickname to give the user", true)
+                        .addOption(OptionType.USER, "target", "User to set nickname.", false),
                 Commands.slash("embedbuilder", "builds an embed")
                         .addOption(OptionType.CHANNEL, "channel", "Channel to send the embed to.").addOptions(),
                 Commands.slash("auth-token", "For Developers only, obtain an auth token!"));
@@ -58,7 +56,8 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
     protected void updateGuildCommands(Guild guild) {
     }
 
-    @Override @SuppressWarnings("all")
+    @Override
+    @SuppressWarnings("all")
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         // Increment SQL Stat
         sqlStats.incrementGuildStat(event.getGuild().getIdLong(), StatType.COMMAND_COUNTER);
@@ -79,7 +78,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
             case "embedbuilder" -> {
                 event.deferReply(true).queue();
                 Channel channel = event.getOption("channel") != null ? event.getOption("channel").getAsChannel() : null;
-                if(channel != null && (!(event.getMember().getPermissions(event.getOption("channel").getAsChannel()).contains(Permission.MESSAGE_SEND)))) {
+                if (channel != null && (!(event.getMember().getPermissions(event.getOption("channel").getAsChannel()).contains(Permission.MESSAGE_SEND)))) {
                     event.getHook().editOriginal("You do not have permission to send embeds in this channel!").queue();
                     return;
                 }
@@ -99,8 +98,8 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
 
     public static void notifyAuthUser(long userId, String token) {
         jda.getUserById(userId).openPrivateChannel().queue(pm -> {
-           pm.sendMessage("Authorization Successful! Click below to obtain your authorization token.").queue();
-           pm.sendMessage("|| " + token + " ||").queue();
+            pm.sendMessage("Authorization Successful! Click below to obtain your authorization token.").queue();
+            pm.sendMessage("|| " + token + " ||").queue();
         });
     }
 
