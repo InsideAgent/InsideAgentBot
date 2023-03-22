@@ -1,10 +1,8 @@
 package dev.jacrispys.JavaBot.utils.mysql;
 
-import dev.jacrispys.JavaBot.JavaBotMain;
-import dev.jacrispys.JavaBot.api.libs.utils.async.AsyncHandler;
 import dev.jacrispys.JavaBot.api.libs.utils.async.AsyncHandlerImpl;
+import dev.jacrispys.JavaBot.api.libs.utils.mysql.MySqlStats;
 import dev.jacrispys.JavaBot.utils.SecretData;
-import org.apache.hc.core5.concurrent.CompletedFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,9 +22,10 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
     private static final Logger logger = LoggerFactory.getLogger(SqlInstanceManager.class);
     private static final SqlInstanceManager INSTANCE = new SqlInstanceManager();
 
+    private final Thread thread = new Thread(this::completeMethod);
     protected SqlInstanceManager() {
-        Thread thread = new Thread(this::completeMethod);
         thread.start();
+        provideConnection();
         try {
             SecretData.initLoginInfo();
         } catch (IOException e) {
@@ -40,6 +39,26 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
 
     private Connection getConnection() {
         return this.connection;
+    }
+
+    public Thread getConnectionThread() {
+        return this.thread;
+    }
+
+    private void provideConnection() {
+        Thread thread = new Thread(() -> {
+            while (true) {
+                try {
+                    this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
+                    MySqlStats.getInstance().obtainConnection(this.connection);
+                    MySQLConnection.getInstance().obtainConnection(this.connection);
+                    Thread.sleep(3600 * 1000);
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
     }
 
     /**

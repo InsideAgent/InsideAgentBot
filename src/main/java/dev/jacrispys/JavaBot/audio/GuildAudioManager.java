@@ -102,11 +102,8 @@ public class GuildAudioManager {
         YoutubeHttpContextFilter.setPAPISID(SecretData.getPAPISID());
         this.audioHandler = new LoadAudioHandler(this);
         logger.info("{} - Successfully added GuildAudioManager for [" + instance.getName() + "]", className);
-        try {
-            sqlStats = MySqlStats.getInstance();
-            logger.info("{} - Initialized SqlStat Manager for current guild.", className);
-        } catch (SQLException | ExecutionException | InterruptedException ignored) {
-        }
+        sqlStats = MySqlStats.getInstance();
+        logger.info("{} - Initialized SqlStat Manager for current guild.", className);
     }
 
     /**
@@ -757,10 +754,14 @@ public class GuildAudioManager {
      */
     public MessageData moveSong(int pos1, int pos2) {
         ArrayList<AudioTrack> trackList = new ArrayList<>(scheduler.getTrackQueue().stream().toList());
+        MessageCreateBuilder message = new MessageCreateBuilder();
+        if (pos1 > trackList.size() || pos1 < 1 || pos2 > trackList.size() || pos2 < 1) {
+            message.setContent("Could not move song, as the given index is not valid! (Pos1: " + pos1 + ", Pos2: " + pos2 + " Queue Size: " + trackList.size() + ")");
+            return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
+        }
         AudioTrack song1 = trackList.get(pos1 - 1);
         Collections.swap(trackList, pos1 - 1, pos2 - 1);
         scheduler.setQueue(new LinkedBlockingQueue<>(trackList));
-        MessageCreateBuilder message = new MessageCreateBuilder();
         message.setContent("Moved song `" + song1.getInfo().author + " - " + song1.getInfo().title + "` to position: `" + pos2 + "`");
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
     }
@@ -785,6 +786,7 @@ public class GuildAudioManager {
 
     /**
      * Moves the audio bot to the channel the sender is in
+     *
      * @param sender user to move to
      * @return message to confirm action
      */
@@ -801,6 +803,7 @@ public class GuildAudioManager {
 
     /**
      * Resets region selection for VC
+     *
      * @param sender user to send confirmation to
      * @return message to confirm action
      */
@@ -819,6 +822,7 @@ public class GuildAudioManager {
 
     /**
      * Removes the bot from the VC and clears its audio channel
+     *
      * @param member to send confirmation to
      * @return message to confirm action
      */
@@ -849,9 +853,10 @@ public class GuildAudioManager {
 
     /**
      * Generates a radio based off of genres and popularity
+     *
      * @param requestData data from {@link GenerateGenrePlaylist#generatePlaylistFromGenre(String, int)} to add songs to the queue
-     * @param channel voice channel to send audio to
-     * @param member user that requested the radio
+     * @param channel     voice channel to send audio to
+     * @param member      user that requested the radio
      * @return message to confirm action
      */
     public MessageData generateRadio(Recommendations requestData, VoiceChannel channel, Member member) {

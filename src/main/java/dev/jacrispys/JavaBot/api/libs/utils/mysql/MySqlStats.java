@@ -15,23 +15,23 @@ import java.util.concurrent.ExecutionException;
  */
 public class MySqlStats {
 
-    private final Connection connection;
+    private Connection connection;
     private static MySqlStats instance = null;
 
     /**
      *
      * @return instance of the current class
-     * @throws SQLException if a database error occurs
-     * @throws ExecutionException if the Async database connection creation fails
-     * @throws InterruptedException if there is a thread fault while obtaining a connection
      */
-    public static MySqlStats getInstance() throws SQLException, ExecutionException, InterruptedException {
+    public static MySqlStats getInstance() {
         return instance != null ? instance : new MySqlStats();
     }
 
-    protected MySqlStats() throws ExecutionException, InterruptedException {
-        this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
+    protected MySqlStats() {
         instance = this;
+    }
+
+    public void obtainConnection(Connection connection) {
+        this.connection = connection;
     }
 
     /**

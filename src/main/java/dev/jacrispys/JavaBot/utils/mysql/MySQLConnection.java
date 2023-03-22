@@ -25,9 +25,8 @@ public class MySQLConnection {
     public MySQLConnection() {
         try {
             SecretData.initLoginInfo();
-            this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         INSTANCE = this;
     }
@@ -36,11 +35,15 @@ public class MySQLConnection {
         return INSTANCE != null ? INSTANCE : new MySQLConnection();
     }
 
+    public void obtainConnection(Connection connection) {
+        this.connection = connection;
+    }
+
     private Connection connection;
 
 
     /**
-     * @param guild guild to register into the DB
+     * @param guild          guild to register into the DB
      * @param defaultChannel default notification channel for guild
      * @return boolean if registration was a success
      */
@@ -49,7 +52,7 @@ public class MySQLConnection {
             Statement statement = connection.createStatement();
             String command = "INSERT IGNORE INTO guilds (ID,TicketChannel) VALUES (" + guild.getId() + ", " + defaultChannel.getId() + ");";
             statement.execute("INSERT IGNORE INTO guild_general_stats (ID) VALUE (" + guild.getIdLong() + ")");
-            for(Member member : guild.getMembers()) {
+            for (Member member : guild.getMembers()) {
                 statement.execute("INSERT IGNORE INTO audio_activity (user_id, guild_id) VALUES (" + member.getIdLong() + "," + guild.getIdLong() + ")");
             }
             statement.execute(command);
@@ -65,6 +68,7 @@ public class MySQLConnection {
 
     /**
      * Safe execution of any command
+     *
      * @param command command to execute
      */
     public void executeCommand(String command) {
@@ -80,6 +84,7 @@ public class MySQLConnection {
 
     /**
      * Safe execution of update commands
+     *
      * @param command command to update DB variables through
      */
     public void executeUpdate(String command) {
@@ -95,6 +100,7 @@ public class MySQLConnection {
 
     /**
      * Safe execution of queries
+     *
      * @param query DB query to execute
      * @return the ResultSet from the query
      */
