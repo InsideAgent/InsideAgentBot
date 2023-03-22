@@ -27,6 +27,11 @@ public class MySqlStats {
     }
 
     protected MySqlStats() {
+        try {
+            connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         instance = this;
     }
 

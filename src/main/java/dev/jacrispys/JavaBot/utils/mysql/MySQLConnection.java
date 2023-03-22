@@ -24,8 +24,9 @@ public class MySQLConnection {
 
     public MySQLConnection() {
         try {
+            connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
             SecretData.initLoginInfo();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
         INSTANCE = this;
