@@ -277,6 +277,7 @@ public class GuildAudioManager {
             message.setContent("Could not play: " + trackUrl + " \n `Reason: " + exception.getLocalizedMessage() + "`");
             data = message.build();
         }
+        exception.printStackTrace();
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : data;
     }
 

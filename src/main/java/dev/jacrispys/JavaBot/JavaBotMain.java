@@ -56,8 +56,9 @@ public class JavaBotMain {
      * <br> It next registers Audio source managers for multi-platform song searching through {@link AudioSourceManagers}
      * <br> Finally we add all event listeners and register a {@link io.javalin.Javalin} server to handle API requests (WIP)
      * <br> <br>
+     *
      * @throws ConfigurationException if any of the token fields are left blank in the config file
-     * @throws IOException if any errors occur whilst obtaining data from the YAML file
+     * @throws IOException            if any errors occur whilst obtaining data from the YAML file
      */
     public static void main(String[] args) throws ConfigurationException, IOException {
         logger.info("{} - Installing & loading data Files.", className);
@@ -70,7 +71,7 @@ public class JavaBotMain {
         }
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(botToken)
+        JDA jda = JDABuilder.createDefault(devToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
@@ -84,9 +85,16 @@ public class JavaBotMain {
         String clientId = SecretData.getSpotifyId();
         String clientSecret = SecretData.getSpotifySecret();
         String countryCode = "US";
-        audioManager.registerSourceManager(new SpotifySourceManager(null, clientId, clientSecret, countryCode, audioManager));
-        audioManager.registerSourceManager(new AppleMusicSourceManager(null, null, "us", audioManager));
+        SpotifySourceManager spMan = new SpotifySourceManager(null, clientId, clientSecret, countryCode, audioManager);
+        spMan.setAlbumPageLimit(32768);
+        spMan.setPlaylistPageLimit(32768);
+        audioManager.registerSourceManager(spMan);
+        AppleMusicSourceManager apMan = new AppleMusicSourceManager(null, null, "us", audioManager);
+        apMan.setAlbumPageLimit(32768);
+        apMan.setPlaylistPageLimit(32768);
+        audioManager.registerSourceManager(apMan);
         AudioSourceManagers.registerRemoteSources(audioManager);
+
         logger.info("{} - Successfully connected to spotify!", className);
 
         logger.info("{} - Connecting to personal spotify API...", className);
