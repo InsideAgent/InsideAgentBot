@@ -98,8 +98,6 @@ public class GuildAudioManager {
         this.scheduler = new TrackScheduler(this.audioPlayer, instance);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
-        YoutubeHttpContextFilter.setPSID(SecretData.getPSID());
-        YoutubeHttpContextFilter.setPAPISID(SecretData.getPAPISID());
         this.audioHandler = new LoadAudioHandler(this);
         logger.info("{} - Successfully added GuildAudioManager for [" + instance.getName() + "]", className);
         sqlStats = MySqlStats.getInstance();
