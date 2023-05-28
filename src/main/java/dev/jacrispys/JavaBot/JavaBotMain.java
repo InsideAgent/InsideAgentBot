@@ -5,6 +5,7 @@ import com.github.topisenpai.lavasrc.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import dev.jacrispys.JavaBot.api.analytics.utils.ListenTimeTracker;
 import dev.jacrispys.JavaBot.api.libs.utils.JavalinManager;
 import dev.jacrispys.JavaBot.audio.AudioPlayerButtons;
@@ -35,14 +36,13 @@ import javax.naming.ConfigurationException;
 import java.io.IOException;
 import java.sql.SQLException;
 
-
 /**
  * The core class that establishes a connection with {@link JDA} and discord.
  * <br> Also initializes all other utility/necessary classes.
  */
 public class JavaBotMain {
 
-    // TODO: 1/26/2023 Add Documentation to all functions 
+    // TODO: 1/26/2023 Add Documentation to all functions
 
     private static final Logger logger = LoggerFactory.getLogger(JavaBotMain.class);
     private static final String className = JavaBotMain.class.getSimpleName();
@@ -56,9 +56,8 @@ public class JavaBotMain {
      * <br> It next registers Audio source managers for multi-platform song searching through {@link AudioSourceManagers}
      * <br> Finally we add all event listeners and register a {@link io.javalin.Javalin} server to handle API requests (WIP)
      * <br> <br>
-     *
      * @throws ConfigurationException if any of the token fields are left blank in the config file
-     * @throws IOException            if any errors occur whilst obtaining data from the YAML file
+     * @throws IOException if any errors occur whilst obtaining data from the YAML file
      */
     public static void main(String[] args) throws ConfigurationException, IOException {
         logger.info("{} - Installing & loading data Files.", className);
@@ -71,7 +70,7 @@ public class JavaBotMain {
         }
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(devToken)
+        JDA jda = JDABuilder.createDefault(botToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
@@ -82,17 +81,13 @@ public class JavaBotMain {
         logger.info("{} - Connecting to spotify source manager...", className);
         audioManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerLocalSource(audioManager);
-        String clientId = SecretData.getSpotifyId();
-        String clientSecret = SecretData.getSpotifySecret();
+        String clientId = SecretData.getSpotifyId();        String clientSecret = SecretData.getSpotifySecret();
+
         String countryCode = "US";
-        SpotifySourceManager spMan = new SpotifySourceManager(null, clientId, clientSecret, countryCode, audioManager);
-        spMan.setAlbumPageLimit(32768);
-        spMan.setPlaylistPageLimit(32768);
-        audioManager.registerSourceManager(spMan);
-        AppleMusicSourceManager apMan = new AppleMusicSourceManager(null, null, "us", audioManager);
-        apMan.setAlbumPageLimit(32768);
-        apMan.setPlaylistPageLimit(32768);
-        audioManager.registerSourceManager(apMan);
+        YoutubeAudioSourceManager ytSource = new YoutubeAudioSourceManager(true, SecretData.getYtEmail(), SecretData.getYtPass());
+        audioManager.registerSourceManager(ytSource);
+        audioManager.registerSourceManager(new SpotifySourceManager(null, clientId, clientSecret, countryCode, audioManager));
+        audioManager.registerSourceManager(new AppleMusicSourceManager(null, null, "us", audioManager));
         AudioSourceManagers.registerRemoteSources(audioManager);
 
         logger.info("{} - Successfully connected to spotify!", className);

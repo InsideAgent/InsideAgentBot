@@ -3,6 +3,7 @@ package dev.jacrispys.JavaBot.audio;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeHttpContextFilter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -98,6 +99,9 @@ public class GuildAudioManager {
         this.scheduler = new TrackScheduler(this.audioPlayer, instance);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
+
+        //YoutubeHttpContextFilter.setPSID(SecretData.getPSID());
+        //YoutubeHttpContextFilter.setPAPISID(SecretData.getPAPISID());
         this.audioHandler = new LoadAudioHandler(this);
         logger.info("{} - Successfully added GuildAudioManager for [" + instance.getName() + "]", className);
         sqlStats = MySqlStats.getInstance();
@@ -449,6 +453,8 @@ public class GuildAudioManager {
     }
 
 
+    
+
     public static Map<Guild, Long> nowPlayingId = new HashMap<>();
 
     /**
@@ -785,7 +791,6 @@ public class GuildAudioManager {
 
     /**
      * Moves the audio bot to the channel the sender is in
-     *
      * @param sender user to move to
      * @return message to confirm action
      */
@@ -802,7 +807,6 @@ public class GuildAudioManager {
 
     /**
      * Resets region selection for VC
-     *
      * @param sender user to send confirmation to
      * @return message to confirm action
      */
@@ -821,7 +825,6 @@ public class GuildAudioManager {
 
     /**
      * Removes the bot from the VC and clears its audio channel
-     *
      * @param member to send confirmation to
      * @return message to confirm action
      */
@@ -852,10 +855,9 @@ public class GuildAudioManager {
 
     /**
      * Generates a radio based off of genres and popularity
-     *
      * @param requestData data from {@link GenerateGenrePlaylist#generatePlaylistFromGenre(String, int)} to add songs to the queue
-     * @param channel     voice channel to send audio to
-     * @param member      user that requested the radio
+     * @param channel voice channel to send audio to
+     * @param member user that requested the radio
      * @return message to confirm action
      */
     public MessageData generateRadio(Recommendations requestData, VoiceChannel channel, Member member) {
@@ -929,6 +931,7 @@ public class GuildAudioManager {
 
         return new MessageEditBuilder().setEmbeds(eb.build()).setComponents(ActionRow.of(buttons)).build();
     }
+
 
 
 }

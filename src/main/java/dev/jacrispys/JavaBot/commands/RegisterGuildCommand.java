@@ -4,6 +4,7 @@ import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.webhooks.SpotifyStats;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +18,14 @@ public class RegisterGuildCommand extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
         if (event.isFromType(ChannelType.PRIVATE)) return;
+        if (event.getGuild().getIdLong() == 703822426974322778L) {
+            event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDD7F️")).queue();
+            event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDD7E️")).queue();
+            event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDF7")).queue();
+            event.getMessage().addReaction(Emoji.fromUnicode("Ⓜ️")).queue();
+            event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDE08")).queue();
+
+        }
         MySQLConnection connection = MySQLConnection.getInstance();
         try {
             if (event.getMessage().getContentRaw().toLowerCase(Locale.ROOT).contains("!registerguild")) {

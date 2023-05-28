@@ -20,7 +20,6 @@ import java.util.concurrent.SynchronousQueue;
 
 /**
  * Manages audio tracks being loaded and played.
- *
  * @param guildAudioManager the audio manager that the tracks are sourced from.
  */
 public record LoadAudioHandler(GuildAudioManager guildAudioManager) {

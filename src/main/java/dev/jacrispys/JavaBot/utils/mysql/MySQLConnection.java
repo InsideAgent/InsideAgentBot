@@ -44,7 +44,7 @@ public class MySQLConnection {
 
 
     /**
-     * @param guild          guild to register into the DB
+     * @param guild guild to register into the DB
      * @param defaultChannel default notification channel for guild
      * @return boolean if registration was a success
      */
@@ -69,7 +69,6 @@ public class MySQLConnection {
 
     /**
      * Safe execution of any command
-     *
      * @param command command to execute
      */
     public void executeCommand(String command) {
@@ -85,7 +84,6 @@ public class MySQLConnection {
 
     /**
      * Safe execution of update commands
-     *
      * @param command command to update DB variables through
      */
     public void executeUpdate(String command) {
@@ -101,7 +99,6 @@ public class MySQLConnection {
 
     /**
      * Safe execution of queries
-     *
      * @param query DB query to execute
      * @return the ResultSet from the query
      */

@@ -71,12 +71,12 @@ public class SecretData {
         return (String) loginInfo.get("DATA_BASE_PASS");
     }
 
-    public static String getPSID() {
-        return (String) loginInfo.get("YOUTUBE_PSID");
+    public static String getYtEmail() {
+        return (String) loginInfo.get("YOUTUBE_EMAIL");
     }
 
-    public static String getPAPISID() {
-        return (String) loginInfo.get("YOUTUBE_PAPISID");
+    public static String getYtPass() {
+        return (String) loginInfo.get("YOUTUBE_PASS");
     }
 
     public static Object getCustomData(String key) {
