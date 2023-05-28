@@ -5,6 +5,7 @@ import com.github.topisenpai.lavasrc.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import dev.jacrispys.JavaBot.api.analytics.utils.ListenTimeTracker;
 import dev.jacrispys.JavaBot.api.libs.utils.JavalinManager;
 import dev.jacrispys.JavaBot.audio.AudioPlayerButtons;
@@ -34,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import javax.naming.ConfigurationException;
 import java.io.IOException;
 import java.sql.SQLException;
-
 
 /**
  * The core class that establishes a connection with {@link JDA} and discord.
@@ -81,9 +81,11 @@ public class JavaBotMain {
         logger.info("{} - Connecting to spotify source manager...", className);
         audioManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerLocalSource(audioManager);
-        String clientId = SecretData.getSpotifyId();
-        String clientSecret = SecretData.getSpotifySecret();
+        String clientId = SecretData.getSpotifyId();        String clientSecret = SecretData.getSpotifySecret();
+
         String countryCode = "US";
+        YoutubeAudioSourceManager ytSource = new YoutubeAudioSourceManager(true, SecretData.getYtEmail(), SecretData.getYtPass());
+        audioManager.registerSourceManager(ytSource);
         audioManager.registerSourceManager(new SpotifySourceManager(null, clientId, clientSecret, countryCode, audioManager));
         audioManager.registerSourceManager(new AppleMusicSourceManager(null, null, "us", audioManager));
         AudioSourceManagers.registerRemoteSources(audioManager);

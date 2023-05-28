@@ -55,10 +55,10 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
 
     private Connection resetConnection(String dataBase) throws SQLException {
         try {
-            String userName = "Jacrispys";
+            String userName = "Jacrispy";
             String db_password = SecretData.getDataBasePass();
 
-            String url = "jdbc:mysql://" + SecretData.getDBHost() + ":3306/" + dataBase + "?autoReconnect=true";
+            String url = "jdbc:mariadb://" + SecretData.getDBHost() + ":3306/" + dataBase + "?autoReconnect=true";
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
             } catch (ClassNotFoundException e) {

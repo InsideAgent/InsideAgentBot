@@ -3,6 +3,7 @@ package dev.jacrispys.JavaBot.audio;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeHttpContextFilter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -98,8 +99,9 @@ public class GuildAudioManager {
         this.scheduler = new TrackScheduler(this.audioPlayer, instance);
         audioPlayer.addListener(this.scheduler);
         sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
-        YoutubeHttpContextFilter.setPSID(SecretData.getPSID());
-        YoutubeHttpContextFilter.setPAPISID(SecretData.getPAPISID());
+
+        //YoutubeHttpContextFilter.setPSID(SecretData.getPSID());
+        //YoutubeHttpContextFilter.setPAPISID(SecretData.getPAPISID());
         this.audioHandler = new LoadAudioHandler(this);
         logger.info("{} - Successfully added GuildAudioManager for [" + instance.getName() + "]", className);
         try {

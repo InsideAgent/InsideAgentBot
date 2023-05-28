@@ -6,8 +6,6 @@ import dev.jacrispys.JavaBot.api.libs.auth.DeveloperConnection;
 import dev.jacrispys.JavaBot.api.libs.auth.TokenAuth;
 import dev.jacrispys.JavaBot.api.libs.auth.UserConnection;
 import dev.jacrispys.JavaBot.api.libs.utils.AgentOptions;
-import dev.jacrispys.JavaBot.utils.SecretData;
-import dev.jacrispys.JavaBot.utils.mysql.SqlInstanceManager;
 import jakarta.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.helpers.CheckReturnValue;
