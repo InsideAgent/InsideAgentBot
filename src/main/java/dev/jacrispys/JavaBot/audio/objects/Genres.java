@@ -140,8 +140,7 @@ public enum Genres {
         return list;
     }
 
-    private Genres(String value) {
-
+    Genres(String value) {
         this.value = value;
     }
 

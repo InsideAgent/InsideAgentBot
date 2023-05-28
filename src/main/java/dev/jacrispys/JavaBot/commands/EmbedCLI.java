@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
@@ -29,6 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Custom embed builder built into drop down menu's and modals.
+ */
 public class EmbedCLI extends ListenerAdapter {
 
     private static EmbedCLI instance = null;
@@ -49,6 +51,9 @@ public class EmbedCLI extends ListenerAdapter {
     private EmbedCLI() {
     }
 
+    /**
+     * Updates the embed once the user has changed a value
+     */
     protected MessageEditData generateEmbedMessage(String buttonId) {
         MessageEditBuilder message = new MessageEditBuilder().setContent("To be sent in: " + buttonIds.get(buttonId.replace("builder:", "")).getAsMention());
         EmbedBuilder builder = new EmbedBuilder();
@@ -78,6 +83,9 @@ public class EmbedCLI extends ListenerAdapter {
         return message.build();
     }
 
+    /**
+     * Creates the prompt to make an embed
+     */
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         if (buttonIds.containsKey(event.getComponentId().replace("builder:", ""))) {
@@ -94,6 +102,9 @@ public class EmbedCLI extends ListenerAdapter {
         }
     }
 
+    /**
+     * Handles a selection from drop down menus
+     */
     @Override
     public void onStringSelectInteraction(StringSelectInteractionEvent event) {
         if (buttonIds.containsKey(event.getComponentId().replace("select:", ""))) {
@@ -214,6 +225,9 @@ public class EmbedCLI extends ListenerAdapter {
         }
     }
 
+    /**
+     * Handles input recieved from drop down menus via modals
+     */
     @SuppressWarnings("all")
     @Override
     public void onModalInteraction(@Nonnull ModalInteractionEvent event) {

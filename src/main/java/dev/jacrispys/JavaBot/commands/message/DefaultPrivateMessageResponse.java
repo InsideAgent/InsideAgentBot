@@ -1,10 +1,13 @@
-package dev.jacrispys.JavaBot.commands.private_message;
+package dev.jacrispys.JavaBot.commands.message;
 
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Placeholder for private message responses
+ */
 public class DefaultPrivateMessageResponse extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if(event.isFromType(ChannelType.PRIVATE)) {

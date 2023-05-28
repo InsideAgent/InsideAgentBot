@@ -19,10 +19,16 @@ import java.util.Objects;
 import static dev.jacrispys.JavaBot.audio.GuildAudioManager.nowPlayingId;
 import static dev.jacrispys.JavaBot.audio.GuildAudioManager.queuePage;
 
+/**
+ * Event listener to handle buttons on paginated embeds.
+ */
 public class AudioPlayerButtons extends ListenerAdapter {
 
     private GuildAudioManager audioManager;
 
+    /**
+     * Listen's for a ButtonInteractionEvent and then checks and edit's an embed according to what each button is mapped to.
+     */
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         try {
@@ -104,6 +110,11 @@ public class AudioPlayerButtons extends ListenerAdapter {
         }
     }
 
+    /**
+     * @param embed embed to update
+     * @param page page of list to display
+     * @return buildable embed to use as a reply in {@link AudioPlayerButtons#onButtonInteraction(ButtonInteractionEvent)}
+     */
     private EmbedBuilder updateEmbed(MessageEmbed embed, int page) {
         queuePage = page;
         EmbedBuilder eb = new EmbedBuilder(embed);

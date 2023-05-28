@@ -14,6 +14,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Framework for mysql connection queries and updates
+ */
 public class MySQLConnection {
 
     private static MySQLConnection INSTANCE;
@@ -36,6 +39,11 @@ public class MySQLConnection {
     private Connection connection;
 
 
+    /**
+     * @param guild guild to register into the DB
+     * @param defaultChannel default notification channel for guild
+     * @return boolean if registration was a success
+     */
     public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
         try {
             Statement statement = connection.createStatement();
@@ -55,6 +63,10 @@ public class MySQLConnection {
         }
     }
 
+    /**
+     * Safe execution of any command
+     * @param command command to execute
+     */
     public void executeCommand(String command) {
         try {
             Statement statement = connection.createStatement();
@@ -66,6 +78,10 @@ public class MySQLConnection {
         }
     }
 
+    /**
+     * Safe execution of update commands
+     * @param command command to update DB variables through
+     */
     public void executeUpdate(String command) {
         try {
             Statement statement = connection.createStatement();
@@ -77,6 +93,11 @@ public class MySQLConnection {
         }
     }
 
+    /**
+     * Safe execution of queries
+     * @param query DB query to execute
+     * @return the ResultSet from the query
+     */
     public ResultSet queryCommand(String query) throws Exception {
         Statement statement;
         try {
@@ -88,12 +109,18 @@ public class MySQLConnection {
 
     }
 
+    /**
+     * Sets the channel for song announcements in a given guild
+     */
     public void setMusicChannel(Guild guild, long channelId) throws SQLException {
         Statement statement = connection.createStatement();
         statement.executeUpdate("UPDATE guilds SET musicChannel=" + channelId + " WHERE ID=" + guild.getId());
         statement.close();
     }
 
+    /**
+     * Obtains current music channel for a given guild
+     */
     public Long getMusicChannel(Guild guild) throws SQLException {
         ResultSet rs = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT musicChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
         rs.beforeFirst();

@@ -14,6 +14,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Undocumented, developer diagnostic tools to check for specific statistics.
+ */
 public class GenericDebugCommands extends ListenerAdapter {
     @SuppressWarnings("all")
     private final long DEBUG_SERVER = 786741501014441995L;

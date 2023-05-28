@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+@Deprecated(forRemoval = true)
 public class ComplaintCommand extends ListenerAdapter {
 
     private static final Map<User, UUID> complaintId = new HashMap<>();
