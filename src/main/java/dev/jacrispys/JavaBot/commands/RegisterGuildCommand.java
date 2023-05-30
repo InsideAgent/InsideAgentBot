@@ -18,14 +18,6 @@ public class RegisterGuildCommand extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
         if (event.isFromType(ChannelType.PRIVATE)) return;
-        if (event.getGuild().getIdLong() == 703822426974322778L) {
-            event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDD7F️")).queue();
-            event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDD7E️")).queue();
-            event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDF7")).queue();
-            event.getMessage().addReaction(Emoji.fromUnicode("Ⓜ️")).queue();
-            event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDE08")).queue();
-
-        }
         MySQLConnection connection = MySQLConnection.getInstance();
         try {
             if (event.getMessage().getContentRaw().toLowerCase(Locale.ROOT).contains("!registerguild")) {
