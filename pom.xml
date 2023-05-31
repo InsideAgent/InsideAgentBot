@@ -55,7 +55,7 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>
-                    <outputDirectory>C:\Users\jvanz\Desktop\Bot</outputDirectory>
+                    <outputDirectory>${project.basedir}\out\Bot</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

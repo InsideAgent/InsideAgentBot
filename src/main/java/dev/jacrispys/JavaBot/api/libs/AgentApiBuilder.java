@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.helpers.CheckReturnValue;
 
 import javax.security.auth.login.LoginException;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 
@@ -21,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 public class AgentApiBuilder {
 
     protected @Nullable String authToken;
-    protected @Nullable long userId;
+    protected long userId = -1;
     protected @Nullable String developerKey;
     protected @Nullable AgentOptions clientOptions;
 
