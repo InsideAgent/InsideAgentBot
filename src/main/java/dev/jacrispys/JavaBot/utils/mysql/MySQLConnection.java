@@ -42,6 +42,20 @@ public class MySQLConnection {
 
     private Connection connection;
 
+    private Connection getConnection() throws SQLException {
+        if (this.connection == null || !connection.isValid(10)) {
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+                this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
+            } catch (InterruptedException | ExecutionException | SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return this.connection;
+    }
+
 
     /**
      * @param guild guild to register into the DB
@@ -50,7 +64,7 @@ public class MySQLConnection {
      */
     public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
         try {
-            Statement statement = connection.createStatement();
+            Statement statement = getConnection().createStatement();
             String command = "INSERT IGNORE INTO guilds (ID,TicketChannel) VALUES (" + guild.getId() + ", " + defaultChannel.getId() + ");";
             statement.execute("INSERT IGNORE INTO guild_general_stats (ID) VALUE (" + guild.getIdLong() + ")");
             for (Member member : guild.getMembers()) {
@@ -73,7 +87,7 @@ public class MySQLConnection {
      */
     public void executeCommand(String command) {
         try {
-            Statement statement = connection.createStatement();
+            Statement statement = getConnection().createStatement();
             statement.execute(command);
             statement.close();
 
@@ -88,7 +102,7 @@ public class MySQLConnection {
      */
     public void executeUpdate(String command) {
         try {
-            Statement statement = connection.createStatement();
+            Statement statement = getConnection().createStatement();
             statement.executeUpdate(command);
             statement.close();
 
@@ -105,7 +119,7 @@ public class MySQLConnection {
     public ResultSet queryCommand(String query) throws Exception {
         Statement statement;
         try {
-            statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             return statement.executeQuery(query);
         } catch (Exception e) {
             throw new Exception("Could not query selected data!");
@@ -117,7 +131,7 @@ public class MySQLConnection {
      * Sets the channel for song announcements in a given guild
      */
     public void setMusicChannel(Guild guild, long channelId) throws SQLException {
-        Statement statement = connection.createStatement();
+        Statement statement = getConnection().createStatement();
         statement.executeUpdate("UPDATE guilds SET musicChannel=" + channelId + " WHERE ID=" + guild.getId());
         statement.close();
     }
@@ -126,7 +140,8 @@ public class MySQLConnection {
      * Obtains current music channel for a given guild
      */
     public Long getMusicChannel(Guild guild) throws SQLException {
-        ResultSet rs = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT musicChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
+        ResultSet rs = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT musicChannel FROM inside_agent_bot.guilds WHERE ID=" + guild.getId());
+
         rs.beforeFirst();
         rs.next();
         long channel = rs.getLong("musicChannel");

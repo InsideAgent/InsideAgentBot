@@ -42,6 +42,20 @@ public class MySqlStats {
         this.connection = connection;
     }
 
+    private Connection getConnection() throws SQLException {
+        if (this.connection == null || !connection.isValid(10)) {
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+                this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
+            } catch (InterruptedException | ExecutionException | SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return this.connection;
+    }
+
     /**
      * Increment's the given stat for the given guild
      * @param guildId guild to increment stat for
@@ -49,7 +63,7 @@ public class MySqlStats {
      */
     public void incrementGuildStat(long guildId, StatType statType) {
         try {
-            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId);
             set.beforeFirst();
             long statValue = set.next() ? set.getLong(statType.name().toLowerCase()) : 0L;
@@ -69,7 +83,7 @@ public class MySqlStats {
      */
     public void incrementGuildStat(long guildId, long increment, StatType statType) {
         try {
-            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId);
             set.beforeFirst();
             long statValue = set.next() ? set.getLong(statType.name().toLowerCase()) : 0L;
@@ -90,7 +104,7 @@ public class MySqlStats {
      * @throws SQLException if a database error occurs
      */
     public Object getGuildStat(long guildId, StatType statType) throws SQLException {
-        Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        Statement stmt = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         ResultSet rs = stmt.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId);
         rs.beforeFirst();
         rs.next();
@@ -109,7 +123,7 @@ public class MySqlStats {
      */
     private void overrideGuildStats(long guildId, long play_counter, long pause_counter, long playtime_millis, long hijack_counter, long command_counter) {
         try {
-            Statement statement = connection.createStatement();
+            Statement statement = getConnection().createStatement();
             statement.executeUpdate("REPLACE INTO guild_general_stats (play_counter, pause_counter, playtime_millis, hijack_counter, command_counter) VALUES " + guildId + play_counter + pause_counter + playtime_millis + hijack_counter + command_counter);
             statement.close();
 
@@ -126,7 +140,7 @@ public class MySqlStats {
      */
     private void incrementJdaStat(StatType statType) {
         try {
-            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM jda_stats");
             set.beforeFirst();
             long statValue = set.next() ? set.getLong(statType.name().toLowerCase()) : 0L;
@@ -145,7 +159,7 @@ public class MySqlStats {
      */
     private void incrementJdaStat(long increment, StatType statType) {
         try {
-            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM jda_stats");
             set.beforeFirst();
             long statValue = set.next() ? set.getLong(statType.name().toLowerCase()) : 0L;
@@ -163,7 +177,7 @@ public class MySqlStats {
      * @throws SQLException if a database error occurs
      */
     public Object getJdaStat(StatType statType) throws SQLException {
-        Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        Statement stmt = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         ResultSet rs = stmt.executeQuery("SELECT " + statType.name().toLowerCase() + " FROM jda_stats");
         rs.beforeFirst();
         rs.next();
@@ -181,7 +195,7 @@ public class MySqlStats {
      */
     private void overrideJdaStats(long play_counter, long pause_counter, long playtime_millis, long hijack_counter, long command_counter) {
         try {
-            Statement statement = connection.createStatement();
+            Statement statement = getConnection().createStatement();
             statement.executeUpdate("REPLACE INTO jda_stats (play_counter, pause_counter, playtime_millis, hijack_counter, command_counter) VALUES " + play_counter + pause_counter + playtime_millis + hijack_counter + command_counter);
             statement.close();
 
@@ -197,7 +211,7 @@ public class MySqlStats {
      */
     public void incrementUserStat(Member member, UserStats stat) {
         try {
-            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + stat.name().toLowerCase() + " FROM audio_activity WHERE guild_id=" + member.getGuild().getIdLong() + " AND user_id=" + member.getIdLong());
             set.beforeFirst();
             long statValue = set.next() ? set.getLong(stat.name().toLowerCase()) : 0L;
@@ -218,7 +232,7 @@ public class MySqlStats {
      */
     public void incrementUserStat(Member member, long increment, UserStats stat) {
         try {
-            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet set = statement.executeQuery("SELECT " + stat.name().toLowerCase() + " FROM audio_activity WHERE guild_id=" + member.getGuild().getIdLong() + " AND user_id=" + member.getIdLong());
             set.beforeFirst();
             long statValue = set.next() ? set.getLong(stat.name().toLowerCase()) : 0L;

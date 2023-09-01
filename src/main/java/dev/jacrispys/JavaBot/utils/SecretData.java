@@ -26,6 +26,7 @@ public class SecretData {
                 Map<String, Object> fileInfo = new HashMap<>();
                 fileInfo.put("DATA_BASE_PASS", " ");
                 fileInfo.put("TOKEN", " ");
+                fileInfo.put("APPLE_TOKEN", " ");
                 fileInfo.put("DEV-TOKEN", " ");
                 fileInfo.put("SPOTIFY_CLIENT_ID", " ");
                 fileInfo.put("SPOTIFY_SECRET", " ");
@@ -84,6 +85,10 @@ public class SecretData {
     }
     public static String getDBHost() {
         return (String) loginInfo.get("DB_HOST");
+    }
+
+    public static String getAppleToken() {
+        return (String) loginInfo.get("APPLE_TOKEN");
     }
 
     public static long getDiscordId(boolean dev) {

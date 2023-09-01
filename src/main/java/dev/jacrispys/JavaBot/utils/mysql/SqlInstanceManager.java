@@ -85,24 +85,30 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
      * @throws SQLException if a database error occurs
      */
     private Connection resetConnection(String dataBase) throws SQLException {
-        try {
-            String userName = "Jacrispy";
-            String db_password = SecretData.getDataBasePass();
-
-            String url = "jdbc:mariadb://" + SecretData.getDBHost() + ":3306/" + dataBase + "?autoReconnect=true";
+        if (this.connection == null || !connection.isValid(10)) {
             try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+                String userName = "Jacrispy";
+                String db_password = SecretData.getDataBasePass();
+
+                String url = "jdbc:mariadb://" + SecretData.getDBHost() + ":3306/" + dataBase + "?autoReconnect=true";
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                connection = DriverManager.getConnection(url, userName, db_password);
+                return connection;
+
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new SQLException("Could not connect to the given database!");
             }
-            connection = DriverManager.getConnection(url, userName, db_password);
-            return connection;
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new SQLException("Could not connect to the given database!");
         }
+        return this.connection;
     }
 
 }

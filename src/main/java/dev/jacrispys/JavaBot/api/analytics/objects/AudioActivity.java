@@ -21,8 +21,22 @@ public class AudioActivity {
 
     private final JdaUser user;
 
-    private final Connection connection;
+    volatile Connection connection;
     private final static Map<AudioUser, AudioActivity> instances = new HashMap<>();
+
+    private Connection getConnection() throws SQLException {
+        if (this.connection == null || !connection.isValid(10)) {
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+                this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
+            } catch (InterruptedException | ExecutionException | SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return this.connection;
+    }
 
     /**
      * Instance manager for audio activity objects.
@@ -60,7 +74,7 @@ public class AudioActivity {
      * @throws SQLException if a database exception occurs
      */
     protected Object getGuildStat(long guildId, @NotNull AudioActivities activity) throws SQLException {
-        Statement stmt = connection.createStatement();
+        Statement stmt = getConnection().createStatement();
         ResultSet rs = stmt.executeQuery("SELECT " + activity.name().toLowerCase() + " FROM audio_activity WHERE guild_id=" + guildId + " AND user_id=" + user.getUser().getIdLong());
         rs.beforeFirst();
         rs.next();
@@ -76,7 +90,7 @@ public class AudioActivity {
      */
     public void incrementStat(long guildId, @NotNull AudioActivities activity) {
         try {
-            Statement statement = connection.createStatement();
+            Statement statement = getConnection().createStatement();
             long statValue = statement.executeQuery("SELECT " + activity.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId).getLong(activity.name().toLowerCase());
             statement.executeUpdate("UPDATE guild_general_stats SET " + activity.name().toLowerCase() + "=" + statValue + 1 + " WHERE ID=" + guildId);
             statement.close();
@@ -96,7 +110,7 @@ public class AudioActivity {
      */
     public void incrementStat(long guildId, int increment, AudioActivities activity) {
         try {
-            Statement statement = connection.createStatement();
+            Statement statement = getConnection().createStatement();
             long statValue = statement.executeQuery("SELECT " + activity.name().toLowerCase() + " FROM guild_general_stats WHERE ID=" + guildId).getLong(activity.name().toLowerCase());
             statement.executeUpdate("UPDATE guild_general_stats SET " + activity.name().toLowerCase() + "=" + statValue + increment + " WHERE ID=" + guildId);
             statement.close();

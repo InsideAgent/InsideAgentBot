@@ -61,7 +61,7 @@ public class SpotifyManager {
         return this.thread;
     }
 
-    protected static String getAccessToken() {
+    public static String getAccessToken() {
         return accessToken;
     }
 

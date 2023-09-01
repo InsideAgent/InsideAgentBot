@@ -18,9 +18,23 @@ import java.util.concurrent.ExecutionException;
  */
 public class TokenAuth {
 
-    private final Connection connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
+    volatile Connection connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
 
     protected TokenAuth() throws ExecutionException, InterruptedException {
+    }
+
+    private Connection getConnection() throws SQLException {
+        if (this.connection == null || !connection.isValid(10)) {
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+                this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
+            } catch (InterruptedException | ExecutionException | SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return this.connection;
     }
 
     /**
@@ -75,7 +89,7 @@ public class TokenAuth {
      * @return true if the token and user exist in the DB, false otherwise
      */
     protected boolean authorizeToken(long userId, String authToken) {
-        try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+        try (Statement statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
             ResultSet rs = statement.executeQuery("SELECT token from api_auth WHERE user_id=" + userId);
 
@@ -99,7 +113,7 @@ public class TokenAuth {
      */
     protected boolean authorizeDevToken(long userId, @Nonnull String devToken) {
         try {
-            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = statement.executeQuery("SELECT token, dev_auth from api_auth WHERE user_id=" + userId);
             rs.beforeFirst();
             rs.next();
