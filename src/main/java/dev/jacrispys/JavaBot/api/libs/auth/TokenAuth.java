@@ -88,16 +88,17 @@ public class TokenAuth {
      * @param authToken token to validate through the DataBase
      * @return true if the token and user exist in the DB, false otherwise
      */
-    protected boolean authorizeToken(long userId, String authToken) {
+    protected boolean authorizeToken(long userId, String authToken) throws AuthorizationException {
+        if (userId == -1) throw new AuthorizationException("User ID must be set!");
         try (Statement statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
             ResultSet rs = statement.executeQuery("SELECT token from api_auth WHERE user_id=" + userId);
-
             rs.beforeFirst();
-            rs.next();
-            String token = rs.getString("token");
-            statement.close();
-            return Objects.equals(authToken, token);
+            if(rs.next()) {
+                String token = rs.getString("token");
+                statement.close();
+                return Objects.equals(authToken, token);
+            } else throw new AuthorizationException("No data in set!");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
