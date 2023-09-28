@@ -1,7 +1,7 @@
 package dev.jacrispys.JavaBot;
 
-import com.github.topisenpai.lavasrc.applemusic.AppleMusicSourceManager;
-import com.github.topisenpai.lavasrc.spotify.SpotifySourceManager;
+import com.github.topi314.lavasrc.applemusic.AppleMusicSourceManager;
+import com.github.topi314.lavasrc.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.naming.ConfigurationException;
 import java.io.IOException;
-import java.sql.SQLException;
 
 /**
  * The core class that establishes a connection with {@link JDA} and discord.
