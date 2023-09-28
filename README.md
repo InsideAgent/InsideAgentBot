@@ -109,10 +109,7 @@ And just like that the bot is ready to go!
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-#### Basic Use
-On startup of the bot, you will want to use `!registerguild` to make sure your guild is indexed in our databases! If your server supports private threads also be sure to use `!setticketchannel` in the channel of your choice for tickets to be created.
-
-## Current Command List for AudioPlayer:
+### Current Command List for AudioPlayer:
 _(Note Current commands with '-' are deprecated and should use slash commands instead)_
 - `/play` - Add a link to most streaming platforms, or use its name to search!
 - `/skip` - Skips the current song!
@@ -238,7 +235,6 @@ Project Link: [https://github.com/InsideAgent/DiscordBot](https://github.com/Ins
 ## Acknowledgments
 
 * [Jacrispys - Lead Designer and Creator](https://github.com/Jacrispys)
-* [Stilin - Ideas and feature brainstorming ](https://discordapp.com/users/972699606012031026)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
