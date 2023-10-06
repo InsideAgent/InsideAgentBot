@@ -80,7 +80,8 @@ public class JavaBotMain {
         logger.info("{} - Connecting to spotify source manager...", className);
         audioManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerLocalSource(audioManager);
-        String clientId = SecretData.getSpotifyId();        String clientSecret = SecretData.getSpotifySecret();
+        String clientId = SecretData.getSpotifyId();
+        String clientSecret = SecretData.getSpotifySecret();
 
         String countryCode = "US";
         YoutubeAudioSourceManager ytSource = new YoutubeAudioSourceManager(true, SecretData.getYtEmail(), SecretData.getYtPass());

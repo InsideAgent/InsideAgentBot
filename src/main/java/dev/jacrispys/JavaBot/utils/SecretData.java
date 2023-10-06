@@ -1,5 +1,6 @@
 package dev.jacrispys.JavaBot.utils;
 
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -23,18 +24,7 @@ public class SecretData {
             File file = new File("src/main/resources/loginInfo.yml");
             if (file.getParentFile() != null) file.getParentFile().mkdirs();
             if (file.createNewFile()) {
-                Map<String, Object> fileInfo = new HashMap<>();
-                fileInfo.put("DATA_BASE_PASS", " ");
-                fileInfo.put("TOKEN", " ");
-                fileInfo.put("APPLE_TOKEN", " ");
-                fileInfo.put("DEV-TOKEN", " ");
-                fileInfo.put("SPOTIFY_CLIENT_ID", " ");
-                fileInfo.put("SPOTIFY_SECRET", " ");
-                fileInfo.put("YOUTUBE_PSID", " ");
-                fileInfo.put("YOUTUBE_PAPISID", " ");
-                fileInfo.put("DB_HOST", "localhost");
-                fileInfo.put("BOT_CLIENT_ID", " ");
-                fileInfo.put("BOT_CLIENT_SECRET", " ");
+                Map<String, Object> fileInfo = getDefaultConfig();
                 FileWriter writer = new FileWriter(file.getPath());
                 fileInfo.keySet().forEach(key -> {
                     try {
@@ -49,6 +39,23 @@ public class SecretData {
             } else throw new FileNotFoundException("Could not create required config file!");
 
         } else return SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml");
+    }
+
+    @NotNull
+    private static Map<String, Object> getDefaultConfig() {
+        Map<String, Object> fileInfo = new HashMap<>();
+        fileInfo.put("DATA_BASE_PASS", " ");
+        fileInfo.put("TOKEN", " ");
+        fileInfo.put("APPLE_TOKEN", " ");
+        fileInfo.put("DEV-TOKEN", " ");
+        fileInfo.put("SPOTIFY_CLIENT_ID", " ");
+        fileInfo.put("SPOTIFY_SECRET", " ");
+        fileInfo.put("YOUTUBE_PSID", " ");
+        fileInfo.put("YOUTUBE_PAPISID", " ");
+        fileInfo.put("DB_HOST", "localhost");
+        fileInfo.put("BOT_CLIENT_ID", " ");
+        fileInfo.put("BOT_CLIENT_SECRET", " ");
+        return fileInfo;
     }
 
 
