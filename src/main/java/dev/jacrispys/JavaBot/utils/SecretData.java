@@ -14,14 +14,21 @@ public class SecretData {
     private static Yaml yaml = new Yaml();
     private static Map<String, Object> loginInfo;
 
-    public static void initLoginInfo() throws IOException {
+    private static final String DEFAULT_PATH_DIR = "src/main/resources/loginInfo.yml";
+
+    public static void initLoginInfo(String path) throws IOException {
         yaml = new Yaml();
-        loginInfo = yaml.load(generateSecretData());
+        loginInfo = yaml.load(generateSecretData(path));
     }
 
-    protected static InputStream generateSecretData() throws IOException {
-        if (SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml") == null) {
-            File file = new File("src/main/resources/loginInfo.yml");
+    public static void initLoginInfo() throws IOException {
+        initLoginInfo(DEFAULT_PATH_DIR);
+    }
+
+    private static InputStream generateSecretData(String path) throws IOException {
+        File fileExists = new File(path);
+        if (!fileExists.exists()) {
+            File file = new File(path);
             if (file.getParentFile() != null) file.getParentFile().mkdirs();
             if (file.createNewFile()) {
                 Map<String, Object> fileInfo = getDefaultConfig();
