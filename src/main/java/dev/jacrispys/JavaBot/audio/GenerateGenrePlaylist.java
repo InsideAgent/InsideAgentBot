@@ -2,10 +2,12 @@ package dev.jacrispys.JavaBot.audio;
 
 import com.neovisionaries.i18n.CountryCode;
 import dev.jacrispys.JavaBot.audio.objects.Genres;
-import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.SpotifyManager;
+import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
@@ -15,7 +17,6 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.hc.core5.http.ParseException;
 import org.jetbrains.annotations.NotNull;
@@ -26,9 +27,10 @@ import se.michaelthelin.spotify.requests.data.browse.GetRecommendationsRequest;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-
-import static dev.jacrispys.JavaBot.audio.GuildAudioManager.nowPlayingId;
 
 /**
  * Util class that uses {@link se.michaelthelin.spotify.SpotifyApi}
@@ -54,8 +56,8 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
      * @throws ParseException if the spotify request fails
      * @throws SpotifyWebApiException if the spotify request fails
      */
-    public Recommendations generatePlaylistFromGenre(String genres, int limit) throws IOException, ParseException, SpotifyWebApiException {
-        final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).build();
+    public Recommendations generatePlaylistFromGenre(String genres, int limit) throws IOException, ParseException, SpotifyWebApiException, ExecutionException, InterruptedException, TimeoutException {
+        final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().get(10000, TimeUnit.MILLISECONDS).getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).build();
         return request.execute();
     }
 
@@ -69,9 +71,9 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
      * @throws ParseException if the spotify request fails
      * @throws SpotifyWebApiException if the spotify request fails
      */
-    public Recommendations generatePlaylistFromGenre(String genres, int limit, int popularity) throws IOException, ParseException, SpotifyWebApiException {
+    public Recommendations generatePlaylistFromGenre(String genres, int limit, int popularity) throws IOException, ParseException, SpotifyWebApiException, ExecutionException, InterruptedException, TimeoutException {
         if (popularity > 100 || popularity < 0) popularity = 100;
-        final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).target_popularity(popularity).build();
+        final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().get(10000, TimeUnit.MILLISECONDS).getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).target_popularity(popularity).build();
         return request.execute();
     }
 

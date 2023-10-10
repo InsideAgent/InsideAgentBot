@@ -3,8 +3,6 @@ package dev.jacrispys.JavaBot.audio;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeHttpContextFilter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -42,15 +40,12 @@ import se.michaelthelin.spotify.model_objects.specification.Recommendations;
 import se.michaelthelin.spotify.model_objects.specification.TrackSimplified;
 
 import java.awt.*;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 import java.util.function.Function;
 
 import static dev.jacrispys.JavaBot.JavaBotMain.audioManager;
@@ -63,6 +58,8 @@ public class GuildAudioManager {
     private static final Logger logger = LoggerFactory.getLogger(GuildAudioManager.class);
     private static final String className = GuildAudioManager.class.getSimpleName();
     private final LoadAudioHandler audioHandler;
+
+    private final SpotifyManager man = SpotifyManager.getInstance();
 
     private boolean djEnabled = false;
 
@@ -408,7 +405,7 @@ public class GuildAudioManager {
         for (int i = 1; i <= 10; i++) {
             try {
                 AudioTrack track = trackList.get(i - 1);
-                String artistLink = "https://open.spotify.com/artist/" + SpotifyManager.getArtistId(track.getIdentifier());
+                String artistLink = "https://open.spotify.com/artist/" + man.getArtistId(track.getIdentifier()).get(1000, TimeUnit.MILLISECONDS);
                 String time;
                 if (track.getDuration() < 3600000) {
                     time = ("[" + DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss") + "]");
@@ -420,7 +417,8 @@ public class GuildAudioManager {
                 } else {
                     queue2.append(i).append(". [").append(track.getInfo().author).append("](").append(artistLink).append(") - [").append(track.getInfo().title).append("](").append(track.getInfo().uri).append(") ").append(time).append(" \n");
                 }
-            } catch (IndexOutOfBoundsException | IOException ex) {
+            } catch (IndexOutOfBoundsException | InterruptedException | ExecutionException |
+                     TimeoutException ex) {
                 break;
             }
         }

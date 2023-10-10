@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.UUID;
 
 public class SecretDataTests {
@@ -27,11 +25,9 @@ public class SecretDataTests {
     @AfterAll
     public static void clean() {
         File dir = new File(PATH_DIR);
-        for (File file:dir.listFiles()) {
+        for (File file : dir.listFiles()) {
             file.delete();
         }
     }
-
-
 
 }

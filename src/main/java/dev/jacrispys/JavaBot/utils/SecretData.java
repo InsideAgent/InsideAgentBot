@@ -45,11 +45,12 @@ public class SecretData {
                 return new FileInputStream(file);
             } else throw new FileNotFoundException("Could not create required config file!");
 
-        } else return SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml");
+        } else return new FileInputStream(path);
     }
 
+    @SafeVarargs
     @NotNull
-    private static Map<String, Object> getDefaultConfig() {
+    private static Map<String, Object> getDefaultConfig(Map.Entry<String, Object>... entry) {
         Map<String, Object> fileInfo = new HashMap<>();
         fileInfo.put("DATA_BASE_PASS", " ");
         fileInfo.put("TOKEN", " ");
@@ -62,6 +63,9 @@ public class SecretData {
         fileInfo.put("DB_HOST", "localhost");
         fileInfo.put("BOT_CLIENT_ID", " ");
         fileInfo.put("BOT_CLIENT_SECRET", " ");
+        for (Map.Entry<String, Object> entryArgs : entry) {
+            fileInfo.put(entryArgs.getKey(), entryArgs.getValue());
+        }
         return fileInfo;
     }
 

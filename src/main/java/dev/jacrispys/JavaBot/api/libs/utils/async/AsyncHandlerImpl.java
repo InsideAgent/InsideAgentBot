@@ -15,6 +15,9 @@ public abstract class AsyncHandlerImpl implements AsyncHandler{
     public final BlockingQueue<MethodRunner> methodQueue = new ArrayBlockingQueue<>(5);
     public final BlockingQueue<VoidMethodRunner> voidMethodQueue = new ArrayBlockingQueue<>(5);
 
+
+    private final long TIMEOUT_MILLIS = 10000L;
+
     /**
      * Continuously completes void functions that have been queued into {@link AsyncHandlerImpl#voidMethodQueue}
      */
@@ -26,6 +29,7 @@ public abstract class AsyncHandlerImpl implements AsyncHandler{
                 runner.cf().complete(null);
             }
         } catch (InterruptedException e) {
+            e.printStackTrace();
             Thread.currentThread().interrupt();
         }
     }
@@ -44,6 +48,7 @@ public abstract class AsyncHandlerImpl implements AsyncHandler{
                 }
             }
         } catch (InterruptedException e) {
+            e.printStackTrace();
             Thread.currentThread().interrupt();
         }
     }
