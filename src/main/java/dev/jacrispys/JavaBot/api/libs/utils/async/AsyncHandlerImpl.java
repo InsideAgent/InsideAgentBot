@@ -1,5 +1,8 @@
 package dev.jacrispys.JavaBot.api.libs.utils.async;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -7,16 +10,15 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Async method handler
  */
-public abstract class AsyncHandlerImpl implements AsyncHandler{
+public abstract class AsyncHandlerImpl implements AsyncHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(AsyncHandlerImpl.class);
 
     public record VoidMethodRunner(Runnable runnable, CompletableFuture<Void> cf) {}
     public record MethodRunner(Runnable runnable, CompletableFuture<?> cf) {}
 
     public final BlockingQueue<MethodRunner> methodQueue = new ArrayBlockingQueue<>(5);
     public final BlockingQueue<VoidMethodRunner> voidMethodQueue = new ArrayBlockingQueue<>(5);
-
-
-    private final long TIMEOUT_MILLIS = 10000L;
 
     /**
      * Continuously completes void functions that have been queued into {@link AsyncHandlerImpl#voidMethodQueue}
@@ -29,7 +31,7 @@ public abstract class AsyncHandlerImpl implements AsyncHandler{
                 runner.cf().complete(null);
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Method runner was interrupted! Please report this.", e);
             Thread.currentThread().interrupt();
         }
     }
@@ -48,7 +50,7 @@ public abstract class AsyncHandlerImpl implements AsyncHandler{
                 }
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Method runner was interrupted! Please report this.", e);
             Thread.currentThread().interrupt();
         }
     }

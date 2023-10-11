@@ -90,7 +90,7 @@ public class SpotifyManager extends AsyncHandlerImpl {
                 }
                 cf.complete(s);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Error occurred when fetching JSON", e);
             }
         }, cf));
         return cf;
@@ -156,14 +156,13 @@ public class SpotifyManager extends AsyncHandlerImpl {
     @Override
     public void completeVoid() {
         try {
-            for (; ; ) {
+            do {
                 VoidMethodRunner runner = voidMethodQueue.take();
                 runner.runnable().run();
                 runner.cf().complete(null);
-                if (voidMethodQueue.isEmpty()) break;
-            }
+            } while (!voidMethodQueue.isEmpty());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Method runner was interrupted! Please report this.", e);
             Thread.currentThread().interrupt();
         }
     }
@@ -171,17 +170,16 @@ public class SpotifyManager extends AsyncHandlerImpl {
     @Override
     public void completeMethod() {
         try {
-            for (; ; ) {
+            do {
                 MethodRunner runner = methodQueue.take();
                 runner.runnable().run();
                 while (true) {
                     if (!runner.cf().isDone() && !runner.cf().isCancelled()) continue;
                     break;
                 }
-                if (methodQueue.isEmpty()) break;
-            }
+            } while (!methodQueue.isEmpty());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Method runner was interrupted! Please report this.", e);
             Thread.currentThread().interrupt();
         }
     }
