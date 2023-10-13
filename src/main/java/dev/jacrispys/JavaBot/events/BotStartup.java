@@ -21,6 +21,7 @@ public class BotStartup extends ListenerAdapter {
 
     private final MySQLConnection connection = MySQLConnection.getInstance();
 
+    @Override
     public void onReady(@NotNull ReadyEvent event) {
         List<CommandData> commands = new ArrayList<>();
 
