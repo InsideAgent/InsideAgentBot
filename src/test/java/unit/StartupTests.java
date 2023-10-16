@@ -47,4 +47,9 @@ public class StartupTests {
 
         ReadyEventMock.assertUpdateCommands(ReadyEventMock.mockBotStartup(), expected);
     }
+
+    @Test
+    void readyStatus() {
+        ReadyEventMock.testReadyStatus(ReadyEventMock.mockBotStartup());
+    }
 }

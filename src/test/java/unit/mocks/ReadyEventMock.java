@@ -58,4 +58,15 @@ public class ReadyEventMock {
         Collections.sort(actual);
         Assertions.assertEquals(expectedOutput, actual);
     }
+
+    public static SessionState testReadyStatus(EventListener listener) {
+        ReadyEvent event = getReadyEvent();
+
+        listener.onEvent(event);
+        return event.getState();
+    }
+
+    public static void assertReadyStatus(EventListener listener) {
+        Assertions.assertEquals(SessionState.READY, testReadyStatus(listener));
+    }
 }
