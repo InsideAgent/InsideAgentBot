@@ -19,7 +19,16 @@ import java.util.List;
  */
 public class BotStartup extends ListenerAdapter {
 
-    private final MySQLConnection connection = MySQLConnection.getInstance();
+    private final MySQLConnection connection;
+
+    public BotStartup() {
+        connection = getConnection();
+    }
+
+
+    public MySQLConnection getConnection() {
+        return MySQLConnection.getInstance();
+    }
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {

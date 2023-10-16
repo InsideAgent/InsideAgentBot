@@ -11,6 +11,6 @@ public class StartupTests {
 
     @Test
     void commandRegisters() {
-        ReadyEventMock.assertUpdateCommands(new BotStartup(), null);
+        ReadyEventMock.assertUpdateCommands(ReadyEventMock.startClass(), null);
     }
 }

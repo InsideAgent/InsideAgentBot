@@ -1,5 +1,6 @@
 package unit.mocks;
 
+import dev.jacrispys.JavaBot.events.BotStartup;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.SessionState;
@@ -17,6 +18,15 @@ import java.util.List;
 import static unit.mocks.JDAMock.getJDA;
 
 public class ReadyEventMock {
+
+
+    public static BotStartup startClass() {
+        BotStartup startup = Mockito.mock(BotStartup.class);
+
+        Mockito.when(startup.getConnection()).thenAnswer(invocationOnMock ->  BypassDb.mockSqlConnection());
+
+        return startup;
+    }
 
 
     public static ReadyEvent getReadyEvent() {
@@ -37,7 +47,6 @@ public class ReadyEventMock {
 
     public static List<Command> testReadyEventCommands(EventListener listener) {
         ReadyEvent event = getReadyEventCommands();
-        Mockito.when(MySQLConnection.getInstance()).thenAnswer(invocationOnMock ->  BypassDb.mockSqlConnection());
 
         listener.onEvent(event);
         return JDAMock.getCommandList();
