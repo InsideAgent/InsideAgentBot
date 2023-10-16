@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.internal.JDAImpl;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JDAMock {
-    private static final List<Command> commandList = new ArrayList<>();
+    private static final List<CommandData> commandList = new ArrayList<>();
 
 
     public static JDA getJDA() {
@@ -82,7 +83,7 @@ public class JDAMock {
 
     }
 
-    public static List<Command> getCommandList() {
+    public static List<CommandData> getCommandList() {
         return commandList;
     }
 }
