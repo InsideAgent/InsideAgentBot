@@ -41,7 +41,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
         guilds.forEach(this::updateGuildCommands);
     }
 
-    public List<CommandData> updateJdaCommands() {
+    public static List<CommandData> updateJdaCommands() {
         List<CommandData> commands = new ArrayList<>();
         Collections.addAll(commands,
                 Commands.slash("setnick", "Sets the nickname of this bot, or a user.")

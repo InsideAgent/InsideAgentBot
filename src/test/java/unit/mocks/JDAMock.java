@@ -33,6 +33,7 @@ public class JDAMock {
             Mockito.when(jda.awaitStatus(Mockito.any(JDA.Status.class), Mockito.any(JDA.Status[].class))).thenAnswer(invocationOnMock -> jda);
             Mockito.when(jda.getSelfUser()).thenAnswer(invocationOnMock -> getSelfUser(name, discriminator));
             Mockito.when(jda.updateCommands()).thenAnswer(invocationOnMock -> getCommandUpdate());
+            Mockito.doNothing().when(jda).addEventListener(Mockito.any());
 
             return jda;
         } catch (InterruptedException e) {
