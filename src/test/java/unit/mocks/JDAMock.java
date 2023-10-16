@@ -8,7 +8,12 @@ import net.dv8tion.jda.internal.JDAImpl;
 import org.jetbrains.annotations.NotNull;
 import org.mockito.Mockito;
 
-public class MockFrameworkJDA {
+public class JDAMock {
+
+
+    public static JDA getJDA() {
+        return getJDA("UnitTesting", "1111");
+    }
 
     @NotNull
     public static JDA getJDA(String name, String discriminator) {
