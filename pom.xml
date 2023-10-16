@@ -9,7 +9,7 @@
     <version>0.1.9-beta.1</version>
 
     <build>
-        <testSourceDirectory>${project.basedir}/src/test/java/unit</testSourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/java/</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -69,7 +69,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <author>Jacrispys</author>
         <mainClass>dev.jacrispys.JavaBot.JavaBotMain</mainClass>
-        <testSourceDirectory>${project.basedir}/src/test/java/unit</testSourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/java/</testSourceDirectory>
     </properties>
 
     <repositories>
