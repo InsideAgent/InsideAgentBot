@@ -1,6 +1,7 @@
 package unit.mocks;
 
 import dev.jacrispys.JavaBot.events.BotStartup;
+import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.SessionState;
 import net.dv8tion.jda.api.hooks.EventListener;
@@ -18,6 +19,11 @@ public class ReadyEventMock extends BotStartup {
 
     public ReadyEventMock() {
 
+    }
+
+    @Override
+    public MySQLConnection getConnection() {
+        return null;
     }
 
 
