@@ -4,11 +4,17 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.internal.JDAImpl;
 import org.jetbrains.annotations.NotNull;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class JDAMock {
+    private static final List<Command> commandList = new ArrayList<>();
 
 
     public static JDA getJDA() {
@@ -25,11 +31,25 @@ public class JDAMock {
             Mockito.when(jda.awaitStatus(Mockito.any(JDA.Status.class))).thenAnswer(invocationOnMock -> jda);
             Mockito.when(jda.awaitStatus(Mockito.any(JDA.Status.class), Mockito.any(JDA.Status[].class))).thenAnswer(invocationOnMock -> jda);
             Mockito.when(jda.getSelfUser()).thenAnswer(invocationOnMock -> getSelfUser(name, discriminator));
+            Mockito.when(jda.updateCommands()).thenAnswer(invocationOnMock -> getCommandUpdate());
 
             return jda;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static CommandListUpdateAction getCommandUpdate() {
+        CommandListUpdateAction update = Mockito.mock(CommandListUpdateAction.class);
+
+        Mockito.doAnswer(invocationOnMock -> {
+            commandList.addAll(invocationOnMock.getArgument(0));
+            return update;
+        }).when(update.addCommands(Mockito.anyList())).queue();
+
+        Mockito.doAnswer(invocationOnMock -> update).when(update).queue();
+
+        return update;
     }
 
 
@@ -57,5 +77,9 @@ public class JDAMock {
 
         return member;
 
+    }
+
+    public static List<Command> getCommandList() {
+        return commandList;
     }
 }
