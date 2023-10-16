@@ -1,18 +1,15 @@
 package unit.mocks;
 
 import dev.jacrispys.JavaBot.events.BotStartup;
-import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.SessionState;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.junit.jupiter.api.Assertions;
+import org.mockito.Mock;
+import org.mockito.MockingDetails;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static unit.mocks.JDAMock.getJDA;
@@ -20,10 +17,12 @@ import static unit.mocks.JDAMock.getJDA;
 public class ReadyEventMock {
 
 
-    public static BotStartup startClass() {
-        BotStartup startup = Mockito.mock(BotStartup.class);
+    public static BotStartup mockBotStartup() {
+        BotStartup startup = Mockito.spy(BotStartup.class);
 
         Mockito.when(startup.getConnection()).thenAnswer(invocationOnMock ->  BypassDb.mockSqlConnection());
+        Mockito.doCallRealMethod().when(startup).onReady(Mockito.any());
+        Mockito.doCallRealMethod().when(startup).onGuildJoin(Mockito.any());
 
         return startup;
     }
@@ -53,6 +52,6 @@ public class ReadyEventMock {
     }
 
     public static void assertUpdateCommands(EventListener listener, List<Command> expectedOutput) {
-        Assertions.assertEquals(testReadyEventCommands(listener), expectedOutput);
+        Assertions.assertEquals(expectedOutput, testReadyEventCommands(listener));
     }
 }

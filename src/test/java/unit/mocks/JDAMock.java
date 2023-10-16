@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.internal.JDAImpl;
 import org.jetbrains.annotations.NotNull;
+import org.mockito.MockingDetails;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -42,10 +43,11 @@ public class JDAMock {
     private static CommandListUpdateAction getCommandUpdate() {
         CommandListUpdateAction update = Mockito.mock(CommandListUpdateAction.class);
 
-        Mockito.doAnswer(invocationOnMock -> {
+        Mockito.when(update.addCommands(Mockito.anyList())).thenAnswer(invocationOnMock -> {
             commandList.addAll(invocationOnMock.getArgument(0));
             return update;
-        }).when(update.addCommands(Mockito.anyList())).queue();
+        });
+
 
         Mockito.doAnswer(invocationOnMock -> update).when(update).queue();
 
