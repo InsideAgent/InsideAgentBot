@@ -1,5 +1,6 @@
 package unit.mocks;
 
+import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.SessionState;
 import net.dv8tion.jda.api.hooks.EventListener;
@@ -36,6 +37,7 @@ public class ReadyEventMock {
 
     public static List<Command> testReadyEventCommands(EventListener listener) {
         ReadyEvent event = getReadyEventCommands();
+        Mockito.when(MySQLConnection.getInstance()).thenAnswer(invocationOnMock ->  BypassDb.mockSqlConnection());
 
         listener.onEvent(event);
         return JDAMock.getCommandList();
