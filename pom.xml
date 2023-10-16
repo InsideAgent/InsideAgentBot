@@ -7,6 +7,7 @@
     <groupId>dev.Jacrispys</groupId>
     <artifactId>InsideAgentDev</artifactId>
     <version>0.1.9-beta.1</version>
+
     <build>
         <plugins>
             <plugin>
@@ -67,6 +68,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <author>Jacrispys</author>
         <mainClass>dev.jacrispys.JavaBot.JavaBotMain</mainClass>
+        <testSourceDirectory>${project.basedir}/src/test/java/unit</testSourceDirectory>
     </properties>
 
     <repositories>
