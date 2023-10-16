@@ -14,11 +14,15 @@ import java.util.List;
 
 import static unit.mocks.JDAMock.getJDA;
 
-public class ReadyEventMock {
+public class ReadyEventMock extends BotStartup {
+
+    public ReadyEventMock() {
+
+    }
 
 
-    public static BotStartup mockBotStartup() {
-        BotStartup startup = Mockito.spy(BotStartup.class);
+    public static ReadyEventMock mockBotStartup() {
+        ReadyEventMock startup = Mockito.spy(ReadyEventMock.class);
 
         Mockito.when(startup.getConnection()).thenAnswer(invocationOnMock ->  BypassDb.mockSqlConnection());
         Mockito.doCallRealMethod().when(startup).onReady(Mockito.any());
