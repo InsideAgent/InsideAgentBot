@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class UnclassifiedSlashCommands extends ListenerAdapter {
 
-    private MySqlStats sqlStats;
+    private final MySqlStats sqlStats;
     private static JDA jda;
 
     public UnclassifiedSlashCommands(JDA jda) {

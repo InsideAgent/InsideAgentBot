@@ -50,6 +50,6 @@ public class StartupTests {
 
     @Test
     void readyStatus() {
-        ReadyEventMock.testReadyStatus(ReadyEventMock.mockBotStartup());
+        ReadyEventMock.assertReadyStatus(ReadyEventMock.mockBotStartup());
     }
 }
