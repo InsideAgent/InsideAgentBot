@@ -1,6 +1,7 @@
 package unit.mocks;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.entities.User;
@@ -8,6 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.internal.JDAImpl;
+import net.dv8tion.jda.internal.utils.PermissionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.mockito.MockingDetails;
 import org.mockito.Mockito;
@@ -68,11 +70,12 @@ public class JDAMock {
     }
 
 
-    public static Member getMember(String name, String discriminator) {
+    public static Member getMember(String name, List<Permission> perms) {
         Member member = Mockito.mock(Member.class);
 
         Mockito.when(member.getEffectiveName()).thenAnswer(invocationOnMock -> name);
         Mockito.when(member.getNickname()).thenAnswer(invocationOnMock -> name);
+        Mockito.when(member.hasPermission(Mockito.anyList())).thenAnswer(invocationOnMock -> checkPerms(perms, invocationOnMock.getArgument(0)));
 
         User user = Mockito.mock(User.class);
         Mockito.when(user.getName()).thenAnswer(invocationOnMock -> name);
@@ -81,6 +84,13 @@ public class JDAMock {
 
         return member;
 
+    }
+
+    private static boolean checkPerms(List<Permission> current, Permission... toCheck) {
+        long curr = Permission.getRaw(current);
+        long check = Permission.getRaw(toCheck);
+        System.out.println("Check Perms");
+        return (curr & check) == check;
     }
 
     public static List<CommandData> getCommandList() {

@@ -1,19 +1,18 @@
 package unit.mocks;
 
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.mockito.Mockito;
 import unit.mocks.util.Callback;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
@@ -44,6 +43,7 @@ public class SlashCommandMock {
                                                                                String subcommandName,
                                                                                String subcommandGroup,
                                                                                Map<String, Object> options,
+                                                                               Member member,
                                                                                Callback<Message> messageCallback,
                                                                                Callback<Boolean> deferReply) {
         SlashCommandInteractionEvent event = mock(SlashCommandInteractionEvent.class);
@@ -51,6 +51,7 @@ public class SlashCommandMock {
         when(event.getSubcommandName()).thenAnswer(invocation -> subcommandName);
         when(event.getSubcommandGroup()).thenAnswer(invocation -> subcommandGroup);
         when(event.getChannel()).thenAnswer(invocation -> channel);
+        when(event.getMember()).thenAnswer(invocationOnMock -> member);
 
         when(event.getOption(anyString())).thenAnswer(invocation -> {
             OptionMapping mapping = mock(OptionMapping.class);
@@ -114,8 +115,16 @@ public class SlashCommandMock {
                                                                                String subcommandName,
                                                                                String subcommandGroup,
                                                                                Map<String, Object> options,
+                                                                               Member member,
                                                                                Callback<Message> messageCallback) {
-        return getSlashCommandInteractionEvent(channel, name, subcommandName, subcommandGroup, options, messageCallback,
+        return getSlashCommandInteractionEvent(channel, name, subcommandName, subcommandGroup, options, member, messageCallback,
+                new Callback<>());
+    }
+
+    public static SlashCommandInteractionEvent getSlashCommandInteractionEvent(String cmdName,
+                                                                               Member member
+                                                                               ) {
+        return getSlashCommandInteractionEvent(null, cmdName, null, null, null, member, null,
                 new Callback<>());
     }
 
@@ -140,6 +149,19 @@ public class SlashCommandMock {
         });
         return action;
     }
+
+
+    public static Message testSlashCommandReply(EventListener listener, String name, Member member) throws InterruptedException {
+        Callback<Message> messageCallback = new Callback<>();
+
+        MessageChannel channel = MessageMock.getMessageChannel("test-channel", 0L, messageCallback);
+        SlashCommandInteractionEvent event = getSlashCommandInteractionEvent(channel, name, null, null,
+                null, member, messageCallback);
+
+        listener.onEvent(event);
+        return messageCallback.await();
+    }
+
 
 
 }
