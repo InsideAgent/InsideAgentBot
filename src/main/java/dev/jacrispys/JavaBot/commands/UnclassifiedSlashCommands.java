@@ -28,12 +28,12 @@ import java.util.concurrent.ExecutionException;
  */
 public class UnclassifiedSlashCommands extends ListenerAdapter {
 
-    private MySqlStats sqlStats;
+    //private final MySqlStats sqlStats;
     private static JDA jda;
 
     public UnclassifiedSlashCommands(JDA jda) {
         this.jda = jda;
-        this.sqlStats = MySqlStats.getInstance();
+        //this.sqlStats = MySqlStats.getInstance();
     }
 
     public void initCommands(List<Guild> guilds) {
@@ -41,7 +41,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
         guilds.forEach(this::updateGuildCommands);
     }
 
-    public List<CommandData> updateJdaCommands() {
+    public static List<CommandData> updateJdaCommands() {
         List<CommandData> commands = new ArrayList<>();
         Collections.addAll(commands,
                 Commands.slash("setnick", "Sets the nickname of this bot, or a user.")
@@ -60,7 +60,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
     @SuppressWarnings("all")
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         // Increment SQL Stat
-        sqlStats.incrementGuildStat(event.getGuild().getIdLong(), StatType.COMMAND_COUNTER);
+        //sqlStats.incrementGuildStat(event.getGuild().getIdLong(), StatType.COMMAND_COUNTER);
         String commandName = event.getName();
         switch (commandName) {
             case "setnick" -> {

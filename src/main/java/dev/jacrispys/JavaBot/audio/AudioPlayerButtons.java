@@ -25,6 +25,7 @@ import static dev.jacrispys.JavaBot.audio.GuildAudioManager.queuePage;
 public class AudioPlayerButtons extends ListenerAdapter {
 
     private GuildAudioManager audioManager;
+    private final SpotifyManager man = SpotifyManager.getInstance();
 
     /**
      * Listen's for a ButtonInteractionEvent and then checks and edit's an embed according to what each button is mapped to.
@@ -131,14 +132,14 @@ public class AudioPlayerButtons extends ListenerAdapter {
                 } else {
                     time = ("[" + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss") + "]");
                 }
-                String artistLink = "https://open.spotify.com/artist/" + SpotifyManager.getArtistId(track.getIdentifier());
+                String artistLink = "https://open.spotify.com/artist/" + man.getArtistId(track.getIdentifier());
                 if (i < 5) {
                     queue.append((page - 1) * 10 + i + 1).append(". [").append(track.getInfo().author).append("](").append(artistLink).append(") - [").append(track.getInfo().title).append("](").append(track.getInfo().uri).append(") ").append(time).append(" \n");
                 } else {
                     queue2.append((page - 1) * 10 + i + 1).append(". [").append(track.getInfo().author).append("](").append(artistLink).append(") - [").append(track.getInfo().title).append("](").append(track.getInfo().uri).append(") ").append(time).append(" \n");
 
                 }
-            } catch (IndexOutOfBoundsException | IOException ex) {
+            } catch (IndexOutOfBoundsException ex) {
                 break;
             }
         }

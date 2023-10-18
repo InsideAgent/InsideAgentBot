@@ -54,7 +54,7 @@ public class SlashMusicCommands extends ListenerAdapter {
      * Generates a list of commands to be updated {@link ListenerAdapter#onReady(ReadyEvent)}
      * @return the list of Commands
      */
-    public List<CommandData> updateJdaCommands() {
+    public static List<CommandData> updateJdaCommands() {
         List<CommandData> commands = new ArrayList<>();
         Collections.addAll(commands,
                 Commands.slash("play", "Add a link to most streaming platforms, or use its name to search!")

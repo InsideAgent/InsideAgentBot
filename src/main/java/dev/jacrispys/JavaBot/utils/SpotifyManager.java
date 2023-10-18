@@ -3,6 +3,7 @@ package dev.jacrispys.JavaBot.utils;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterfaceManager;
+import dev.jacrispys.JavaBot.api.libs.utils.async.AsyncHandlerImpl;
 import org.apache.http.ParseException;
 import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
@@ -12,48 +13,101 @@ import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Manages instances of the {@link SpotifyApi}
  */
-public class SpotifyManager {
+public class SpotifyManager extends AsyncHandlerImpl {
 
-    private final Thread thread;
+    private Thread thread;
     private static final Logger logger = LoggerFactory.getLogger(SpotifyManager.class);
-    private final SpotifyApi spotifyApi;
+    private SpotifyApi spotifyApi;
 
     private static SpotifyManager instance = null;
     private static String accessToken;
+
+    private long cooldown;
 
     /**
      * Uses credentials to obtain connection to spotify api
      */
     private SpotifyManager() {
-        instance = this;
-        this.spotifyApi = new SpotifyApi.Builder().setClientId(SecretData.getSpotifyId()).setClientSecret(SecretData.getSpotifySecret()).build();
-        ClientCredentialsRequest clientCredentialsRequest = spotifyApi.clientCredentials().build();
+        runThread();
+    }
+
+
+    /**
+     * Thread update order is as follows...
+     * Check cooldown & execute spotify token update
+     * Check queues for artist ID requests
+     */
+    private void runThread() {
         this.thread = new Thread(() -> {
-            try {
-                while (true) {
-                    try {
-                        var clientCredentials = clientCredentialsRequest.execute();
-                        accessToken = clientCredentials.getAccessToken();
-                        spotifyApi.setAccessToken(clientCredentials.getAccessToken());
-                        Thread.sleep((clientCredentials.getExpiresIn() - 10) * 1000L);
-                    } catch (IOException | SpotifyWebApiException | ParseException e) {
-                        logger.error("Failed to update the spotify access token. Retrying in 1 minute ", e);
-                        Thread.sleep(60 * 1000);
-                    }
+            while (true) {
+                if (System.currentTimeMillis() >= cooldown && voidMethodQueue.isEmpty()) {
+                    CompletableFuture<Void> cf = new CompletableFuture<>();
+                    this.voidMethodQueue.add(new AsyncHandlerImpl.VoidMethodRunner(this::retrieveToken, cf));
+                    completeVoid();
+                    continue;
                 }
-            } catch (Exception e) {
-                logger.error("Failed to update the spotify access token", e);
+                if (spotifyApi != null) {
+                    completeMethod();
+                }
             }
         });
         thread.setDaemon(true);
         thread.start();
     }
 
-    public SpotifyApi getSpotifyApi() {
+    private void retrieveToken() {
+        instance = this;
+        this.spotifyApi = new SpotifyApi.Builder().setClientId(SecretData.getSpotifyId()).setClientSecret(SecretData.getSpotifySecret()).build();
+        ClientCredentialsRequest clientCredentialsRequest = spotifyApi.clientCredentials().build();
+        try {
+            try {
+                var clientCredentials = clientCredentialsRequest.execute();
+                accessToken = clientCredentials.getAccessToken();
+                spotifyApi.setAccessToken(clientCredentials.getAccessToken());
+                cooldown = System.currentTimeMillis() + ((clientCredentials.getExpiresIn() - 10) * 1000L);
+            } catch (IOException | SpotifyWebApiException | ParseException e) {
+                logger.error("Failed to update the spotify access token. Retrying in 1 minute ", e);
+                cooldown = System.currentTimeMillis() + (60 * 1000);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to update the spotify access token", e);
+        }
+    }
+
+
+    public CompletableFuture<String> getArtistId(String id) {
+        CompletableFuture<String> cf = new CompletableFuture<>();
+        this.methodQueue.add(new AsyncHandlerImpl.MethodRunner(() -> {
+            try {
+                String s = null;
+                while (s == null) {
+                    s = getArtistIdAsync(id);
+                }
+                cf.complete(s);
+            } catch (IOException e) {
+                logger.error("Error occurred when fetching JSON", e);
+            }
+        }, cf));
+        return cf;
+    }
+
+    public CompletableFuture<SpotifyApi> getSpotifyApi() {
+        CompletableFuture<SpotifyApi> cf = new CompletableFuture<>();
+        this.methodQueue.add(new AsyncHandlerImpl.MethodRunner(() -> {
+            do {
+            } while (spotifyApi == null);
+            cf.complete(getSpotifyApiAsync());
+        }, cf));
+        return cf;
+
+    }
+
+    private SpotifyApi getSpotifyApiAsync() {
         return this.spotifyApi;
     }
 
@@ -70,36 +124,63 @@ public class SpotifyManager {
 
     /**
      * Gets json object from a given spotify URI
+     *
      * @param uri spotify api endpoint to obtain
      * @return json data received from the http request
      * @throws IOException if http request fails
      */
-    private static JsonBrowser getJson(String uri) throws IOException {
-        try {
-            var request = new HttpGet(uri);
-            request.addHeader("Authorization", "Bearer " + getAccessToken());
-            return HttpClientTools.fetchResponseAsJson(httpInterfaceManager.getInterface(), request);
-        } catch (Exception ignored) {
-            return null;
-        }
+    private JsonBrowser getJson(String uri) throws IOException {
+        var request = new HttpGet(uri);
+        request.addHeader("Authorization", "Bearer " + getAccessToken());
+        return HttpClientTools.fetchResponseAsJson(httpInterfaceManager.getInterface(), request);
     }
 
     /**
      * Obtains the UUID of an artist from a given song
      */
-    public static String getArtistId(String id) throws IOException {
-        try {
-            var json = getJson(API_BASE + "tracks/" + id);
-            if (json == null || json.get("artists").values().isEmpty()) {
-                return null;
-            }
-            return json.get("artists").index(0).get("id").text();
-        } catch (Exception ignored) {
+    private String getArtistIdAsync(String id) throws IOException {
+        do {
+        } while (accessToken == null);
+        var json = getJson(API_BASE + "tracks/" + id);
+        if (json == null || json.get("artists").values().isEmpty()) {
             return null;
         }
+        return json.get("artists").index(0).get("id").text();
     }
 
     public static SpotifyManager getInstance() {
         return instance != null ? instance : new SpotifyManager();
+    }
+
+
+    @Override
+    public void completeVoid() {
+        try {
+            do {
+                VoidMethodRunner runner = voidMethodQueue.take();
+                runner.runnable().run();
+                runner.cf().complete(null);
+            } while (!voidMethodQueue.isEmpty());
+        } catch (InterruptedException e) {
+            logger.error("Method runner was interrupted! Please report this.", e);
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    @Override
+    public void completeMethod() {
+        try {
+            do {
+                MethodRunner runner = methodQueue.take();
+                runner.runnable().run();
+                while (true) {
+                    if (!runner.cf().isDone() && !runner.cf().isCancelled()) continue;
+                    break;
+                }
+            } while (!methodQueue.isEmpty());
+        } catch (InterruptedException e) {
+            logger.error("Method runner was interrupted! Please report this.", e);
+            Thread.currentThread().interrupt();
+        }
     }
 }

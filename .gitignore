@@ -2,5 +2,5 @@
 /target/
 /src/main/resources/loginInfo.yml
 /.idea/
-/src/test/
+/src/test/java/api
 /out/

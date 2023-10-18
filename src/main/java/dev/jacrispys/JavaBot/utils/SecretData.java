@@ -14,14 +14,21 @@ public class SecretData {
     private static Yaml yaml = new Yaml();
     private static Map<String, Object> loginInfo;
 
-    public static void initLoginInfo() throws IOException {
+    private static final String DEFAULT_PATH_DIR = "src/main/resources/loginInfo.yml";
+
+    public static void initLoginInfo(String path) throws IOException {
         yaml = new Yaml();
-        loginInfo = yaml.load(generateSecretData());
+        loginInfo = yaml.load(generateSecretData(path));
     }
 
-    protected static InputStream generateSecretData() throws IOException {
-        if (SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml") == null) {
-            File file = new File("src/main/resources/loginInfo.yml");
+    public static void initLoginInfo() throws IOException {
+        initLoginInfo(DEFAULT_PATH_DIR);
+    }
+
+    private static InputStream generateSecretData(String path) throws IOException {
+        File fileExists = new File(path);
+        if (!fileExists.exists()) {
+            File file = new File(path);
             if (file.getParentFile() != null) file.getParentFile().mkdirs();
             if (file.createNewFile()) {
                 Map<String, Object> fileInfo = getDefaultConfig();
@@ -38,11 +45,12 @@ public class SecretData {
                 return new FileInputStream(file);
             } else throw new FileNotFoundException("Could not create required config file!");
 
-        } else return SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml");
+        } else return new FileInputStream(path);
     }
 
+    @SafeVarargs
     @NotNull
-    private static Map<String, Object> getDefaultConfig() {
+    private static Map<String, Object> getDefaultConfig(Map.Entry<String, Object>... entry) {
         Map<String, Object> fileInfo = new HashMap<>();
         fileInfo.put("DATA_BASE_PASS", " ");
         fileInfo.put("TOKEN", " ");
@@ -55,6 +63,9 @@ public class SecretData {
         fileInfo.put("DB_HOST", "localhost");
         fileInfo.put("BOT_CLIENT_ID", " ");
         fileInfo.put("BOT_CLIENT_SECRET", " ");
+        for (Map.Entry<String, Object> entryArgs : entry) {
+            fileInfo.put(entryArgs.getKey(), entryArgs.getValue());
+        }
         return fileInfo;
     }
 

@@ -1,5 +1,8 @@
 package dev.jacrispys.JavaBot.api.libs.utils.async;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -7,7 +10,9 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Async method handler
  */
-public abstract class AsyncHandlerImpl implements AsyncHandler{
+public abstract class AsyncHandlerImpl implements AsyncHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(AsyncHandlerImpl.class);
 
     public record VoidMethodRunner(Runnable runnable, CompletableFuture<Void> cf) {}
     public record MethodRunner(Runnable runnable, CompletableFuture<?> cf) {}
@@ -26,6 +31,7 @@ public abstract class AsyncHandlerImpl implements AsyncHandler{
                 runner.cf().complete(null);
             }
         } catch (InterruptedException e) {
+            logger.error("Method runner was interrupted! Please report this.", e);
             Thread.currentThread().interrupt();
         }
     }
@@ -44,6 +50,7 @@ public abstract class AsyncHandlerImpl implements AsyncHandler{
                 }
             }
         } catch (InterruptedException e) {
+            logger.error("Method runner was interrupted! Please report this.", e);
             Thread.currentThread().interrupt();
         }
     }
