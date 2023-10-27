@@ -99,7 +99,8 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     }
                 }
                 case ("showQueue") -> {
-                    event.reply((MessageCreateData) audioManager.displayQueue()).setEphemeral(true).queue();
+                    event.deferReply().setEphemeral(true).queue();
+                    event.getInteraction().getHook().editOriginal((MessageEditData) audioManager.displayQueue()).queue();
                     if (!event.isAcknowledged()) {
                         event.editMessage((MessageEditData) event.getMessage()).queue();
                     }
