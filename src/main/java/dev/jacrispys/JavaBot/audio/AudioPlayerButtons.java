@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import static dev.jacrispys.JavaBot.audio.GuildAudioManager.queuePage;
 public class AudioPlayerButtons extends ListenerAdapter {
 
     private GuildAudioManager audioManager;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Listen's for a ButtonInteractionEvent and then checks and edit's an embed according to what each button is mapped to.
@@ -107,7 +110,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage());
         }
     }
 
