@@ -6,7 +6,6 @@ import dev.jacrispys.JavaBot.api.libs.auth.DeveloperConnection;
 import dev.jacrispys.JavaBot.api.libs.auth.TokenAuth;
 import dev.jacrispys.JavaBot.api.libs.auth.UserConnection;
 import dev.jacrispys.JavaBot.api.libs.utils.AgentOptions;
-import jakarta.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.helpers.CheckReturnValue;
 
@@ -30,7 +29,6 @@ public class AgentApiBuilder {
      * @param authToken token to authenticate to the server with
      * @return new instance of the class to allow setting other variables.
      */
-    @Nonnull
     @CheckReturnValue
     public static AgentApiBuilder createClient(@Nullable String authToken) {
         return new AgentApiBuilder(authToken);
@@ -40,7 +38,6 @@ public class AgentApiBuilder {
      * @param userId Discord user ID to link the User to the API
      * @return current instance of the class to allow setting of other variables.
      */
-    @Nonnull
     public AgentApiBuilder setUserId(long userId) {
         this.userId = userId;
         return this;
@@ -50,7 +47,6 @@ public class AgentApiBuilder {
      * @param developerKey alternate token that verifies credentials for developer access
      * @return current instance of the class to allow setting of other variables.
      */
-    @Nonnull
     public AgentApiBuilder setDeveloperKey(String developerKey) {
         this.developerKey = developerKey;
         return this;
@@ -60,7 +56,6 @@ public class AgentApiBuilder {
      * @param options advanced configuration options for the API (WIP)
      * @return current instance of the class to allow setting of other variables.
      */
-    @Nonnull
     public AgentApiBuilder setOptions(AgentOptions options) {
         this.clientOptions = options;
         return this;

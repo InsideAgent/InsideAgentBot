@@ -1,7 +1,6 @@
 package dev.jacrispys.JavaBot.commands;
 
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
-import jakarta.annotation.Nonnull;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -152,7 +151,7 @@ public class ComplaintCommand extends ListenerAdapter {
 
     }
 
-    public void onModalInteraction(@Nonnull ModalInteractionEvent event) {
+    public void onModalInteraction(ModalInteractionEvent event) {
         if (event.getModalId().equals("complaint:" + complaintId.get(event.getUser()))) {
             String reason = Objects.requireNonNull(event.getValue("Reason")).getAsString();
             User mentionedUser = complaintMention.get(event.getUser());

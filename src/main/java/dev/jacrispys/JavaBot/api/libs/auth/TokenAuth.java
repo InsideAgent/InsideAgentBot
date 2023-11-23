@@ -2,10 +2,8 @@ package dev.jacrispys.JavaBot.api.libs.auth;
 
 import dev.jacrispys.JavaBot.api.exceptions.AuthorizationException;
 import dev.jacrispys.JavaBot.utils.mysql.SqlInstanceManager;
-import jakarta.annotation.Nonnull;
 import net.dv8tion.jda.api.JDA;
 
-import javax.security.auth.login.LoginException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -112,7 +110,7 @@ public class TokenAuth {
      * @param devToken token to validate through the DataBase
      * @return true if the token and user exist in the DB along with a True value for "dev_auth", false otherwise
      */
-    protected boolean authorizeDevToken(long userId, @Nonnull String devToken) {
+    protected boolean authorizeDevToken(long userId, String devToken) {
         try {
             Statement statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = statement.executeQuery("SELECT token, dev_auth from api_auth WHERE user_id=" + userId);

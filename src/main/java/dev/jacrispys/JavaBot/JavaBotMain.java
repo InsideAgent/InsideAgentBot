@@ -35,6 +35,10 @@ import org.slf4j.LoggerFactory;
 import javax.naming.ConfigurationException;
 import java.io.IOException;
 
+
+// TODO: 11/22/2023 Stats command + Debug Stats command
+// TODO: 11/22/2023 allow yml data to be set from a /override command
+
 /**
  * The core class that establishes a connection with {@link JDA} and discord.
  * <br> Also initializes all other utility/necessary classes.

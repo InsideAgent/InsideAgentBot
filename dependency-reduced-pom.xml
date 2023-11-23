@@ -63,6 +63,11 @@
       <id>jitpack</id>
       <url>https://jitpack.io</url>
     </repository>
+    <repository>
+      <id>TopiWTF-releases</id>
+      <name>Topis Maven Repo</name>
+      <url>https://maven.topi.wtf/releases</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>

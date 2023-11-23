@@ -1,6 +1,5 @@
 package dev.jacrispys.JavaBot.commands;
 
-import jakarta.annotation.Nonnull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -230,7 +229,7 @@ public class EmbedCLI extends ListenerAdapter {
      */
     @SuppressWarnings("all")
     @Override
-    public void onModalInteraction(@Nonnull ModalInteractionEvent event) {
+    public void onModalInteraction(ModalInteractionEvent event) {
         if (buttonIds.containsKey(event.getModalId().replace("modal:", ""))) {
             Message message = messageId.get(event.getModalId().replace("modal:", ""));
             MessageEmbed embed = message.getEmbeds().get(0);

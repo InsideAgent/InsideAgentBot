@@ -82,6 +82,12 @@
             <url>https://jitpack.io</url>
         </repository>
 
+        <repository>
+            <id>TopiWTF-releases</id>
+            <name>Topis Maven Repo</name>
+            <url>https://maven.topi.wtf/releases</url>
+        </repository>
+
     </repositories>
 
     <dependencies>
@@ -102,7 +108,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.0-beta.13</version>
+            <version>5.0.0-beta.18</version>
         </dependency>
 
         <dependency>
@@ -120,13 +126,13 @@
         <dependency>
             <groupId>io.javalin</groupId>
             <artifactId>javalin</artifactId>
-            <version>5.6.1</version>
+            <version>6.0.0-beta.2</version>
         </dependency>
 
         <dependency>
             <groupId>dev.arbjerg</groupId>
             <artifactId>lavaplayer</artifactId>
-            <version>2.0.2</version>
+            <version>2.0.3</version>
         </dependency>
 
         <dependency>
@@ -136,9 +142,20 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.TopiSenpai.LavaSrc</groupId>
+            <groupId>com.github.topi314.lavasrc</groupId>
             <artifactId>lavasrc</artifactId>
-            <version>4.0.0-beta.6</version>
+            <version>4.0.0-beta.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.topi314.lavasrc</groupId>
+            <artifactId>lavasrc-plugin</artifactId>
+            <version>4.0.0-beta.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.topi314.lavasearch</groupId>
+            <artifactId>lavasearch</artifactId>
+            <version>1.0.0-beta.2</version>
         </dependency>
 
 
