@@ -2,6 +2,7 @@ package dev.jacrispys.JavaBot.commands.debug;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import dev.jacrispys.JavaBot.audio.GuildAudioManager;
+import dev.jacrispys.JavaBot.utils.SecretData;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -22,6 +23,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +51,12 @@ public class SlashDebugCommands extends ListenerAdapter {
         Collections.addAll(subCommands,
                 new SubcommandData("latency", "View the bot's current latency.")
                         .addOption(OptionType.STRING, "guildid", "A guild to get the latency of.", false),
-                new SubcommandData("active", "List of active AudioPlayers"));
+                new SubcommandData("active", "List of active AudioPlayers"),
+                new SubcommandData("override", "Override yml data in loginInfo.")
+                        .addOption(OptionType.STRING, "yml_key", "The YML key to override", true)
+                        .addOption(OptionType.STRING, "yml_value", "The value to set as an override", true),
+                new SubcommandData("addsuperuser", "Add a new super user.")
+                        .addOption(OptionType.USER, "user", "User to be added to super users", true));
         Collections.addAll(commands,
                 Commands.slash("debug", "Developer Only Commands.")
                         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
@@ -64,6 +71,9 @@ public class SlashDebugCommands extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (!event.getName().equals("debug")) return;
         String commandName = event.getSubcommandName();
+        if (!SecretData.getSuperUsers().contains(event.getUser().getIdLong())) {
+            event.reply("Only super users may use debug commands! Please contact the developer for more information.").setEphemeral(true).queue();
+        }
         switch (commandName) {
             case "latency" -> {
                 event.deferReply(true).queue();
@@ -82,6 +92,31 @@ public class SlashDebugCommands extends ListenerAdapter {
                 }
             }
             case "active" -> event.reply(new MessageCreateBuilder().setEmbeds(activePlayers(event.getUser())).build()).setEphemeral(true).queue();
+            case "override" -> {
+                event.deferReply().queue();
+                try {
+                    String key = event.getOption("yml_key").getAsString();
+                    String value = event.getOption("yml_value").getAsString();
+
+                    Object obj = SecretData.getCustomData(key);
+                    if (obj == null || key.equals("SUPER_USERS")) {
+                        event.getInteraction().getHook().editOriginal("Invalid key or value entered. Please try again.").queue();
+                        return;
+                    }
+                    SecretData.setCustomData(key, value);
+                    event.getInteraction().getHook().editOriginalEmbeds(overrideEmbed(key, obj.toString(), value, event.getUser()).build()).queue();
+                } catch (NullPointerException ex) {
+                    event.getInteraction().getHook().editOriginal("Invalid key or value entered. Please try again.").queue();
+                }
+            }
+            case "addsuperuser" -> {
+                User user = event.getOption("user").getAsUser();
+                long userId = user.getIdLong();
+                List<Long> superUsers = SecretData.getSuperUsers();
+                superUsers.add(userId);
+                SecretData.setCustomData("SUPER_USERS", superUsers);
+                event.replyEmbeds(overrideEmbed("SUPER_USERS", "N/A", "@" + user.getName() + " : " + userId, event.getUser()).build()).queue();
+            }
         }
     }
 
@@ -133,6 +168,20 @@ public class SlashDebugCommands extends ListenerAdapter {
             }
         });
         return active.size();
+    }
+
+
+    private EmbedBuilder overrideEmbed(String key, String oldValue, String newValue, User editor) {
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("YAML Key override for: \"" + key + "\"");
+        eb.addField("Old Value: ", "`" + oldValue + "`\n", false);
+        eb.addField("New Value: ", "`" + newValue + "`\n", false);
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss z");
+        Date currentDate = new Date();
+        eb.setFooter("Edited at: " + formatter.format(currentDate));
+        eb.setAuthor("Edited by: @" + editor.getName(), null, editor.getEffectiveAvatarUrl());
+        eb.setColor(0xed284c);
+        return eb;
     }
 
 }

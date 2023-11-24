@@ -37,7 +37,6 @@ import java.io.IOException;
 
 
 // TODO: 11/22/2023 Stats command + Debug Stats command
-// TODO: 11/22/2023 allow yml data to be set from a /override command
 
 /**
  * The core class that establishes a connection with {@link JDA} and discord.
@@ -65,7 +64,7 @@ public class JavaBotMain {
     public static void main(String[] args) throws ConfigurationException, IOException {
         logger.info("{} - Installing & loading data Files.", className);
         SecretData.initLoginInfo();
-        String devToken = SecretData.getToken(false);
+        String devToken = SecretData.getToken(true);
         String botToken = SecretData.getToken();
 
         if (devToken == null || botToken == null) {
