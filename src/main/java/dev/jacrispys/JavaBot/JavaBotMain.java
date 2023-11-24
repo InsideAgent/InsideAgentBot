@@ -43,9 +43,6 @@ import java.io.IOException;
  * <br> Also initializes all other utility/necessary classes.
  */
 public class JavaBotMain {
-
-    // TODO: 1/26/2023 Add Documentation to all functions
-
     private static final Logger logger = LoggerFactory.getLogger(JavaBotMain.class);
     private static final String className = JavaBotMain.class.getSimpleName();
     public static AudioPlayerManager audioManager;

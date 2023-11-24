@@ -32,9 +32,6 @@ import java.util.concurrent.TimeUnit;
  * Undocumented, developer diagnostic tools to check for specific statistics.
  */
 public class SlashDebugCommands extends ListenerAdapter {
-
-    // TODO: 9/15/2022 Add more debug commands.
-
     private final Map<Long, Pair<UUID, InteractionHook>> trackedGuilds = new HashMap<>();
 
     public SlashDebugCommands(JDA jda) {
