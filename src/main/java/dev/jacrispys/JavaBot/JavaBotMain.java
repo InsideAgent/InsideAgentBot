@@ -112,6 +112,7 @@ public class JavaBotMain {
         jda.addEventListener(new GenerateGenrePlaylist());
         jda.addEventListener(new ListenTimeTracker(jda));
         jda.addEventListener(new HelpCommand());
+        jda.addEventListener(new StatsCommands());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
 
 
