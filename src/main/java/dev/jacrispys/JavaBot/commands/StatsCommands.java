@@ -37,7 +37,7 @@ public class StatsCommands extends ListenerAdapter {
                         .addOption(OptionType.BOOLEAN, "visible", "Determines if the stats message will be visible to all.", false),
 
                 Commands.slash("serverstats", "Stats for the whole server.").setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_CHANNEL))
-                        .addOption(OptionType.BOOLEAN, "visible", "Determines if the stats message will be visible to all.", false)
+                        .addOption(OptionType.BOOLEAN, "visible", "Determines if the stats message will be visible to all.", true)
                         .addOption(OptionType.BOOLEAN, "usecache", "Bypasses caching system if false", true));
         return commands;
     }
