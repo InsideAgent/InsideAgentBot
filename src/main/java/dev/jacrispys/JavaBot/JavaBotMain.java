@@ -11,10 +11,7 @@ import dev.jacrispys.JavaBot.api.libs.utils.JavalinManager;
 import dev.jacrispys.JavaBot.audio.AudioPlayerButtons;
 import dev.jacrispys.JavaBot.audio.GenerateGenrePlaylist;
 import dev.jacrispys.JavaBot.audio.InactivityTimer;
-import dev.jacrispys.JavaBot.commands.ComplaintCommand;
-import dev.jacrispys.JavaBot.commands.EmbedCLI;
-import dev.jacrispys.JavaBot.commands.RegisterGuildCommand;
-import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
+import dev.jacrispys.JavaBot.commands.*;
 import dev.jacrispys.JavaBot.commands.audio.GenericMusicCommands;
 import dev.jacrispys.JavaBot.commands.audio.SlashMusicCommands;
 import dev.jacrispys.JavaBot.commands.debug.GenericDebugCommands;
@@ -46,6 +43,9 @@ public class JavaBotMain {
     private static final Logger logger = LoggerFactory.getLogger(JavaBotMain.class);
     private static final String className = JavaBotMain.class.getSimpleName();
     public static AudioPlayerManager audioManager;
+
+    public static String VERSION = JavaBotMain.class.getPackage().getImplementationVersion();
+
 
     /**
      * The main method of the application.
@@ -96,9 +96,7 @@ public class JavaBotMain {
         SpotifyManager.getInstance();
         logger.info("{} - Connected to personal API!", className);
 
-        String version = JavaBotMain.class.getPackage().getImplementationVersion();
-
-        jda.getPresence().setActivity(Activity.streaming(version + " Woo!", "https://www.twitch.tv/jacrispyslive"));
+        jda.getPresence().setActivity(Activity.streaming(VERSION + " Woo!", "https://www.twitch.tv/jacrispyslive"));
         logger.info("{} - Starting event listeners...", className);
         jda.addEventListener(new SlashMusicCommands());
         jda.addEventListener(new DefaultPrivateMessageResponse());
@@ -113,6 +111,7 @@ public class JavaBotMain {
         jda.addEventListener(EmbedCLI.getInstance());
         jda.addEventListener(new GenerateGenrePlaylist());
         jda.addEventListener(new ListenTimeTracker(jda));
+        jda.addEventListener(new HelpCommand());
         logger.info("{} - Successfully added [" + jda.getRegisteredListeners().size() + "] event listeners!", className);
 
 

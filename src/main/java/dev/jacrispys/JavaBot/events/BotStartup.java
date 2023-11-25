@@ -1,5 +1,6 @@
 package dev.jacrispys.JavaBot.events;
 
+import dev.jacrispys.JavaBot.commands.HelpCommand;
 import dev.jacrispys.JavaBot.commands.UnclassifiedSlashCommands;
 import dev.jacrispys.JavaBot.commands.audio.SlashMusicCommands;
 import dev.jacrispys.JavaBot.commands.debug.SlashDebugCommands;
@@ -26,9 +27,12 @@ public class BotStartup extends ListenerAdapter {
 
         commands.addAll(new SlashMusicCommands().updateJdaCommands());
         commands.addAll(new UnclassifiedSlashCommands(event.getJDA()).updateJdaCommands());
+        commands.addAll(new HelpCommand().updateJdaCommands());
         event.getJDA().addEventListener(new SlashDebugCommands(event.getJDA()));
 
         event.getJDA().updateCommands().addCommands(commands).queue();
+
+
         for (Guild guild : event.getJDA().getGuilds()) {
             connection.registerGuild(guild, guild.getTextChannels().get(0));
         }
