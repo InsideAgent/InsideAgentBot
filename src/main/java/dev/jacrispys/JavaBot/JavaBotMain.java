@@ -36,9 +36,7 @@ import javax.naming.ConfigurationException;
 import java.io.IOException;
 
 
-// TODO: 11/22/2023 Stats command + Debug Stats command
-// TODO: 11/22/2023 allow yml data to be set from a /override command
-// TODO: 11/24/2023 add more verbose logging, and cli support (Jansi?) 
+// TODO: 11/24/2023 add more verbose logging, and cli support (Jansi?)
 
 /**
  * The core class that establishes a connection with {@link JDA} and discord.
