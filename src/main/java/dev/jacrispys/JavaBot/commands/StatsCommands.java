@@ -14,8 +14,6 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -104,15 +102,7 @@ public class StatsCommands extends ListenerAdapter {
         sb.append("Playlists Queued: `").append(rs.getLong("playlist_queues")).append("` \n");
         sb.append("Playlists Queued: `").append(rs.getLong("playlist_queues")).append("` \n");
         long listen_time = rs.getLong("listen_time");
-        String listen_string = String.format("%02d days, %02d hours, %02d minutes, %02d seconds.",
-                TimeUnit.MILLISECONDS.toDays(listen_time),
-                TimeUnit.MILLISECONDS.toHours(listen_time) -
-                TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(listen_time)),
-                TimeUnit.MILLISECONDS.toMinutes(listen_time) -
-                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(listen_time)),
-                TimeUnit.MILLISECONDS.toSeconds(listen_time) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(listen_time)));
-        listen_string = listen_string.replaceFirst("^0+(?!$)", "");
+        String listen_string = millisToTime(listen_time);
         sb.append("Time Listened: `").append(listen_string).append("` \n");
         sb.append("Other users songs skipped: `").append(rs.getLong("skip_others")).append("` \n");
         eb.addField("User stats queried...", sb.toString(), false);
@@ -124,12 +114,12 @@ public class StatsCommands extends ListenerAdapter {
     private EmbedBuilder generateServerStats(Guild guild, boolean invalidateCache) throws Exception {
         ResultSet rs;
         boolean cached = false;
-        if (cachedResults.containsKey(guild.getIdLong()) && (System.currentTimeMillis() - cachedResults.get(guild.getIdLong()).getValue()) / 1000L < 1800 && !invalidateCache) {
-            rs = cachedResults.get(guild.getIdLong()).getKey();
+        if (guildCachedResults.containsKey(guild.getIdLong()) && (System.currentTimeMillis() - guildCachedResults.get(guild.getIdLong()).getValue()) / 1000L < 1800 && !invalidateCache) {
+            rs = guildCachedResults.get(guild.getIdLong()).getKey();
             cached = true;
         } else {
             rs = MySQLConnection.getInstance().queryCommand("SELECT * FROM guild_general_stats WHERE ID=" + guild.getIdLong() + ";");
-            cachedResults.put(guild.getIdLong(), new AbstractMap.SimpleEntry<>(rs, System.currentTimeMillis()));
+            guildCachedResults.put(guild.getIdLong(), new AbstractMap.SimpleEntry<>(rs, System.currentTimeMillis()));
         }
         rs.beforeFirst();
         rs.next();
@@ -140,6 +130,17 @@ public class StatsCommands extends ListenerAdapter {
         sb.append("Songs Queued: `").append(rs.getLong("play_counter")).append("` \n");
         sb.append("Player Paused: `").append(rs.getLong("pause_counter")).append("` \n");
         long listen_time = rs.getLong("playtime_millis");
+        String listen_string = millisToTime(listen_time);
+        sb.append("Total Time Listened: `").append(listen_string).append("` \n");
+        sb.append("Hijack Events: `").append(rs.getLong("hijack_counter")).append("` \n");
+        sb.append("Commands sent: `").append(rs.getLong("command_counter")).append("` \n");
+        eb.addField("User stats queried...", sb.toString(), false);
+        if (cached) eb.setFooter("Stats cached and may be up to 30 min out of date.");
+        eb.setColor(0x34eb8f);
+        return eb;
+    }
+
+    private String millisToTime(long listen_time) {
         String listen_string = String.format("%02d days, %02d hours, %02d minutes, %02d seconds.",
                 TimeUnit.MILLISECONDS.toDays(listen_time),
                 TimeUnit.MILLISECONDS.toHours(listen_time) -
@@ -149,13 +150,7 @@ public class StatsCommands extends ListenerAdapter {
                 TimeUnit.MILLISECONDS.toSeconds(listen_time) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(listen_time)));
         listen_string = listen_string.replaceFirst("^0+(?!$)", "");
-        sb.append("Total Time Listened: `").append(listen_string).append("` \n");
-        sb.append("Hijack Events: `").append(rs.getLong("hijack_counter")).append("` \n");
-        sb.append("Commands sent: `").append(rs.getLong("command_counter")).append("` \n");
-        eb.addField("User stats queried...", sb.toString(), false);
-        if (cached) eb.setFooter("Stats cached and may be up to 30 min out of date.");
-        eb.setColor(0x34eb8f);
-        return eb;
+        return listen_string;
     }
 
 
