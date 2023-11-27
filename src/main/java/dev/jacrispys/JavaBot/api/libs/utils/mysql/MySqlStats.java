@@ -3,6 +3,8 @@ package dev.jacrispys.JavaBot.api.libs.utils.mysql;
 import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.mysql.SqlInstanceManager;
 import net.dv8tion.jda.api.entities.Member;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -17,6 +19,8 @@ public class MySqlStats {
 
     private Connection connection;
     private static MySqlStats instance = null;
+
+    private final Logger logger = LoggerFactory.getLogger(MySqlStats.class);
 
     /**
      *
@@ -33,6 +37,7 @@ public class MySqlStats {
         try {
             connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
         } catch (ExecutionException | InterruptedException e) {
+            logger.error("{} - Error creating a SQL stat instance!", getClass().getSimpleName());
             throw new RuntimeException(e);
         }
         instance = this;
@@ -50,7 +55,7 @@ public class MySqlStats {
                 }
                 this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
             } catch (InterruptedException | ExecutionException | SQLException e) {
-                e.printStackTrace();
+                logger.error("{} - Error obtaining SQL connection! \n" + e.getMessage(), getClass().getSimpleName());
             }
         }
         return this.connection;
@@ -72,6 +77,7 @@ public class MySqlStats {
             incrementJdaStat(statType);
 
         } catch (SQLException ignored) {
+            logger.warn("{} - SQL error while updating stat: " + statType.name() + " in guild: " + guildId, getClass().getSimpleName());
         }
     }
 
@@ -92,8 +98,9 @@ public class MySqlStats {
 
             incrementJdaStat(increment, statType);
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+            logger.warn("{} - SQL error while updating stat: " + statType.name() + " in guild: " + guildId, getClass().getSimpleName());
+
         }
     }
 
@@ -128,7 +135,7 @@ public class MySqlStats {
             statement.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("{} - SQL error while overriding guild stats in guild: " + guildId, getClass().getSimpleName());
         }
     }
 
@@ -148,7 +155,7 @@ public class MySqlStats {
             statement.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("{} - SQL error while updating JDA stat: " + statType.name(), getClass().getSimpleName());
         }
     }
 
@@ -167,7 +174,7 @@ public class MySqlStats {
             statement.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("{} - SQL error while updating JDA stat: " + statType.name(), getClass().getSimpleName());
         }
     }
 
@@ -200,7 +207,7 @@ public class MySqlStats {
             statement.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("{} - SQL error while overriding JDA stats.", getClass().getSimpleName());
         }
     }
 
@@ -220,7 +227,7 @@ public class MySqlStats {
             set.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("{} - SQL error while updating stat: " + stat.name() + " for user: " + member.getUser().getName() + " in guild: " + member.getGuild().getIdLong(), getClass().getSimpleName());
         }
     }
 
@@ -240,7 +247,7 @@ public class MySqlStats {
             statement.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn("{} - SQL error while updating stat: " + stat.name() + " for user: " + member.getUser().getName() + " in guild: " + member.getGuild().getIdLong(), getClass().getSimpleName());
         }
     }
 
