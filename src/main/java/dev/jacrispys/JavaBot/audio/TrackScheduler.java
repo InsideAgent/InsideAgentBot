@@ -2,6 +2,7 @@ package dev.jacrispys.JavaBot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.entities.Guild;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -96,6 +98,16 @@ public class TrackScheduler extends AudioEventAdapter {
         }catch (Exception ex) {
             logger.warn("{} -  SQL error while retrieving music channel.", getClass().getSimpleName());
         }
+    }
+
+    @Override
+    public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
+        logger.error("There was an error during track playback! Track: " + track.getIdentifier() + exception.getMessage());
+    }
+
+    @Override
+    public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs, StackTraceElement[] stackTrace) {
+        logger.error("The track got stuck while playing! Track: " + track.getIdentifier() + " \n " + Arrays.toString(stackTrace));
     }
 
     public void onPlayerPause(AudioPlayer player) {
