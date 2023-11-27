@@ -126,7 +126,7 @@ public class GuildAudioManager {
      */
     public MessageEmbed trackLoaded(String trackUrl, AudioTrack track, AudioChannel voiceChannel, boolean playTop) {
         play(voiceChannel.getGuild(), getGuildAudioManager(voiceChannel.getGuild()), track, voiceChannel, playTop);
-        logger.debug(" {} - Track loaded into audio player, TrackID: (" + track.getIdentifier() + ")", className);
+        logger.debug("{} -  Track loaded into audio player, TrackID: (" + track.getIdentifier() + ")", className);
         sqlStats.incrementGuildStat(currentGuild, StatType.PLAY_COUNTER);
         return djEnabled ? djEnabledEmbed(voiceChannel.getJDA()) : songLoadedMessage(trackUrl, track);
     }
@@ -145,7 +145,7 @@ public class GuildAudioManager {
             firstTrack = playlist.getTracks().get(0);
         }
 
-        logger.debug(" {} - Playlist loaded into audio player, PlaylistID: (" + playlist.getName() + ")", className);
+        logger.debug("{} -  Playlist loaded into audio player, PlaylistID: (" + playlist.getName() + ")", className);
 
         play(voiceChannel.getGuild(), getGuildAudioManager(voiceChannel.getGuild()), firstTrack, voiceChannel, playTop);
 
@@ -260,7 +260,7 @@ public class GuildAudioManager {
             message.setContent("Could not find: " + trackUrl);
             data = message.build();
         }
-        logger.debug(" {} - Could not find requested track URL (" + trackUrl + ")", className);
+        logger.debug("{} -  Could not find requested track URL (" + trackUrl + ")", className);
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : data;
     }
 
@@ -279,7 +279,7 @@ public class GuildAudioManager {
             message.setContent("Could not play: " + trackUrl + " \n `Reason: " + exception.getLocalizedMessage() + "`");
             data = message.build();
         }
-        logger.error(" {} - Error loading track. \n" + exception.getMessage(), className);
+        logger.error("{} -  Error loading track. \n" + exception.getMessage(), className);
         return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : data;
     }
 
@@ -361,13 +361,13 @@ public class GuildAudioManager {
             manager.setSendingHandler(sendHandler);
             manager.openAudioConnection(channel);
             manager.setAutoReconnect(true);
-            logger.debug(" {} - Opened new voice connection in " + guild.getName(), className);
+            logger.debug("{} -  Opened new voice connection in " + guild.getName(), className);
         }
     }
 
     public void stageUpdate(boolean stageStarted) {
         stageEvent = stageStarted;
-        logger.debug(" {} - Stage event update: " + (stageStarted ? "Stage Created." : "Stage Ended."), className);
+        logger.debug("{} -  Stage event update: " + (stageStarted ? "Stage Created." : "Stage Ended."), className);
     }
 
     /**
@@ -470,7 +470,7 @@ public class GuildAudioManager {
                 channel.sendMessageEmbeds(djEnabledEmbed(guild.getJDA())).queue();
                 return;
             } catch (SQLException ex) {
-                logger.warn(" {} - SQL error while retrieving music channel.", className);
+                logger.warn("{} -  SQL error while retrieving music channel.", className);
                 return;
             }
         }
@@ -497,7 +497,7 @@ public class GuildAudioManager {
             channel.sendMessageEmbeds(eb.build()).setActionRow(buttons).queue(message -> nowPlayingId.put(guild, message.getIdLong()));
             sqlStats.incrementGuildStat(currentGuild, newSong.getDuration(), StatType.PLAYTIME_MILLIS);
         } catch (SQLException ignored) {
-            logger.warn(" {} - SQL error while retrieving music channel.", className);
+            logger.warn("{} -  SQL error while retrieving music channel.", className);
         }
     }
 
@@ -623,7 +623,7 @@ public class GuildAudioManager {
         }
             return djEnabled ? new MessageCreateBuilder().setEmbeds(djEnabledEmbed(jdaInstance)).build() : message.build();
         } catch (IndexOutOfBoundsException ignored) {
-            logger.warn(" {} - User tried to remove track out of index bounds.", className);
+            logger.warn("{} -  User tried to remove track out of index bounds.", className);
             return new MessageCreateBuilder().setContent("Could not retrieve given track in index!").build();
         }
 
@@ -673,8 +673,8 @@ public class GuildAudioManager {
         if (sender.getIdLong() != 731364923120025705L) {
             return new MessageCreateBuilder().setContent("You sir! Are not a certified DJ! Begone! ヽ(⌐■_■)ノ♬").build();
         }
-        logger.info(" {} - New DJ created for:  " + guild.getName() + "(" + guild.getIdLong() + ")", className);
-        logger.info(" {} - DJ attempting to open audio stream on: " + "http://" + SecretData.getDBHost() + ":8000/mixxx.mp3", className);
+        logger.info("{} -  New DJ created for:  " + guild.getName() + "(" + guild.getIdLong() + ")", className);
+        logger.info("{} -  DJ attempting to open audio stream on: " + "http://" + SecretData.getDBHost() + ":8000/mixxx.mp3", className);
         if (!djEnabled) {
             hijackQueue = new LinkedBlockingQueue<>(scheduler.getTrackQueue());
             clearQueue();
@@ -710,7 +710,7 @@ public class GuildAudioManager {
 
             @Override
             public void loadFailed(FriendlyException e) {
-                logger.error(" {} - DJ Failed to load to audio player! \n" + e.getMessage(), className);
+                logger.error("{} -  DJ Failed to load to audio player! \n" + e.getMessage(), className);
             }
         });
         return new MessageCreateBuilder().setEmbeds(djEnabledEmbed(guild.getJDA())).build();
@@ -825,7 +825,7 @@ public class GuildAudioManager {
             VoiceChannel vc = (VoiceChannel) sender.getVoiceState().getChannel();
             vc.getManager().setRegion(Region.US_WEST).queue();
             vc.getManager().setRegion(Region.AUTOMATIC).queue();
-            logger.debug(" {} - Reconnected " + vc.getMembers().size() + " members to voice channel.", className);
+            logger.debug("{} -  Reconnected " + vc.getMembers().size() + " members to voice channel.", className);
             message.setContent("Re-established audio connection \uD83D\uDC4D");
         } else {
             message.setContent("Could not locate your voice channel!");

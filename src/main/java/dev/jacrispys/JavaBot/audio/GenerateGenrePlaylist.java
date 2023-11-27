@@ -104,7 +104,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
             switch (buttonName) {
                 case ("firstGenre") -> {
-                    logger.debug(" {} - First genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
+                    logger.debug("{} -  First genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (genrePage != 1) {
                         event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), 1, event.getUser()).build()).queue();
                     } else {
@@ -114,7 +114,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     }
                 }
                 case ("backGenre") -> {
-                    logger.debug(" {} - Back genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
+                    logger.debug("{} -  Back genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (genrePage <= 1) {
                         if (genrePage == 0) {
                             if (!event.isAcknowledged()) {
@@ -130,7 +130,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), genrePage - 1, event.getUser()).build()).queue();
                 }
                 case ("submitGenres") -> {
-                    logger.debug(" {} - Genre Submit button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
+                    logger.debug("{} -  Genre Submit button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     event.getMessage().delete().queue();
                     event.reply("Generating playlist please wait...").setEphemeral(true).queue();
                     VoiceChannel channel;
@@ -162,7 +162,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
                 }
                 case ("nextGenre") -> {
-                    logger.debug(" {} - Next genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
+                    logger.debug("{} -  Next genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (genrePage >= pages) {
                         if (!event.isAcknowledged()) {
                             event.reply("Cannot go further than the final page!").setEphemeral(true).queue();
@@ -172,7 +172,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), genrePage + 1, event.getUser()).build()).queue();
                 }
                 case ("lastGenre") -> {
-                    logger.debug(" {} - Last genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
+                    logger.debug("{} -  Last genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (genrePage != pages) {
                         event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), pages, event.getUser()).build()).queue();
                     } else {
@@ -300,7 +300,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         try {
             MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
         } catch (SQLException e) {
-            logger.error(" {} - Error updating music channel for radio! \n" + e.getMessage(), getClass().getSimpleName());
+            logger.error("{} -  Error updating music channel for radio! \n" + e.getMessage(), getClass().getSimpleName());
         }
 
     }
@@ -312,7 +312,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     @Override
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
         if (reactMessage.containsValue(event.getMessageIdLong())) {
-            logger.debug(" {} - Radio generator message deleted. Resetting values...", getClass().getSimpleName());
+            logger.debug("{} -  Radio generator message deleted. Resetting values...", getClass().getSimpleName());
             reactMessage.keySet().forEach(key -> reactMessage.values().forEach(value -> {
                 if (value.equals(event.getMessageIdLong())) {
                     if (reactMessage.get(key).equals(value)) {

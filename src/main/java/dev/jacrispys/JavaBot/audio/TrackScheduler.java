@@ -94,7 +94,7 @@ public class TrackScheduler extends AudioEventAdapter {
         try {
             GuildAudioManager.getGuildAudioManager(guild).announceNextTrack(guild, track);
         }catch (Exception ex) {
-            logger.warn(" {} - SQL error while retrieving music channel.", getClass().getSimpleName());
+            logger.warn("{} -  SQL error while retrieving music channel.", getClass().getSimpleName());
         }
     }
 

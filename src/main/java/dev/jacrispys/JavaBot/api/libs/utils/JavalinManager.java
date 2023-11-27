@@ -99,10 +99,10 @@ public class JavalinManager {
             }
 
         } catch (IOException e) {
-            logger.error(" {} - Could not create auth token: " +  e.getMessage(), getClass().getSimpleName());
+            logger.error("{} -  Could not create auth token: " +  e.getMessage(), getClass().getSimpleName());
             return false;
         } catch (SQLException ex) {
-            logger.error(" {} - SQL error while trying to generate API token!", getClass().getSimpleName());
+            logger.error("{} -  SQL error while trying to generate API token!", getClass().getSimpleName());
             return true;
         }
     }
@@ -132,11 +132,11 @@ public class JavalinManager {
             stmt.close();
             query.close();
             UnclassifiedSlashCommands.notifyAuthUser(id, token);
-            logger.info(" {} - API token generated for user: " + user_tag + "(" + userData.getString("id") + ")", getClass().getSimpleName());
-            logger.info(" {} - API token user email: " + email, getClass().getSimpleName());
+            logger.info("{} -  API token generated for user: " + user_tag + "(" + userData.getString("id") + ")", getClass().getSimpleName());
+            logger.info("{} -  API token user email: " + email, getClass().getSimpleName());
 
     } catch (SQLException | InterruptedException | ExecutionException ex) {
-            logger.error(" {} - An unknown error occurred while generating API token. \n" + ex.getMessage(), getClass().getSimpleName());
+            logger.error("{} -  An unknown error occurred while generating API token. \n" + ex.getMessage(), getClass().getSimpleName());
         }
     }
 

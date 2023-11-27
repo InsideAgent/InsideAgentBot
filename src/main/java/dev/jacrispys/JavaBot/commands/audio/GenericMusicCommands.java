@@ -41,7 +41,7 @@ public class GenericMusicCommands extends ListenerAdapter {
         try {
             MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
         } catch (SQLException e) {
-            logger.warn(" {} - SQL error while updating music channel.", className);
+            logger.warn("{} -  SQL error while updating music channel.", className);
         }
 
     }
@@ -65,13 +65,13 @@ public class GenericMusicCommands extends ListenerAdapter {
                 ResultSet rs = connection.queryCommand("select * from inside_agent_bot.guilds where ID=" + event.getGuild().getId());
                 rs.beforeFirst();
                 if (!rs.next()) {
-                    logger.warn(" {} - Query for guild registration failed! Guild: " + event.getGuild().getName() + "(" + event.getGuild().getIdLong() + ")", className);
+                    logger.warn("{} -  Query for guild registration failed! Guild: " + event.getGuild().getName() + "(" + event.getGuild().getIdLong() + ")", className);
                     rs.close();
                     return;
                 }
                 rs.close();
             } catch (Exception ignored) {
-                logger.warn(" {} - Query for guild registration failed! Guild: " + event.getGuild().getName() + "(" + event.getGuild().getIdLong() + ")", className);
+                logger.warn("{} -  Query for guild registration failed! Guild: " + event.getGuild().getName() + "(" + event.getGuild().getIdLong() + ")", className);
                 return;
             }
         }
@@ -114,7 +114,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ignored) {
-                    logger.warn(" {} - SQL error while setting the music channel.", getClass().getSimpleName());
+                    logger.warn("{} -  SQL error while setting the music channel.", getClass().getSimpleName());
                 }
             } catch (MalformedURLException ignored) {
                 channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
@@ -127,7 +127,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
-                    logger.warn(" {} - SQL error while setting the music channel.", getClass().getSimpleName());
+                    logger.warn("{} -  SQL error while setting the music channel.", getClass().getSimpleName());
                 }
             }
         } else if (message.equalsIgnoreCase("-skip") || message.equalsIgnoreCase("-s")) {
@@ -230,7 +230,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
-                    logger.warn(" {} - SQL error while updating music channel.", className);
+                    logger.warn("{} -  SQL error while updating music channel.", className);
                 }
             }
         } else if ((message.contains("-skipto") && message.split("-skipto ").length > 1) || (message.contains("-st") && message.split("-st ").length > 1)) {
