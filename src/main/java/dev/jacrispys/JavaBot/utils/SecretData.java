@@ -4,7 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,7 +56,8 @@ public class SecretData {
         fileInfo.put("YOUTUBE_PAPISID", " ");
         fileInfo.put("DB_HOST", "localhost");
         fileInfo.put("BOT_CLIENT_ID", " ");
-        fileInfo.put("BOT_CLIENT_SECRET", " ");
+        fileInfo.put("TEST_DATA", "Hello, World!");
+        fileInfo.put("SUPER_USERS", List.of(731364923120025705L, 327167869236543490L));
         return fileInfo;
     }
 
@@ -88,8 +91,9 @@ public class SecretData {
     }
 
     public static Object getCustomData(String key) {
-        return loginInfo.get(key);
+        return loginInfo.getOrDefault(key, null);
     }
+
     public static String getDBHost() {
         return (String) loginInfo.get("DB_HOST");
     }
@@ -118,5 +122,34 @@ public class SecretData {
 
     public static String getDiscordSecret() {
         return (String) loginInfo.get("BOT_CLIENT_SECRET");
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Long> getSuperUsers() {
+        return (List<Long>) loginInfo.get("SUPER_USERS");
+    }
+
+    public static boolean setCustomData(String key, Object value) {
+        try {
+            InputStream io;
+            File file = new File("src/main/resources/loginInfo.yml");
+            loginInfo.put(key, value);
+            FileWriter writer = new FileWriter(file.getPath());
+            loginInfo.keySet().forEach(keys -> {
+                try {
+                    writer.write(keys + ": " + loginInfo.get(keys) + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            writer.flush();
+            writer.close();
+            io = new FileInputStream(file);
+            loginInfo = yaml.load(io);
+            return true;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 }
