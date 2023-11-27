@@ -21,6 +21,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.*;
@@ -31,8 +33,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SlashDebugCommands extends ListenerAdapter {
 
-    // TODO: 9/15/2022 Add more debug commands.
-
+    private final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
     private final Map<Long, Pair<UUID, InteractionHook>> trackedGuilds = new HashMap<>();
 
     public SlashDebugCommands(JDA jda) {

@@ -125,7 +125,7 @@ public class SlashMusicCommands extends ListenerAdapter {
 
     }
 
-    private StageInstance stageInstance;
+    public static StageInstance stageInstance;
 
     /**
      * Checks for stage instances being created, to allow bot to join stages and play music

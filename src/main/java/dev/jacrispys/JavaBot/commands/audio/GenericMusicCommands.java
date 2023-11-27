@@ -11,11 +11,14 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,16 +27,21 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static dev.jacrispys.JavaBot.commands.audio.SlashMusicCommands.stageInstance;
+
 /**
  * Legacy music commands using '-' prefix rather than slash commands
  */
 public class GenericMusicCommands extends ListenerAdapter {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
+    private final String className = getClass().getSimpleName();
+
     protected void updateMusicChannel(Guild guild, TextChannel channel) {
         try {
             MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warn(" {} - SQL error while updating music channel.", className);
         }
 
     }
@@ -57,17 +65,22 @@ public class GenericMusicCommands extends ListenerAdapter {
                 ResultSet rs = connection.queryCommand("select * from inside_agent_bot.guilds where ID=" + event.getGuild().getId());
                 rs.beforeFirst();
                 if (!rs.next()) {
-                    event.getGuildChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+                    logger.warn(" {} - Query for guild registration failed! Guild: " + event.getGuild().getName() + "(" + event.getGuild().getIdLong() + ")", className);
                     rs.close();
                     return;
                 }
                 rs.close();
             } catch (Exception ignored) {
-                event.getGuildChannel().sendMessage("Cannot execute commands before guild is indexed! Please use `!registerguild` to index your guild!").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+                logger.warn(" {} - Query for guild registration failed! Guild: " + event.getGuild().getName() + "(" + event.getGuild().getIdLong() + ")", className);
                 return;
             }
         }
-
+        if (audioManager.isStageEvent() && stageInstance != null) {
+            if ((!stageInstance.getChannel().isModerator(event.getMember())) && (!stageInstance.getSpeakers().contains(event.getMember()))) {
+                event.getGuildChannel().sendMessageEmbeds(audioManager.djEnabledEmbed(event.getJDA())).queue();
+                return;
+            }
+        }
         if (((message.contains("-play ") && message.split("-play ").length > 1) || (message.contains("-p ") && message.split("-p ").length > 1) || ((message.contains("-p ") || message.contains("-play ")) && event.getMessage().getAttachments().size() > 0))) {
             String trackUrl;
             updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
@@ -89,9 +102,9 @@ public class GenericMusicCommands extends ListenerAdapter {
             }
 
 
-            VoiceChannel channel;
+            AudioChannel channel;
             try {
-                channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
+                channel = event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
                 if (channel == null) {
                     event.getMessage().reply("Could not load song, as you are not in a voice channel!").queue();
                     return;
@@ -100,10 +113,10 @@ public class GenericMusicCommands extends ListenerAdapter {
                 event.getGuildChannel().sendMessage((MessageCreateData) audioHandler.loadAndPlay(trackUrl, channel, event.getMember(), false, false)).queue();
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
-                } catch (SQLException ex1) {
-                    ex1.printStackTrace();
+                } catch (SQLException ignored) {
+                    logger.warn(" {} - SQL error while setting the music channel.", getClass().getSimpleName());
                 }
-            } catch (MalformedURLException ex) {
+            } catch (MalformedURLException ignored) {
                 channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
                 if (channel == null) {
                     event.getMessage().reply("Could not load song, as you are not in a voice channel!").queue();
@@ -114,7 +127,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
-                    ex1.printStackTrace();
+                    logger.warn(" {} - SQL error while setting the music channel.", getClass().getSimpleName());
                 }
             }
         } else if (message.equalsIgnoreCase("-skip") || message.equalsIgnoreCase("-s")) {
@@ -217,7 +230,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 try {
                     MySQLConnection.getInstance().setMusicChannel(event.getGuild(), event.getGuildChannel().getIdLong());
                 } catch (SQLException ex1) {
-                    ex1.printStackTrace();
+                    logger.warn(" {} - SQL error while updating music channel.", className);
                 }
             }
         } else if ((message.contains("-skipto") && message.split("-skipto ").length > 1) || (message.contains("-st") && message.split("-st ").length > 1)) {
