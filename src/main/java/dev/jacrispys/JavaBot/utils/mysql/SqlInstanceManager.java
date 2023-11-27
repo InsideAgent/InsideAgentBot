@@ -29,6 +29,7 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
         try {
             SecretData.initLoginInfo();
         } catch (IOException e) {
+            logger.warn("{} - IOException occurred while creating SQL instance.", getClass().getSimpleName());
             throw new RuntimeException(e);
         }
     }
@@ -54,7 +55,7 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
                     MySQLConnection.getInstance().obtainConnection(this.connection);
                     Thread.sleep(3600 * 1000);
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+                    logger.error("{} - Error occurred in thread while obtaining SQL connection. \n" + e.getMessage(), getClass().getSimpleName());
                 }
             }
         });
@@ -72,6 +73,7 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
                     cf.complete(resetConnection("inside_agent_bot"));
                 } else cf.complete(connection);
             } catch (SQLException e) {
+                logger.error("{} - Error occurred in thread while obtaining SQL connection. \n" + e.getMessage(), getClass().getSimpleName());
                 throw new RuntimeException(e);
             }
         }, cf));
@@ -104,7 +106,7 @@ public class SqlInstanceManager extends AsyncHandlerImpl {
 
 
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error("{} - Error occurred in thread while obtaining SQL connection. \n" + e.getMessage(), getClass().getSimpleName());
                 throw new SQLException("Could not connect to the given database!");
             }
         }

@@ -1,10 +1,11 @@
 package dev.jacrispys.JavaBot.utils;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,13 +17,17 @@ public class SecretData {
     private static Yaml yaml = new Yaml();
     private static Map<String, Object> loginInfo;
 
+    private static final Logger logger = LoggerFactory.getLogger(SecretData.class);
+
     public static void initLoginInfo() throws IOException {
         yaml = new Yaml();
         loginInfo = yaml.load(generateSecretData());
+        logger.info("{} - Reloading login info configuration file!", SecretData.class.getSimpleName());
     }
 
     protected static InputStream generateSecretData() throws IOException {
         if (SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml") == null) {
+            logger.info("{} - Login info file not found! Generating a new file.", SecretData.class.getSimpleName());
             File file = new File("src/main/resources/loginInfo.yml");
             if (file.getParentFile() != null) file.getParentFile().mkdirs();
             if (file.createNewFile()) {
@@ -32,7 +37,7 @@ public class SecretData {
                     try {
                         writer.write(key + ": " + fileInfo.get(key) + "\n");
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.error("{} - Error occurred while writing to data file. \n" + e.getMessage(), SecretData.class.getSimpleName());
                     }
                 });
                 writer.flush();
@@ -139,7 +144,7 @@ public class SecretData {
                 try {
                     writer.write(keys + ": " + loginInfo.get(keys) + "\n");
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("{} - Error occurred while writing to data file. \n" + e.getMessage(), SecretData.class.getSimpleName());
                 }
             });
             writer.flush();
@@ -148,7 +153,7 @@ public class SecretData {
             loginInfo = yaml.load(io);
             return true;
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.error("{} - Error occurred while accessing data file. \n" + ex.getMessage(), SecretData.class.getSimpleName());
             return false;
         }
     }
