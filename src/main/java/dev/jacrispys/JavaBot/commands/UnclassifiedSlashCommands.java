@@ -15,20 +15,22 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Manages miscellaneous slash commands that do not fit under a specific category
  */
 public class UnclassifiedSlashCommands extends ListenerAdapter {
 
-    private MySqlStats sqlStats;
+    private final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
+
+    private final MySqlStats sqlStats;
     private static JDA jda;
 
     public UnclassifiedSlashCommands(JDA jda) {
@@ -92,6 +94,7 @@ public class UnclassifiedSlashCommands extends ListenerAdapter {
                 String devLink = "https://discord.com/api/oauth2/authorize?client_id=892555820292796488&redirect_uri=https%3A%2F%2Fbot.insideagent.pro&response_type=code&scope=identify%20email";
                 Button auth = Button.primary("auth:" + event.getUser().getId(), "Authenticate ").withEmoji(Emoji.fromUnicode("\uD83D\uDCE2")).withUrl(authLink);
                 event.reply("Click the button to authorize!").addActionRow(auth).setEphemeral(true).queue();
+                logger.info("{} - API token requested for user: " + event.getUser().getName() + "(" + event.getUser().getIdLong() + ")", getClass().getSimpleName());
             }
         }
     }

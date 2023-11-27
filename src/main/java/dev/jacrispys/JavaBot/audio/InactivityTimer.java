@@ -31,6 +31,7 @@ public class InactivityTimer extends ListenerAdapter {
 
 
     private static final Logger logger = LoggerFactory.getLogger(InactivityTimer.class);
+    private static final String className = InactivityTimer.class.getSimpleName();
 
     /**
      * Checks if given inactivity period has expired.
@@ -55,7 +56,6 @@ public class InactivityTimer extends ListenerAdapter {
      * @param guildId guild the audioplayer is located in
      * @param jda instance to JDA API
      */
-    @SuppressWarnings("all")
     public static void startInactivity(AudioPlayer player, Long guildId, JDA jda) {
         long startMillis = System.currentTimeMillis();
         Runnable service = () -> {
@@ -68,7 +68,7 @@ public class InactivityTimer extends ListenerAdapter {
                         TextChannel channel = jda.getGuildById(guildId).getTextChannelById(MySQLConnection.getInstance().getMusicChannel(jda.getGuildById(guildId)));
                         inactivityMessage(channel);
                     } catch (SQLException ex) {
-                        ex.printStackTrace();
+                        logger.warn("{} -  SQL error locating music channel.", className);
                     } finally {
                         if (jda.getGuildById(guildId).getSelfMember().getVoiceState().inAudioChannel()) {
                             AudioManager manager = jda.getGuildById(guildId).getAudioManager();
@@ -77,10 +77,9 @@ public class InactivityTimer extends ListenerAdapter {
                             manager.closeAudioConnection();
                         }
                         if (!runnables.get(guildId).cancel(true)) {
-                            logger.error("COULD NOT CANCEL");
+                            logger.error("{} -  Error occurred whilst cancelling inactivity timer!", className);
                         }
                         runnables.remove(guildId);
-                        return;
                     }
                 }
             }
@@ -111,5 +110,6 @@ public class InactivityTimer extends ListenerAdapter {
         embedBuilder.setAuthor("|   Left the channel & destroyed the audio player due to inactivity!", null, selfUser.getEffectiveAvatarUrl());
         embedBuilder.setColor(Color.PINK);
         channel.sendMessageEmbeds(embedBuilder.build()).queue();
+        logger.debug("{} -  Destroyed an audio player due to inactivity.", className);
     }
 }

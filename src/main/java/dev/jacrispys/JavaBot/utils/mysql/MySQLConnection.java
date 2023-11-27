@@ -27,7 +27,7 @@ public class MySQLConnection {
             connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
             SecretData.initLoginInfo();
         } catch (IOException | InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+            logger.error("{} - Error while retrieving SQL connection. \n" + e.getMessage(), getClass().getSimpleName());
         }
         INSTANCE = this;
     }
@@ -50,7 +50,7 @@ public class MySQLConnection {
                 }
                 this.connection = SqlInstanceManager.getInstance().getConnectionAsync().get();
             } catch (InterruptedException | ExecutionException | SQLException e) {
-                e.printStackTrace();
+                logger.error("{} - Error while retrieving SQL connection. \n" + e.getMessage(), getClass().getSimpleName());
             }
         }
         return this.connection;
@@ -75,8 +75,7 @@ public class MySQLConnection {
             logger.info("{} - Registered DB for Guild - " + guild.getName(), MySQLConnection.class.getSimpleName());
             return true;
         } catch (Exception e) {
-            logger.error("{} - Failed to register DB for Guild - " + guild.getName(), MySQLConnection.class.getSimpleName());
-            e.printStackTrace();
+            logger.error("{} - Failed to register DB for Guild - " + guild.getName() + "\n" + e.getMessage(), MySQLConnection.class.getSimpleName());
             return false;
         }
     }
@@ -92,7 +91,7 @@ public class MySQLConnection {
             statement.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("{} - Failed to execute SQL command. \n" + e.getMessage(), getClass().getSimpleName());
         }
     }
 
@@ -107,7 +106,7 @@ public class MySQLConnection {
             statement.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("{} - Failed to execute SQL command. \n" + e.getMessage(), getClass().getSimpleName());
         }
     }
 
@@ -116,13 +115,14 @@ public class MySQLConnection {
      * @param query DB query to execute
      * @return the ResultSet from the query
      */
-    public ResultSet queryCommand(String query) throws Exception {
+    public ResultSet queryCommand(String query) throws SQLException {
         Statement statement;
         try {
             statement = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             return statement.executeQuery(query);
         } catch (Exception e) {
-            throw new Exception("Could not query selected data!");
+            logger.error("{} - Failed to query SQL data. \n" + e.getMessage(), getClass().getSimpleName());
+            throw new SQLException(e);
         }
 
     }

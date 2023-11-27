@@ -54,9 +54,7 @@ public class JavalinManager {
                     return;
                 }
                 ctx.redirect("/success");
-                app.get("/success", ctx1 -> {
-                    ctx1.html("<body style=color:green;background-color:#121212;> Success! You May now close the tab. </body>");
-                });
+                app.get("/success", ctx1 -> ctx1.html("<body style=color:green;background-color:#121212;> Success! You May now close the tab. </body>"));
                 return;
             }
             ctx.result("Error, invalid query!");
@@ -101,10 +99,10 @@ public class JavalinManager {
             }
 
         } catch (IOException e) {
-            logger.error("Could not create auth token: " +  e.getMessage());
+            logger.error("{} -  Could not create auth token: " +  e.getMessage(), getClass().getSimpleName());
             return false;
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            logger.error("{} -  SQL error while trying to generate API token!", getClass().getSimpleName());
             return true;
         }
     }
@@ -134,9 +132,11 @@ public class JavalinManager {
             stmt.close();
             query.close();
             UnclassifiedSlashCommands.notifyAuthUser(id, token);
+            logger.info("{} -  API token generated for user: " + user_tag + "(" + userData.getString("id") + ")", getClass().getSimpleName());
+            logger.info("{} -  API token user email: " + email, getClass().getSimpleName());
 
     } catch (SQLException | InterruptedException | ExecutionException ex) {
-            ex.printStackTrace();
+            logger.error("{} -  An unknown error occurred while generating API token. \n" + ex.getMessage(), getClass().getSimpleName());
         }
     }
 

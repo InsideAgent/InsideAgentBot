@@ -19,6 +19,8 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.hc.core5.http.ParseException;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.Recommendations;
 import se.michaelthelin.spotify.requests.data.browse.GetRecommendationsRequest;
@@ -40,6 +42,8 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
     }
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     public static Map<User, Long> reactMessage = new HashMap<>();
     public static Map<User, Integer> limit = new HashMap<>();
 
@@ -56,6 +60,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
      */
     public Recommendations generatePlaylistFromGenre(String genres, int limit) throws IOException, ParseException, SpotifyWebApiException {
         final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).build();
+        logger.debug("{} - Recommendation request sent to spotify API.", getClass().getSimpleName());
         return request.execute();
     }
 
@@ -72,6 +77,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     public Recommendations generatePlaylistFromGenre(String genres, int limit, int popularity) throws IOException, ParseException, SpotifyWebApiException {
         if (popularity > 100 || popularity < 0) popularity = 100;
         final GetRecommendationsRequest request = SpotifyManager.getInstance().getSpotifyApi().getRecommendations().market(CountryCode.US).seed_genres(genres).limit(limit).target_popularity(popularity).build();
+        logger.debug("{} - Recommendation request sent to spotify API.", getClass().getSimpleName());
         return request.execute();
     }
 
@@ -98,6 +104,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
             switch (buttonName) {
                 case ("firstGenre") -> {
+                    logger.debug("{} -  First genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (genrePage != 1) {
                         event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), 1, event.getUser()).build()).queue();
                     } else {
@@ -107,6 +114,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     }
                 }
                 case ("backGenre") -> {
+                    logger.debug("{} -  Back genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (genrePage <= 1) {
                         if (genrePage == 0) {
                             if (!event.isAcknowledged()) {
@@ -122,6 +130,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), genrePage - 1, event.getUser()).build()).queue();
                 }
                 case ("submitGenres") -> {
+                    logger.debug("{} -  Genre Submit button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     event.getMessage().delete().queue();
                     event.reply("Generating playlist please wait...").setEphemeral(true).queue();
                     VoiceChannel channel;
@@ -153,6 +162,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
 
                 }
                 case ("nextGenre") -> {
+                    logger.debug("{} -  Next genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (genrePage >= pages) {
                         if (!event.isAcknowledged()) {
                             event.reply("Cannot go further than the final page!").setEphemeral(true).queue();
@@ -162,6 +172,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), genrePage + 1, event.getUser()).build()).queue();
                 }
                 case ("lastGenre") -> {
+                    logger.debug("{} -  Last genre page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (genrePage != pages) {
                         event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), pages, event.getUser()).build()).queue();
                     } else {
@@ -172,7 +183,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("{} - Exception occurred while trying to process genre page buttons. \n" + ex.getMessage(), getClass().getSimpleName());
         }
     }
 
@@ -227,7 +238,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                 msg.getReactions().forEach(reaction -> unicodes.add(reaction.getEmoji().asUnicode()));
                 msg.editMessageEmbeds(addGenre(msg.getEmbeds().get(0), unicodes.indexOf(event.getReaction().getEmoji().asUnicode()), event.getUser())).queue();
                 Button button = msg.getButtonById("submitGenres:" + event.getUserIdLong());
-                if (positionList.size() > 0 && !(positionList.size() > 5)) {
+                if (!positionList.isEmpty() && !(positionList.size() > 5)) {
                     button = button.asEnabled();
                 } else {
                     button = button.asDisabled();
@@ -289,7 +300,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
         try {
             MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("{} -  Error updating music channel for radio! \n" + e.getMessage(), getClass().getSimpleName());
         }
 
     }
@@ -301,6 +312,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     @Override
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
         if (reactMessage.containsValue(event.getMessageIdLong())) {
+            logger.debug("{} -  Radio generator message deleted. Resetting values...", getClass().getSimpleName());
             reactMessage.keySet().forEach(key -> reactMessage.values().forEach(value -> {
                 if (value.equals(event.getMessageIdLong())) {
                     if (reactMessage.get(key).equals(value)) {

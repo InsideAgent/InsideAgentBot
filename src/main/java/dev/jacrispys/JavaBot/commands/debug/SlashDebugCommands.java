@@ -22,6 +22,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -32,6 +34,8 @@ import java.util.concurrent.TimeUnit;
  * Undocumented, developer diagnostic tools to check for specific statistics.
  */
 public class SlashDebugCommands extends ListenerAdapter {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
     private final Map<Long, Pair<UUID, InteractionHook>> trackedGuilds = new HashMap<>();
 
     public SlashDebugCommands(JDA jda) {

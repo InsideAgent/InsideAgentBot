@@ -33,7 +33,7 @@ import javax.naming.ConfigurationException;
 import java.io.IOException;
 
 
-// TODO: 11/22/2023 Stats command + Debug Stats command
+// TODO: 11/24/2023 add more verbose logging, and cli support (Jansi?)
 
 /**
  * The core class that establishes a connection with {@link JDA} and discord.
@@ -69,7 +69,7 @@ public class JavaBotMain {
         }
 
         logger.info("{} - Logging into bot & discord servers...", className);
-        JDA jda = JDABuilder.createDefault(botToken)
+        JDA jda = JDABuilder.createDefault(devToken)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)

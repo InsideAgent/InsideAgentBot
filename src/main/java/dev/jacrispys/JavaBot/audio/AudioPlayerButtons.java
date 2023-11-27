@@ -43,6 +43,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
 
             switch (buttonName) {
                 case ("firstPage") -> {
+                    logger.debug("{} -  First page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (queuePage != 1) {
                         event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), 1).build()).queue();
                     } else {
@@ -52,6 +53,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     }
                 }
                 case ("backPage") -> {
+                    logger.debug("{} -  Back page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (queuePage <= 1) {
                         if (queuePage == 0) {
                             if (!event.isAcknowledged()) {
@@ -67,11 +69,13 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), (queuePage - 1)).build()).queue();
                 }
                 case ("remove") -> {
+                    logger.debug("{} -  Remove button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if(event.getMessage().isEphemeral()) {
                         event.editMessageEmbeds(new EmbedBuilder().setAuthor(".", null, Objects.requireNonNull(event.getGuild()).getSelfMember().getEffectiveAvatarUrl()).build()).queue();
                     } else event.getMessage().delete().queue();
                 }
                 case ("nextPage") -> {
+                    logger.debug("{} -  Next page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (queuePage >= pages) {
                         if (!event.isAcknowledged()) {
                             event.reply("Cannot go further than the final page!").setEphemeral(true).queue();
@@ -81,6 +85,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), queuePage + 1).build()).queue();
                 }
                 case ("lastPage") -> {
+                    logger.debug("{} -  Last page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if (queuePage != pages) {
                         event.editMessageEmbeds(updateEmbed(event.getMessage().getEmbeds().get(0), pages).build()).queue();
                     } else {
@@ -90,10 +95,12 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     }
                 }
                 case ("togglePlayer") -> {
+                    logger.debug("{} -  Pause button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     audioManager.togglePlayer();
                     event.deferEdit().queue();
                 }
                 case ("skipTrack") -> {
+                    logger.debug("{} -  Skip track button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     nowPlayingId.put(fromButtonGuild, event.getMessage().getIdLong());
                     if(audioManager.audioPlayer.getPlayingTrack() == null) {
                         event.deferEdit().queue();
@@ -102,6 +109,7 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     }
                 }
                 case ("showQueue") -> {
+                    logger.debug("{} -  Show Queue button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     event.deferReply().setEphemeral(true).queue();
                     event.getInteraction().getHook().editOriginal((MessageEditData) audioManager.displayQueue()).queue();
                     if (!event.isAcknowledged()) {

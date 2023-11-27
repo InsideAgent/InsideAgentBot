@@ -7,6 +7,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
@@ -17,6 +19,7 @@ public class TrackScheduler extends AudioEventAdapter {
     private BlockingQueue<AudioTrack> queue;
     private final Guild guild;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
     /**
      *
@@ -91,7 +94,7 @@ public class TrackScheduler extends AudioEventAdapter {
         try {
             GuildAudioManager.getGuildAudioManager(guild).announceNextTrack(guild, track);
         }catch (Exception ex) {
-            ex.printStackTrace();
+            logger.warn("{} -  SQL error while retrieving music channel.", getClass().getSimpleName());
         }
     }
 
