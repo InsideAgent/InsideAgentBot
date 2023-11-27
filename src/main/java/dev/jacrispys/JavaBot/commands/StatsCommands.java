@@ -100,7 +100,6 @@ public class StatsCommands extends ListenerAdapter {
         StringBuilder sb = new StringBuilder();
         sb.append("Songs Queued: `").append(rs.getLong("song_queues")).append("` \n");
         sb.append("Playlists Queued: `").append(rs.getLong("playlist_queues")).append("` \n");
-        sb.append("Playlists Queued: `").append(rs.getLong("playlist_queues")).append("` \n");
         long listen_time = rs.getLong("listen_time");
         String listen_string = millisToTime(listen_time);
         sb.append("Time Listened: `").append(listen_string).append("` \n");
@@ -141,16 +140,19 @@ public class StatsCommands extends ListenerAdapter {
     }
 
     private String millisToTime(long listen_time) {
-        String listen_string = String.format("%02d days, %02d hours, %02d minutes, %02d seconds.",
-                TimeUnit.MILLISECONDS.toDays(listen_time),
-                TimeUnit.MILLISECONDS.toHours(listen_time) -
-                        TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(listen_time)),
-                TimeUnit.MILLISECONDS.toMinutes(listen_time) -
-                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(listen_time)),
-                TimeUnit.MILLISECONDS.toSeconds(listen_time) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(listen_time)));
-        listen_string = listen_string.replaceFirst("^0+(?!$)", "");
-        return listen_string;
+
+        String days = String.valueOf(TimeUnit.MILLISECONDS.toDays(listen_time)).replaceAll("^0+(?!$)", "");
+        String hours = String.valueOf(TimeUnit.MILLISECONDS.toHours(listen_time) -
+                TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(listen_time))).replaceAll("^0+(?!$)", "");
+        String minutes = String.valueOf(TimeUnit.MILLISECONDS.toMinutes(listen_time) -
+                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(listen_time))).replaceAll("^0+(?!$)", "");
+        String seconds = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(listen_time) -
+                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(listen_time))).replaceAll("^0+(?!$)", "");
+        return String.format("%s days, %s hours, %s minutes, %s seconds.",
+                days,
+                hours,
+                minutes,
+                seconds);
     }
 
 
