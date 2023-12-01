@@ -1,18 +1,27 @@
 package dev.jacrispys.JavaBot.utils;
 
 import com.sun.jna.platform.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.annotation.Resources;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static com.google.protobuf.CodedOutputStream.DEFAULT_BUFFER_SIZE;
 
 /**
  * Yaml loader for environment variables from loginInfo file
@@ -29,11 +38,22 @@ public class SecretData {
         logger.info("{} - Reloading login info configuration file!", SecretData.class.getSimpleName());
     }
 
+    private static String getClassPath()  {
+        try {
+            return Paths.get(SecretData.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString();
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
     protected static InputStream generateSecretData() throws IOException {
-        if (SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml") == null) {
+        String path = getClassPath() + File.separator + "config" + File.separator + "loginInfo.yml";
+        logger.info(path);
+        File f = new File(path);
+        if (!f.exists()) {
             logger.info("{} - Login info file not found! Generating a new file.", SecretData.class.getSimpleName());
-            File file = new File("src/main/resources/loginInfo.yml");
-            if (file.getParentFile() != null) file.getParentFile().mkdirs();
+            File file = new File(path);
+            if(!file.getParentFile().mkdirs()) logger.error("Did not create directories!");
             if (file.createNewFile()) {
                 Map<String, Object> fileInfo = getDefaultConfig();
                 FileWriter writer = new FileWriter(file.getPath());
@@ -141,15 +161,15 @@ public class SecretData {
     public static boolean setCustomData(String key, Object value) {
         try {
             InputStream io;
-            File file = new File(Objects.requireNonNull(SecretData.class.getClassLoader().getResource("loginInfo.yml")).getFile());
             String oldValue = loginInfo.get(key).toString();
             loginInfo.put(key, value);
-            FileWriter writer = new FileWriter(file.getPath());
+            File file = new File(getClassPath() + File.separator + "config" + File.separator + "loginInfo.yml");
+            FileWriter writer = new FileWriter(file);
             loginInfo.keySet().forEach(keys -> {
                 try {
                     writer.write(keys + ": " + loginInfo.get(keys) + "\n");
                 } catch (IOException e) {
-                    logger.error("{} - Error occurred while writing to data file. \n" + e.getMessage(), SecretData.class.getSimpleName());
+                    throw new RuntimeException(e);
                 }
             });
             writer.flush();

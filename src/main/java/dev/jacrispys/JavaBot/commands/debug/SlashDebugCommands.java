@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
@@ -114,10 +115,11 @@ public class SlashDebugCommands extends ListenerAdapter {
                         event.getInteraction().getHook().editOriginal("Invalid key or value entered. Please try again.").queue();
                         return;
                     }
-                    SecretData.setCustomData(key, value);
+                    if (!SecretData.setCustomData(key, value)) throw new FileNotFoundException("Could not overwrite data file!");
                     event.getInteraction().getHook().editOriginalEmbeds(overrideEmbed(key, obj.toString(), value, isProt, event.getUser()).build()).queue();
                     informAdmins(event.getJDA(), overrideEmbed(key, obj.toString(), value, isProt, event.getUser()));
-                } catch (NullPointerException ex) {
+                } catch (NullPointerException | FileNotFoundException ex) {
+                    ex.printStackTrace();
                     event.getInteraction().getHook().editOriginal("Invalid key or value entered. Please try again.").queue();
                 }
             }
@@ -191,7 +193,7 @@ public class SlashDebugCommands extends ListenerAdapter {
         eb.addField("New Value: ", "`" + newValue + "`\n", false);
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss z");
         Date currentDate = new Date();
-        Emoji em = locked ? Emoji.fromUnicode("✅") : Emoji.fromUnicode("❌");
+        String em = locked ? "✅" : "❌";
         eb.setFooter("Edited at: " + formatter.format(currentDate) + " | Locked: " + em);
         eb.setAuthor("Edited by: @" + editor.getName() + "(" + editor.getIdLong() + ")", null, editor.getEffectiveAvatarUrl());
         eb.setColor(0xed284c);
