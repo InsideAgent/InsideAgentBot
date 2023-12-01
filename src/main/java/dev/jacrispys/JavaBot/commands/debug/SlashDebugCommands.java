@@ -102,6 +102,7 @@ public class SlashDebugCommands extends ListenerAdapter {
                     if (v != null) {
                         if (v.isHardLocked()) {
                             event.getHook().editOriginal("Cannot edit this value! This values is `Hard Locked` which means it must be manually overridden by a project maintainer.").queue();
+                            return;
                         } else {
                             isProt = true;
                         }
