@@ -94,13 +94,21 @@ public class SlashDebugCommands extends ListenerAdapter {
             }
             case "active" -> event.reply(new MessageCreateBuilder().setEmbeds(activePlayers(event.getUser())).build()).setEphemeral(true).queue();
             case "override" -> {
-                event.deferReply().queue();
                 try {
                     String key = event.getOption("yml_key").getAsString();
                     String value = event.getOption("yml_value").getAsString();
-
+                    ProtectedValues v = ProtectedValues.getKey(key);
+                    boolean isProt = false;
+                    if (v != null) {
+                        if (v.isHardLocked()) {
+                            event.getHook().editOriginal("Cannot edit this value! This values is `Hard Locked` which means it must be manually overridden by a project maintainer.").queue();
+                        } else {
+                            isProt = true;
+                        }
+                    }
+                    event.deferReply(isProt).queue();
                     Object obj = SecretData.getCustomData(key);
-                    if (obj == null || key.equals("SUPER_USERS")) {
+                    if (obj == null) {
                         event.getInteraction().getHook().editOriginal("Invalid key or value entered. Please try again.").queue();
                         return;
                     }
@@ -183,6 +191,54 @@ public class SlashDebugCommands extends ListenerAdapter {
         eb.setAuthor("Edited by: @" + editor.getName(), null, editor.getEffectiveAvatarUrl());
         eb.setColor(0xed284c);
         return eb;
+    }
+
+}
+
+enum ProtectedValues {
+    DATA_BASE_PASS("DATA_BASE_PASS", true),
+    TOKEN("TOKEN", true),
+    TOKEN_DEV("TOKEN-DEV", true),
+    SPOTIFY_CLIENT_ID("SPOTIFY_CLIENT_ID", false),
+    SPOTIFY_SECRET("SPOTIFY_SECRET", false),
+    YOUTUBE_PASS("YOUTUBE_PASS", false),
+    DB_HOST("DB_HOST", true),
+    BOT_CLIENT_ID("BOT_CLIENT_ID", true),
+    BOT_CLIENT_SECRET("BOT_CLIENT_SECRET", true),
+    DEV_BOT_CLIENT_ID("DEV-BOT_CLIENT_ID", true),
+    DEV_BOT_CLIENT_SECRET("DEV-BOT_CLIENT_SECRET", true),
+    SUPER_USERS("SUPER_USERS", true);
+    
+    private final String value;
+    private final boolean hardLock;
+
+    public static List<String> getValues() {
+        List<String> list = new ArrayList<>();
+        Arrays.stream(values()).toList().forEach(value -> list.add(value.value));
+        return list;
+    }
+
+    @NotNull
+    public String getValue() {
+        return this.value;
+    }
+
+    @NotNull
+    public Boolean isHardLocked() {
+        return this.hardLock;
+    }
+
+    public static ProtectedValues getKey(String name) {
+        for (ProtectedValues v : values()) {
+            if (v.getValue().equals(name)) return v;
+        }
+        return null;
+    }
+
+
+    ProtectedValues(String value, boolean hardLock) {
+        this.value = value;
+        this.hardLock = hardLock;
     }
 
 }
