@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -389,7 +390,7 @@ public class GuildAudioManager {
     /**
      * creates a Dynamic {@link MessageEmbed} with multiple {@link Button} to search pages for the current queue
      */
-    public MessageData displayQueue() {
+    public MessageCreateData displayQueue() {
         if (audioPlayer.getPlayingTrack() == null) {
             MessageCreateBuilder message = new MessageCreateBuilder();
             message.setContent("Cannot display queue when no track is playing!");

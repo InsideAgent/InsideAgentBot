@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static dev.jacrispys.JavaBot.audio.GuildAudioManager.nowPlayingId;
@@ -72,7 +73,10 @@ public class AudioPlayerButtons extends ListenerAdapter {
                     logger.debug("{} -  Remove button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     if(event.getMessage().isEphemeral()) {
                         event.editMessageEmbeds(new EmbedBuilder().setAuthor(".", null, Objects.requireNonNull(event.getGuild()).getSelfMember().getEffectiveAvatarUrl()).build()).queue();
-                    } else event.getMessage().delete().queue();
+                    } else  {
+                        event.deferEdit().queue();
+                        event.getMessage().delete().queue();
+                    }
                 }
                 case ("nextPage") -> {
                     logger.debug("{} -  Next page button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
@@ -111,14 +115,14 @@ public class AudioPlayerButtons extends ListenerAdapter {
                 case ("showQueue") -> {
                     logger.debug("{} -  Show Queue button pressed, ID (" + event.getComponentId() + ")", getClass().getSimpleName());
                     event.deferReply().setEphemeral(true).queue();
-                    event.getInteraction().getHook().editOriginal((MessageEditData) audioManager.displayQueue()).queue();
+                    event.getHook().editOriginal(MessageEditData.fromCreateData(audioManager.displayQueue())).queue();
                     if (!event.isAcknowledged()) {
                         event.editMessage((MessageEditData) event.getMessage()).queue();
                     }
                 }
             }
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
+            logger.error(ex.getMessage(), ex);
         }
     }
 
