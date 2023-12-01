@@ -1,14 +1,18 @@
 package dev.jacrispys.JavaBot.utils;
 
+import com.sun.jna.platform.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Yaml loader for environment variables from loginInfo file
@@ -137,7 +141,8 @@ public class SecretData {
     public static boolean setCustomData(String key, Object value) {
         try {
             InputStream io;
-            File file = new File("src/main/resources/loginInfo.yml");
+            File file = new File(Objects.requireNonNull(SecretData.class.getClassLoader().getResource("loginInfo.yml")).getFile());
+            String oldValue = loginInfo.get(key).toString();
             loginInfo.put(key, value);
             FileWriter writer = new FileWriter(file.getPath());
             loginInfo.keySet().forEach(keys -> {
@@ -151,6 +156,7 @@ public class SecretData {
             writer.close();
             io = new FileInputStream(file);
             loginInfo = yaml.load(io);
+            logger.info("{} - Yaml value overridden! Key: " + key + ", Old Value: " + oldValue + ", New Value: " + value, SecretData.class.getSimpleName());
             return true;
         } catch (IOException ex) {
             logger.error("{} - Error occurred while accessing data file. \n" + ex.getMessage(), SecretData.class.getSimpleName());

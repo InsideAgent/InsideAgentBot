@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -101,7 +102,7 @@ public class SlashDebugCommands extends ListenerAdapter {
                     boolean isProt = false;
                     if (v != null) {
                         if (v.isHardLocked()) {
-                            event.getHook().editOriginal("Cannot edit this value! This values is `Hard Locked` which means it must be manually overridden by a project maintainer.").queue();
+                            event.reply("Cannot edit this value! This values is `Hard Locked` which means it must be manually overridden by a project maintainer.").setEphemeral(true).queue();
                             return;
                         } else {
                             isProt = true;
@@ -114,7 +115,8 @@ public class SlashDebugCommands extends ListenerAdapter {
                         return;
                     }
                     SecretData.setCustomData(key, value);
-                    event.getInteraction().getHook().editOriginalEmbeds(overrideEmbed(key, obj.toString(), value, event.getUser()).build()).queue();
+                    event.getInteraction().getHook().editOriginalEmbeds(overrideEmbed(key, obj.toString(), value, isProt, event.getUser()).build()).queue();
+                    informAdmins(event.getJDA(), overrideEmbed(key, obj.toString(), value, isProt, event.getUser()));
                 } catch (NullPointerException ex) {
                     event.getInteraction().getHook().editOriginal("Invalid key or value entered. Please try again.").queue();
                 }
@@ -125,7 +127,8 @@ public class SlashDebugCommands extends ListenerAdapter {
                 List<Long> superUsers = SecretData.getSuperUsers();
                 superUsers.add(userId);
                 SecretData.setCustomData("SUPER_USERS", superUsers);
-                event.replyEmbeds(overrideEmbed("SUPER_USERS", "N/A", "@" + user.getName() + " : " + userId, event.getUser()).build()).queue();
+                event.replyEmbeds(overrideEmbed("SUPER_USERS", "N/A", "@" + user.getName() + " : " + userId, true, event.getUser()).build()).queue();
+                informAdmins(event.getJDA(), overrideEmbed("SUPER_USERS", "N/A", "@" + user.getName() + " : " + userId, true, event.getUser()));
             }
         }
     }
@@ -181,17 +184,24 @@ public class SlashDebugCommands extends ListenerAdapter {
     }
 
 
-    private EmbedBuilder overrideEmbed(String key, String oldValue, String newValue, User editor) {
+    private EmbedBuilder overrideEmbed(String key, String oldValue, String newValue, boolean locked, User editor) {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("YAML Key override for: \"" + key + "\"");
         eb.addField("Old Value: ", "`" + oldValue + "`\n", false);
         eb.addField("New Value: ", "`" + newValue + "`\n", false);
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss z");
         Date currentDate = new Date();
-        eb.setFooter("Edited at: " + formatter.format(currentDate));
-        eb.setAuthor("Edited by: @" + editor.getName(), null, editor.getEffectiveAvatarUrl());
+        Emoji em = locked ? Emoji.fromUnicode("✅") : Emoji.fromUnicode("❌");
+        eb.setFooter("Edited at: " + formatter.format(currentDate) + " | Locked: " + em);
+        eb.setAuthor("Edited by: @" + editor.getName() + "(" + editor.getIdLong() + ")", null, editor.getEffectiveAvatarUrl());
         eb.setColor(0xed284c);
         return eb;
+    }
+
+    private void informAdmins(JDA jda, EmbedBuilder eb) {
+        for (Long longs : SecretData.getSuperUsers()) {
+            jda.getUserById(longs).openPrivateChannel().queue(pc -> pc.sendMessageEmbeds(eb.build()).queue());
+        }
     }
 
 }
