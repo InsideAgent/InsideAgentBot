@@ -23,7 +23,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/InsideAgent/DiscordBot">
-    <img src="src/main/resources/images/InsideAgent-New-Blue.jpg" alt="Logo" width="80" height="80">
+    <img src="src/main/resources/images/InsideAgent-New-Blue.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Inside Agent Bot</h3>
