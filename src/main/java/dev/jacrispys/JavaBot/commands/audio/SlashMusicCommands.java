@@ -7,8 +7,8 @@ import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.StageInstance;
 import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -116,7 +116,7 @@ public class SlashMusicCommands extends ListenerAdapter {
     /**
      * Internal updates to Database
      */
-    protected void updateMusicChannel(Guild guild, TextChannel channel) {
+    protected void updateMusicChannel(Guild guild, GuildMessageChannel channel) {
         try {
             MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
         } catch (SQLException e) {
@@ -185,7 +185,7 @@ public class SlashMusicCommands extends ListenerAdapter {
                 assert event.getMember().getVoiceState() != null;
                 assert event.getMember().getVoiceState().getChannel() != null;
                 channel = event.getMember().getVoiceState().getChannel();
-                updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
+                updateMusicChannel(event.getGuild(), event.getGuildChannel());
 
                 String track = null;
                 if (!(event.getName().equalsIgnoreCase("fileplay") || event.getName().equalsIgnoreCase("fp"))) {
