@@ -9,9 +9,9 @@ import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -37,7 +37,7 @@ public class GenericMusicCommands extends ListenerAdapter {
     private final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
     private final String className = getClass().getSimpleName();
 
-    protected void updateMusicChannel(Guild guild, TextChannel channel) {
+    protected void updateMusicChannel(Guild guild, GuildMessageChannel channel) {
         try {
             MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
         } catch (SQLException e) {
@@ -83,7 +83,7 @@ public class GenericMusicCommands extends ListenerAdapter {
         }
         if (((message.contains("-play ") && message.split("-play ").length > 1) || (message.contains("-p ") && message.split("-p ").length > 1) || ((message.contains("-p ") || message.contains("-play ")) && event.getMessage().getAttachments().size() > 0))) {
             String trackUrl;
-            updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
+            updateMusicChannel(event.getGuild(), event.getGuildChannel());
             if (event.getMessage().getAttachments().size() > 0) {
                 VoiceChannel channel;
                 channel = (VoiceChannel) event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
@@ -197,7 +197,7 @@ public class GenericMusicCommands extends ListenerAdapter {
                 event.getGuildChannel().sendMessage("Cannot parse integer positions! Please use the format: `-move [pos1] [pos2]` where pos1,pos2 are numbers!").queue();
             }
         } else if (((message.contains("-playtop") && message.split("-playtop ").length > 1) || (message.contains("-ptop") && message.split("-ptop ").length > 1))) {
-            updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
+            updateMusicChannel(event.getGuild(), event.getGuildChannel());
             String trackUrl;
             if (message.contains("-playtop")) {
                 trackUrl = event.getMessage().getContentRaw().split("-playtop ")[1];

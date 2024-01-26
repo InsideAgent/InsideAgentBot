@@ -3,7 +3,7 @@ package dev.jacrispys.JavaBot.utils.mysql;
 import dev.jacrispys.JavaBot.utils.SecretData;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,7 @@ public class MySQLConnection {
      * @param defaultChannel default notification channel for guild
      * @return boolean if registration was a success
      */
-    public boolean registerGuild(Guild guild, TextChannel defaultChannel) {
+    public boolean registerGuild(Guild guild, GuildMessageChannel defaultChannel) {
         try {
             Statement statement = getConnection().createStatement();
             String command = "INSERT IGNORE INTO guilds (ID,TicketChannel) VALUES (" + guild.getId() + ", " + defaultChannel.getId() + ");";

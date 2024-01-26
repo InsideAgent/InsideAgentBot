@@ -2,12 +2,14 @@ package dev.jacrispys.JavaBot.audio;
 
 import com.neovisionaries.i18n.CountryCode;
 import dev.jacrispys.JavaBot.audio.objects.Genres;
-import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import dev.jacrispys.JavaBot.utils.SpotifyManager;
+import dev.jacrispys.JavaBot.utils.mysql.MySQLConnection;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
@@ -15,7 +17,6 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.hc.core5.http.ParseException;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +30,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static dev.jacrispys.JavaBot.audio.GuildAudioManager.nowPlayingId;
 
 /**
  * Util class that uses {@link se.michaelthelin.spotify.SpotifyApi}
@@ -145,7 +144,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
                         positionList.clear();
                         return;
                     }
-                    updateMusicChannel(event.getGuild(), event.getGuildChannel().asTextChannel());
+                    updateMusicChannel(event.getGuild(), event.getGuildChannel());
                     GenerateGenrePlaylist genrePlaylist = new GenerateGenrePlaylist();
                     StringBuilder genre = new StringBuilder();
                     chosenGenres.get(event.getUser()).forEach(pos -> genre.append(Genres.getValues().get(pos)).append(","));
@@ -296,7 +295,7 @@ public class GenerateGenrePlaylist extends ListenerAdapter {
     /**
      * Manages important database entries to ensure song announcements are sent
      */
-    protected void updateMusicChannel(Guild guild, TextChannel channel) {
+    protected void updateMusicChannel(Guild guild, GuildMessageChannel channel) {
         try {
             MySQLConnection.getInstance().setMusicChannel(Objects.requireNonNull(guild), channel.getIdLong());
         } catch (SQLException e) {
