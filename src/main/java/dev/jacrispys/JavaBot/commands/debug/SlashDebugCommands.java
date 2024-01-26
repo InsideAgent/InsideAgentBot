@@ -158,16 +158,15 @@ public class SlashDebugCommands extends ListenerAdapter {
         EmbedBuilder activeEb = new EmbedBuilder();
         activeEb.setAuthor("Players Currently Active...", null, requester.getAvatarUrl());
         activeEb.addField("", activePlayersList(), false);
-        activeEb.setFooter("*" + activePlayerCount() + "/" + requester.getJDA().getGuilds().size() + " AudioPlayers currently active.*");
+        activeEb.setFooter(activePlayerCount() + "/" + requester.getJDA().getGuilds().size() + " AudioPlayers currently active.");
         return activeEb.build();
     }
 
     private String activePlayersList() {
         StringBuilder activeList = new StringBuilder();
-        GuildAudioManager.getAudioManagers().entrySet().stream().limit(10).forEach(entry -> {
-            Guild guild = entry.getKey();
-            AudioPlayer audio = entry.getValue().audioPlayer;
-            if (audio.getPlayingTrack() != null) {
+        GuildAudioManager.getAudioManagers().forEach((guild, manager) -> {
+            AudioPlayer audio = manager.audioPlayer;
+            if (audio.getPlayingTrack() != null && activeList.length() < 900) {
                 activeList.append(guild.getName()).append(" - ").append("[").append(audio.getPlayingTrack().getInfo().author).append(" - ").append(audio.getPlayingTrack().getInfo().title).append("](").append(audio.getPlayingTrack().getInfo().uri).append(")").append("\n");
             }
         });
