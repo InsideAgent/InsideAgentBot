@@ -138,6 +138,8 @@ public class GenericMusicCommands extends ListenerAdapter {
                 event.getGuildChannel().sendMessage((MessageCreateData) audioManager.setVolume(i)).queue();
             } catch (NumberFormatException ex) {
                 event.getMessage().reply(event.getMessage().getContentRaw().split("-volume ")[1] + " is not a number 1 - 100!").queue();
+            } catch (ArrayIndexOutOfBoundsException ex1) {
+                event.getMessage().reply("Volume is currently: " + audioManager.audioPlayer.getVolume()).queue();
             }
         } else if (message.equalsIgnoreCase("-clear")) {
             event.getGuildChannel().sendMessage((MessageCreateData) audioManager.clearQueue()).queue();
