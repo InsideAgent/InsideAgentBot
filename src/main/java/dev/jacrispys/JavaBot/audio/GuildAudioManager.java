@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.michaelthelin.spotify.enums.ModelObjectType;
 import se.michaelthelin.spotify.model_objects.specification.Recommendations;
+import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.model_objects.specification.TrackSimplified;
 
 import java.awt.*;
@@ -889,7 +890,7 @@ public class GuildAudioManager {
         embedBuilder.addField("Position in queue: ", "`" + (scheduler.getTrackQueue().size() - (requestData.getTracks().length - 1)) + "`", false);
         long rawTimeUntilPlay = 0;
 
-        for (TrackSimplified track : requestData.getTracks()) {
+        for (Track track : requestData.getTracks()) {
             rawTimeUntilPlay -= track.getDurationMs();
         }
         for (AudioTrack queue : scheduler.getTrackQueue().stream().toList()) {
