@@ -51,6 +51,13 @@
           <outputDirectory>${project.basedir}\out\Bot</outputDirectory>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+        <configuration>
+          <reportOutputDirectory>./docs/</reportOutputDirectory>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <repositories>
@@ -87,9 +94,9 @@
     </dependency>
   </dependencies>
   <properties>
-    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.target>17</maven.compiler.target>
     <mainClass>dev.jacrispys.JavaBot.JavaBotMain</mainClass>
-    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.source>17</maven.compiler.source>
     <author>Jacrispys</author>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

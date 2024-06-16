@@ -69,7 +69,7 @@ public class SecretData {
                 return new FileInputStream(file);
             } else throw new FileNotFoundException("Could not create required config file!");
 
-        } else return SecretData.class.getClassLoader().getResourceAsStream("loginInfo.yml");
+        } else return new FileInputStream(path);
     }
 
     @NotNull
