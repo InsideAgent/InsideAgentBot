@@ -12,7 +12,7 @@ jobs:
           distribution: 'oracle'
           java-version: '23.0.1'
       - run: |
-          mvn --batch-mode --update-snapshots verify
+          mvn test
           
 
   build:
@@ -37,4 +37,14 @@ jobs:
           path: out/Bot/InsideAgentDev-${{env.RELEASE_VERSION}}.jar
 
 
-  #lint:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '23.0.1'
+      - run: |
+          mvn checkstyle:check
