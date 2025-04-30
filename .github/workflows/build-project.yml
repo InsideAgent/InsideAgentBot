@@ -1,0 +1,40 @@
+name: Build InsideAgentDev
+run-name: ${{ github.actor }} started a build process.
+on: [ push ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '23.0.1'
+      - run: |
+          mvn --batch-mode --update-snapshots verify
+          
+
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '23.0.1'
+      - run: |
+          mvn package --file pom.xml
+      - name: Extract Maven project version
+        run: |
+          echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+      - uses: actions/upload-artifact@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: InsideAgentDev-${{env.RELEASE_VERSION}}
+          path: out/Bot/InsideAgentDev-${{env.RELEASE_VERSION}}.jar
+
+
+  #lint:
